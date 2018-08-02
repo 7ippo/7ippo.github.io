@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+<center><h2>白驹过隙，生活不易</h2></center>
 
 You can use the [editor on GitHub](https://github.com/7ippo/7ippo.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
