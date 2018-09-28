@@ -4,7 +4,7 @@ title: 'Log for Shell'
 subtitle: '以及Shell脚本规范'
 date: 2018-09-28
 categories: 技术
-cover: 'http://7ippo.github.io/assets/img/Manhattan.jpg'
+cover: 'https://7ippo.github.io/assets/img/Manhattan.jpg'
 tags: Shell 脚本规范 日志
 ---
 
