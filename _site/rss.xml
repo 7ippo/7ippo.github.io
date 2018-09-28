@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 28 Sep 2018 15:05:44 +0800</pubDate>
-    <lastBuildDate>Fri, 28 Sep 2018 15:05:44 +0800</lastBuildDate>
+    <pubDate>Fri, 28 Sep 2018 15:26:41 +0800</pubDate>
+    <lastBuildDate>Fri, 28 Sep 2018 15:26:41 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -39,22 +39,21 @@
 &lt;/ul&gt;
 &lt;h2&gt;文件部署&lt;/h2&gt;
 
-&lt;pre&gt;
-&amp;gt;build_scripts
-    &amp;gt;bin  业务脚本
-    &amp;gt;lib  引用库
-        &amp;gt;tools  内部工具
-        ...
-    &amp;gt;etc  配置文件，包括通用配置与本地配置
-        &amp;gt;local_etc  本地配置
-            &amp;gt;default  默认配置
-            &amp;gt;using_etc*  本地使用的环境配置
-        ...
-    &amp;gt;tmp*  临时文件
-        &amp;gt;log*  日志
-        ...
-    &amp;gt;server  服务脚本
-&lt;/pre&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;build_scripts&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;bin&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;业务脚本&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;引用库&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;内部工具&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;配置文件，包括通用配置与本地配置&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;local_etc&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;本地配置&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;default&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;默认配置&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;using_etc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;本地使用的环境配置&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;临时文件&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;日志&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;服务脚本&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;ul&gt;
 &lt;li&gt;local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。&lt;/li&gt;
 &lt;li&gt;带星号*的目录不会纳入版本控制系统&lt;/li&gt;

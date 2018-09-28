@@ -170,22 +170,21 @@ Author: Ray-Eldath
 </ul>
 <h2>文件部署</h2>
 
-<pre>
-&gt;build_scripts
-    &gt;bin  业务脚本
-    &gt;lib  引用库
-        &gt;tools  内部工具
-        ...
-    &gt;etc  配置文件，包括通用配置与本地配置
-        &gt;local_etc  本地配置
-            &gt;default  默认配置
-            &gt;using_etc*  本地使用的环境配置
-        ...
-    &gt;tmp*  临时文件
-        &gt;log*  日志
-        ...
-    &gt;server  服务脚本
-</pre>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="o">&gt;</span><span class="n">build_scripts</span>
+    <span class="o">&gt;</span><span class="nb">bin</span>  <span class="err">业务脚本</span>
+    <span class="o">&gt;</span><span class="n">lib</span>  <span class="err">引用库</span>
+        <span class="o">&gt;</span><span class="n">tools</span>  <span class="err">内部工具</span>
+        <span class="o">...</span>
+    <span class="o">&gt;</span><span class="n">etc</span>  <span class="err">配置文件，包括通用配置与本地配置</span>
+        <span class="o">&gt;</span><span class="n">local_etc</span>  <span class="err">本地配置</span>
+            <span class="o">&gt;</span><span class="n">default</span>  <span class="err">默认配置</span>
+            <span class="o">&gt;</span><span class="n">using_etc</span><span class="o">*</span>  <span class="err">本地使用的环境配置</span>
+        <span class="o">...</span>
+    <span class="o">&gt;</span><span class="n">tmp</span><span class="o">*</span>  <span class="err">临时文件</span>
+        <span class="o">&gt;</span><span class="n">log</span><span class="o">*</span>  <span class="err">日志</span>
+        <span class="o">...</span>
+    <span class="o">&gt;</span><span class="n">server</span>  <span class="err">服务脚本</span></code></pre></figure>
+
 <ul>
 <li>local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。</li>
 <li>带星号*的目录不会纳入版本控制系统</li>

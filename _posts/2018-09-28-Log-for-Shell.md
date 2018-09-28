@@ -4,7 +4,7 @@ title: 'Log for Shell'
 subtitle: '以及Shell脚本规范'
 date: 2018-09-28
 categories: 技术
-cover: 'http://7ippo.github.io/assets/img/Manhattan.png'
+cover: 'http://7ippo.github.io/assets/img/Manhattan.jpg'
 tags: Shell 脚本规范 日志
 ---
 
@@ -36,7 +36,7 @@ tags: Shell 脚本规范 日志
 </ul>
 <h2>文件部署</h2>
 
-<pre>
+{% highlight python %}
 >build_scripts
     >bin  业务脚本
     >lib  引用库
@@ -51,7 +51,7 @@ tags: Shell 脚本规范 日志
         >log*  日志
         ...
     >server  服务脚本
-</pre>
+{% endhighlight %}
 <ul>
 <li>local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。</li>
 <li>带星号*的目录不会纳入版本控制系统</li>
