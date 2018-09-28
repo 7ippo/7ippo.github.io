@@ -79,5 +79,3 @@ permalink: /:year/:month/:day/:title.html
 # Plugins
 plugins: [jekyll-paginate]
 
-# Highligt
-pygments: true
