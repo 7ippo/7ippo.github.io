@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log for Shell - 周鬼才's blog</title>
+    <meta name="author"  content="周子博">
+    <meta name="description" content="Log for Shell">
+    <meta name="keywords"  content="Shell, 脚本规范, 日志">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Log for Shell - 周鬼才's blog">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:4000/2018/09/28/Log-for-Shell.html">
+    <meta property="og:description" content="What is the purpose of LIFE">
+    <meta property="og:site_name" content="周鬼才's blog">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-circuitBoard bgcolor-default "
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="http://localhost:4000/tags#Shell" class="post-tag">Shell</a>
+          
+            <a href="http://localhost:4000/tags#%E8%84%9A%E6%9C%AC%E8%A7%84%E8%8C%83" class="post-tag">脚本规范</a>
+          
+            <a href="http://localhost:4000/tags#%E6%97%A5%E5%BF%97" class="post-tag">日志</a>
+          
+        
+      </div>
+      <h1>Log for Shell</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>周子博</span>
+        <time class="post-meta-item" datetime="18-09-28"><i class="iconfont icon-date"></i>28 Sep 2018</time>
+      </div>
+    </div>
+    
+    <div class="filter"></div>
+      <div class="post-cover" style="background: url('../assets/img/Manhattan.png') center no-repeat; background-size: cover;"></div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+    <h2 class="post-subtitle">以及Shell脚本规范</h2>
+    
+
+    <article class="markdown-body">
+      <h2>目标</h2>
+<p>Shell脚本面向内部技术人员，编写目标如下：   
+</p>
+<ul>
+<li>
+<p>脚本编写简单小巧，结构清晰，便于维护</p>
+<ol>
+<li>脚本内容需要分为若干步骤，同时打印步骤序号和步骤名称</li>
+<li>一个脚本做的事情不超过5步，脚本内容过多则进行相应拆分,避免某一个脚本过于复杂</li>
+<li>脚本的每个步骤以及函数实现遵循单一功能原则，代码长度控制在50行以内（50行大概是整个桌面窗口最大化后能全部展示的行数）</li>
+<li>文件部署尽量清晰，及时清理废弃脚本和废弃文件夹，被注释掉的无用代码及时删除</li>
+<li>入口脚本应该提供<strong>-help</strong>，<strong>-version</strong>功能
+<br /><br /></li>
+</ol>
+</li>
+<li>
+<p>日志输出可以快速定位问题，打印格式规范统一</p>
+<ol>
+<li>日志止于出错位置，并且能够明确指出错误位置</li>
+<li>能够看到执行脚本的脚本名与执行时的具体参数</li>
+<li>关键日志和非关键日志区分开来</li>
+<li>不打印看起来没有意义或没有人会看的日志</li>
+<li>调试脚本时打印的辅助日志，调试完成后请<strong>务必</strong>删掉</li>
+</ol>
+</li>
+</ul>
+<h2>文件部署</h2>
+<ul>
+<li>
+<pre>
+&gt;build_scripts
+    &gt;bin  业务脚本
+    &gt;lib  引用库
+        &gt;tools  内部工具
+        ...
+    &gt;etc  配置文件，包括通用配置与本地配置
+        &gt;local_etc  本地配置
+            &gt;default  默认配置
+            &gt;using_etc*  本地使用的环境配置
+        ...
+    &gt;tmp*  临时文件
+        &gt;log*  日志
+        ...
+    &gt;server  服务脚本
+</pre>
+</li>
+<li>local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。</li>
+<li>lib存放非内部实现的第三方脚本，lib下按照第三方脚本功能命名二级文件夹，并于二级文件夹下建立文本文件，描述第三方脚本的功能，使用方法，引用者，版本，引用时间，如果是替换了别人原先使用的第三方库，还要注明替换原因，替换者，替换时间等信息</li>
+<li>tool存放内部实现的通用工具脚本，如日志输出脚本等等，tool下可按照脚本功能进行二级文件命名，工具脚本中添加注释说明工具脚本的实现者，版本号，使用方法等信息，如非第一版实现，应该添加修改内容，修改者，修改时间等信息</li>
+<li>带星号*的目录不会纳入版本控制系统</li>
+<li>目录结构使用过程中有更多需求和建议可以提出讨论以改进</li>
+</ul>
+<h2>规约</h2>
+<h3>命名风格统一</h3>
+<ul>
+<li>文件名、内部变量名使用&nbsp;<strong><em>lowerCamelCase</em></strong>&nbsp;小写驼峰形式，如:&nbsp; buildServerConsole.sh，resultNum</li>
+<li>函数名使用&nbsp;<strong><em>UpperCamelCase</em></strong>&nbsp;大写驼峰形式，如:&nbsp; ReportFailure，AfterShell</li>
+<li>常量名、路径名使用以下划线连接的全大写单词形式，如:&nbsp;QUIET_RUN，SCRIPTS_AUTOBUILD_DIR</li>
+<li>命名时，除非某个单词有业内通用的缩写简写，否则不要使用单词缩写简写命名，<strong>特别不要把自己平时的缩写简写写入公共脚本</strong></li>
+</ul>
+<h3>日志输出规范</h3>
+<p>编写了一套Shell的日志工具脚本，目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
+<ol>
+<li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。</li>
+<li>
+<p>脚本开始时，调用&nbsp;<strong><em>BeforeShell</em></strong>&nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：</p>
+<pre>
+BeforeShell $@
+
+2018-09-05 [17:52:21]
+2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
+2018-09-05 [17:52:21]    +   test.sh -n -r -android 90   +
+2018-09-05 [17:52:21]
+</pre>
+</li>
+<li>
+<p>脚本执行步骤时，打印步骤序号和步骤名称。调用&nbsp;<strong><em>Step</em></strong>&nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：</p>
+<pre>
+Step 1 "Copy Unity Resource"
+
+2018-09-05 [17:52:21]
+2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
+2018-09-05 [17:52:21]
+</pre>
+</li>
+<li>
+<p>脚本结束时，调用&nbsp;<strong><em>AfterShell</em></strong>&nbsp;函数。该函数会打印脚本结束标志：</p>
+<pre>
+AfterShell
+
+2018-09-05 [17:52:21]
+2018-09-05 [17:52:21]    +   test.sh  FINISH   +
+</pre>
+</li>
+<li>
+<p>需要打印关键步骤成功的标志时，调用&nbsp;<strong><em>ReportSuccess</em></strong>&nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：</p>
+<pre>
+ReportSuccess "Build Dynamic Framework Project"	
+
+****     Build Dynamic Framework Project SUCCESS      ****
+
+</pre>
+</li>
+<li>
+<p>需要打印错误标志时，调用&nbsp;<strong><em>ReportFailure</em></strong>&nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：</p>
+<pre>
+ReportFailure		
+
+****     line 10 test.sh REPORTED FAILURE     ****
+
+
+    CALLER LIST
+ - line 10 a test.sh
+ - line 14 b test.sh
+ - line 17 main test.sh
+
+</pre>
+</li>
+<li>
+<p>非关键命令，如svn操作，cp命令执行前请调用&nbsp;<strong><em>BlankLine</em></strong>&nbsp;打印一个空行</p>
+</li>
+<li>
+<p>如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：</p>
+<pre>
+source ./logForShell.sh [Shell]
+Show "Using TAG to LOG"
+
+2018-09-11 [10:08:26] [Shell] Using TAG to LOG
+</pre>
+</li>
+</ol>
+<h3>其他规范</h3>
+<ol>
+<li>脚本设计编写时应考虑按功能模块拆分成独立脚本，执行时均使用sh或source执行，去掉分配脚本执行权限的过程</li>
+<li>
+<p>变量使用时要加花括号</p>
+<blockquote>
+<pre>$Ditch =&gt; ${Ditch}</pre>
+</blockquote>
+</li>
+<li>
+规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：
+<blockquote>
+<pre>
+function HandleError(){
+returnVal=$?
+if [ $retVal -ne 0 ]; then
+    Show " error exit status "$returnVal" last command"
+    rm -f ${MARK_FILE}
+    exit 0
+fi
+}
+</pre>
+</blockquote>
+</li>
+<li>
+<p>引用命令输出时，使用$()而不用反引号``</p>
+<blockquote>
+<pre>`pwd` =&gt; $(pwd)</pre>
+</blockquote>
+</li>
+<li>
+<p>打印变量时，把变量名和变量值一起打印</p>
+<blockquote>
+<pre>如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</pre>
+</blockquote>
+</li>
+<li>
+定义函数时在函数名前加上<em>function</em>:
+<blockquote>
+<pre>
+function UpperCamelCase(){
+	...
+}
+</pre>
+</blockquote>
+</li>
+<li>
+if-else流程控制，then和条件判断请写在同一行:
+<blockquote>
+<pre>
+if [ ... ];then
+  ...
+elif [ ... ]; then
+  ...
+else
+  ...
+fi
+</pre>
+</blockquote>
+</li>
+<li>区分$0与$BASH_SOURCE的区别，需要打印当前执行脚本名时使用$BASH_SOURCE
+<br />
+<br /></li>
+</ol>
+<h2>logForShell代码</h2>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c">#!/bin/bash</span>
+
+<span class="c"># 全局执行结果标志位，有一步出错后日志不会继续输出</span>
+<span class="c"># 考虑到子Shell与父Shell进程间通信，使用与该文件同目录下的tag文件作为标志位进行信息传递和判断</span>
+<span class="n">export</span> <span class="n">GLOBAL_FAIL_FLAG</span><span class="o">=</span><span class="s">"$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/globalFailFlag.tag"</span>
+
+<span class="c"># 是否加入标签TAG标志位，默认为default</span>
+<span class="c"># 如： . ./logForShell.sh default</span>
+<span class="c"># 需要加入TAG时，调用该脚本时传入TAG参数</span>
+<span class="c"># 如： . ./logForShell.sh [Shell]</span>
+<span class="k">if</span> <span class="p">[</span> <span class="s">"${1}"</span> <span class="o">!=</span> <span class="s">"default"</span> <span class="p">];</span><span class="n">then</span>
+	<span class="n">TAG_FOR_SHELL</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+<span class="k">else</span>
+	<span class="n">TAG_FOR_SHELL</span><span class="o">=</span><span class="s">""</span>
+<span class="n">fi</span>
+
+<span class="c"># 核心打印函数：用于区分关键与非关键日志</span>
+<span class="c"># 正常log前加时间戳，这样如svn cp等命令打印的内容没有时间戳</span>
+<span class="c"># 打印日志前加入自定义标签，方便过滤检索</span>
+
+<span class="n">function</span> <span class="n">Show</span><span class="p">(){</span>
+	<span class="n">dateStr</span><span class="o">=</span><span class="sb">`echo $(date +%Y-%m-%d) $(date +[%H:%M:%S])`</span>
+	<span class="k">if</span> <span class="p">[</span> <span class="err">!</span> <span class="o">-</span><span class="n">f</span> <span class="err">$</span><span class="p">{</span><span class="n">GLOBAL_FAIL_FLAG</span><span class="p">}</span> <span class="p">];</span> <span class="n">then</span>
+		<span class="n">echo</span> <span class="s">"${dateStr} ${TAG_FOR_SHELL} $@"</span>
+	<span class="n">fi</span>
+<span class="p">}</span>
+
+<span class="c"># 空行打印函数：请在非关键日志如svn,cp,wget等命令前打印一个空行</span>
+
+<span class="n">function</span> <span class="n">BlankLine</span><span class="p">(){</span>
+	<span class="n">echo</span> <span class="s">""</span>
+<span class="p">}</span>
+
+<span class="c"># 纯净打印函数：无时间戳无标签无格式</span>
+
+<span class="n">function</span> <span class="n">NoFormatShow</span><span class="p">(){</span>
+	<span class="n">echo</span> <span class="s">"$@"</span>
+<span class="p">}</span>
+
+<span class="c"># 步骤打印函数：需要传入$1：步骤序号，$2：步骤描述</span>
+<span class="c"># 如： Step 1 "Copy Unity Resource"</span>
+
+<span class="n">function</span> <span class="n">Step</span><span class="p">(){</span>
+	<span class="n">sourceFileName</span><span class="o">=</span><span class="sb">`caller`</span>
+	<span class="n">Show</span> <span class="s">""</span>
+	<span class="n">Show</span> <span class="s">"==================== ${sourceFileName##*/}  STEP $1 : $2 ===================="</span>
+	<span class="n">Show</span> <span class="s">""</span>
+<span class="p">}</span>
+
+<span class="c"># 进入脚本函数：在关键脚本开始时执行，调用时需要传入执行脚本的所有参数</span>
+<span class="c"># 如： BeforeShell $@</span>
+
+<span class="n">function</span> <span class="n">BeforeShell</span><span class="p">(){</span>
+	<span class="n">sourceFileName</span><span class="o">=</span><span class="sb">`caller`</span>
+	<span class="n">Show</span> <span class="s">""</span>
+	<span class="n">Show</span> <span class="s">"   +   ${sourceFileName##*/}  BEGIN   +"</span>
+	<span class="n">Show</span> <span class="s">"   +   ${sourceFileName##*/} $@   +"</span>
+	<span class="n">Show</span> <span class="s">""</span>
+<span class="p">}</span>
+
+<span class="c"># 退出脚本函数：在脚本结束时执行</span>
+<span class="c"># 如： AfterShell</span>
+
+<span class="n">function</span> <span class="n">AfterShell</span><span class="p">(){</span>
+	<span class="n">sourceFileName</span><span class="o">=</span><span class="sb">`caller`</span>
+	<span class="n">Show</span> <span class="s">""</span>
+	<span class="n">Show</span> <span class="s">"   +   ${sourceFileName##*/}  FINISH   +"</span>
+<span class="p">}</span>
+
+<span class="c"># 错误报告函数：在某一步结束后判断执行结果，若出错则调用该函数</span>
+<span class="c"># 如： ReportFailure</span>
+<span class="c"># 该函数会改变执行结果标志位，阻止出错后日志继续输出</span>
+
+<span class="n">function</span> <span class="n">ReportFailure</span><span class="p">(){</span>
+	<span class="n">touch</span> <span class="err">$</span><span class="p">{</span><span class="n">GLOBAL_FAIL_FLAG</span><span class="p">}</span>
+	<span class="n">echo</span> <span class="s">""</span>
+	<span class="n">echo</span> <span class="s">""</span>
+	<span class="n">echo</span> <span class="s">"****     line `caller` REPORTED FAILURE     ****"</span>
+	<span class="n">echo</span> <span class="s">""</span>
+	<span class="n">echo</span> <span class="s">""</span>
+	<span class="c"># 通过循环判断caller返回，如果不为空则持续打印，最多打印5行</span>
+	<span class="n">echo</span> <span class="s">"    CALLER LIST    "</span>
+	<span class="n">echo</span> <span class="s">" - line `caller 0`"</span>
+	<span class="k">for</span> <span class="n">loop</span> <span class="ow">in</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span>
+	<span class="n">do</span>
+		<span class="k">if</span> <span class="p">[</span> <span class="s">"`caller ${loop}`"</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">];</span><span class="n">then</span>
+			<span class="n">echo</span> <span class="s">" - line `caller ${loop}`"</span>
+		<span class="k">else</span>
+			<span class="n">echo</span> <span class="s">""</span>
+			<span class="k">break</span>
+		<span class="n">fi</span>
+	<span class="n">done</span>
+<span class="p">}</span>
+
+<span class="c"># 成功报告函数：在关键步骤结束后判断执行结果，成功则调用该函数</span>
+<span class="c"># 一般步骤不用调用该函数输出</span>
+<span class="c"># 如： ReportSuccess "Init and check related params"</span>
+
+<span class="n">function</span> <span class="n">ReportSuccess</span><span class="p">(){</span>
+	<span class="n">echo</span> <span class="s">""</span>
+	<span class="n">echo</span> <span class="s">"****     $1 SUCCESS      ****"</span>
+	<span class="n">echo</span> <span class="s">""</span>
+<span class="p">}</span>
+
+<span class="c"># 清理标志位函数：在加载logForShell函数后，务必在主入口脚本所有语句执行前调用</span>
+
+<span class="n">function</span> <span class="n">CleanFlagBeforeStart</span><span class="p">(){</span>
+	<span class="k">if</span> <span class="p">[</span> <span class="o">-</span><span class="n">f</span> <span class="err">$</span><span class="p">{</span><span class="n">GLOBAL_FAIL_FLAG</span><span class="p">}</span> <span class="p">];</span> <span class="n">then</span>
+		<span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="err">$</span><span class="p">{</span><span class="n">GLOBAL_FAIL_FLAG</span><span class="p">}</span>
+	<span class="n">fi</span>
+<span class="p">}</span></code></pre></figure>
+
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="http://localhost:4000/assets/img/profile.png" alt="">
+      </div>
+      <div class="author-name" rel="author">周子博</div>
+      <div class="bio">
+        <p>爱生活，爱游戏</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="//weibo.com/swazz" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/7ippo" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2017/04/18/hello-jekyll.html" class="read-next-link"></a>
+          <section>
+            <span>Hello Jekyll</span>
+            <p>  Transform your plain text into static websites and blogs.</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" alt="">
+          
+      </div>
+      
+    </section>
+    
+    <section class="post-footer-item comment">
+        <div id="disqus_thread"></div>
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>周鬼才's blog ©
+  
+  
+    2017
+    -
+  
+  2018
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+  <script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://liaokeyu.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>
