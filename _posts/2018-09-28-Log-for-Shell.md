@@ -4,7 +4,7 @@ title: 'Log for Shell'
 subtitle: '以及Shell脚本规范'
 date: 2018-09-28
 categories: 技术
-cover: '../assets/img/Manhattan.jpg'
+cover: ' 7ippo.github.io/assets/img/Manhattan.jpg '
 tags: Shell 脚本规范 日志
 ---
 
@@ -35,8 +35,7 @@ tags: Shell 脚本规范 日志
 </li>
 </ul>
 <h2>文件部署</h2>
-<ul>
-<li>
+
 <pre>
 >build_scripts
     >bin  业务脚本
@@ -53,12 +52,9 @@ tags: Shell 脚本规范 日志
         ...
     >server  服务脚本
 </pre>
-</li>
+<ul>
 <li>local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。</li>
-<li>lib存放非内部实现的第三方脚本，lib下按照第三方脚本功能命名二级文件夹，并于二级文件夹下建立文本文件，描述第三方脚本的功能，使用方法，引用者，版本，引用时间，如果是替换了别人原先使用的第三方库，还要注明替换原因，替换者，替换时间等信息</li>
-<li>tool存放内部实现的通用工具脚本，如日志输出脚本等等，tool下可按照脚本功能进行二级文件命名，工具脚本中添加注释说明工具脚本的实现者，版本号，使用方法等信息，如非第一版实现，应该添加修改内容，修改者，修改时间等信息</li>
 <li>带星号*的目录不会纳入版本控制系统</li>
-<li>目录结构使用过程中有更多需求和建议可以提出讨论以改进</li>
 </ul>
 <h2>规约</h2>
 <h3>命名风格统一</h3>
@@ -74,46 +70,46 @@ tags: Shell 脚本规范 日志
 <li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。</li>
 <li>
 <p>脚本开始时，调用&nbsp;<strong><em>BeforeShell</em></strong>&nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：</p>
-<pre>
+{% highlight python %}
 BeforeShell $@
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
 2018-09-05 [17:52:21]    +   test.sh -n -r -android 90   +
 2018-09-05 [17:52:21]
-</pre>
+{% endhighlight %}
 </li>
 <li>
 <p>脚本执行步骤时，打印步骤序号和步骤名称。调用&nbsp;<strong><em>Step</em></strong>&nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：</p>
-<pre>
+{% highlight python %}
 Step 1 "Copy Unity Resource"
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
 2018-09-05 [17:52:21]
-</pre>
+{% endhighlight %}
 </li>
 <li>
 <p>脚本结束时，调用&nbsp;<strong><em>AfterShell</em></strong>&nbsp;函数。该函数会打印脚本结束标志：</p>
-<pre>
+{% highlight python %}
 AfterShell
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  FINISH   +
-</pre>
+{% endhighlight %}
 </li>
 <li>
 <p>需要打印关键步骤成功的标志时，调用&nbsp;<strong><em>ReportSuccess</em></strong>&nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：</p>
-<pre>
+{% highlight python %}
 ReportSuccess "Build Dynamic Framework Project"	
 
 ****     Build Dynamic Framework Project SUCCESS      ****
 
-</pre>
+{% endhighlight %}
 </li>
 <li>
 <p>需要打印错误标志时，调用&nbsp;<strong><em>ReportFailure</em></strong>&nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：</p>
-<pre>
+{% highlight python %}
 ReportFailure		
 
 ****     line 10 test.sh REPORTED FAILURE     ****
@@ -124,19 +120,19 @@ ReportFailure
  - line 14 b test.sh
  - line 17 main test.sh
 
-</pre>
+{% endhighlight %}
 </li>
 <li>
 <p>非关键命令，如svn操作，cp命令执行前请调用&nbsp;<strong><em>BlankLine</em></strong>&nbsp;打印一个空行</p>
 </li>
 <li>
 <p>如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：</p>
-<pre>
+{% highlight python %}
 source ./logForShell.sh [Shell]
 Show "Using TAG to LOG"
 
 2018-09-11 [10:08:26] [Shell] Using TAG to LOG
-</pre>
+{% endhighlight %}
 </li>
 </ol>
 <h3>其他规范</h3>

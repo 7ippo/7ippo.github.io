@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 28 Sep 2018 14:02:46 +0800</pubDate>
-    <lastBuildDate>Fri, 28 Sep 2018 14:02:46 +0800</lastBuildDate>
+    <pubDate>Fri, 28 Sep 2018 15:02:40 +0800</pubDate>
+    <lastBuildDate>Fri, 28 Sep 2018 15:02:40 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -38,8 +38,7 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2&gt;文件部署&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;
+
 &lt;pre&gt;
 &amp;gt;build_scripts
     &amp;gt;bin  业务脚本
@@ -56,12 +55,9 @@
         ...
     &amp;gt;server  服务脚本
 &lt;/pre&gt;
-&lt;/li&gt;
+&lt;ul&gt;
 &lt;li&gt;local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。&lt;/li&gt;
-&lt;li&gt;lib存放非内部实现的第三方脚本，lib下按照第三方脚本功能命名二级文件夹，并于二级文件夹下建立文本文件，描述第三方脚本的功能，使用方法，引用者，版本，引用时间，如果是替换了别人原先使用的第三方库，还要注明替换原因，替换者，替换时间等信息&lt;/li&gt;
-&lt;li&gt;tool存放内部实现的通用工具脚本，如日志输出脚本等等，tool下可按照脚本功能进行二级文件命名，工具脚本中添加注释说明工具脚本的实现者，版本号，使用方法等信息，如非第一版实现，应该添加修改内容，修改者，修改时间等信息&lt;/li&gt;
 &lt;li&gt;带星号*的目录不会纳入版本控制系统&lt;/li&gt;
-&lt;li&gt;目录结构使用过程中有更多需求和建议可以提出讨论以改进&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2&gt;规约&lt;/h2&gt;
 &lt;h3&gt;命名风格统一&lt;/h3&gt;
@@ -77,69 +73,67 @@
 &lt;li&gt;&lt;strong&gt;入口脚本&lt;/strong&gt;中，在调用任何日志方法之前，请先调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;CleanFlagBeforeStart&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;脚本开始时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;BeforeShell&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：&lt;/p&gt;
-&lt;pre&gt;
-BeforeShell $@
 
-2018-09-05 [17:52:21]
-2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
-2018-09-05 [17:52:21]    +   test.sh -n -r -android 90   +
-2018-09-05 [17:52:21]
-&lt;/pre&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;BeforeShell&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;$@&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;BEGIN&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;android&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;90&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;脚本执行步骤时，打印步骤序号和步骤名称。调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;Step&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：&lt;/p&gt;
-&lt;pre&gt;
-Step 1 &quot;Copy Unity Resource&quot;
 
-2018-09-05 [17:52:21]
-2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
-2018-09-05 [17:52:21]
-&lt;/pre&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;Step&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Copy Unity Resource&quot;&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;====================&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;STEP&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Copy&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Unity&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Resource&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;====================&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;脚本结束时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;AfterShell&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会打印脚本结束标志：&lt;/p&gt;
-&lt;pre&gt;
-AfterShell
 
-2018-09-05 [17:52:21]
-2018-09-05 [17:52:21]    +   test.sh  FINISH   +
-&lt;/pre&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;AfterShell&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mo&quot;&gt;05&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;FINISH&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;需要打印关键步骤成功的标志时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;ReportSuccess&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：&lt;/p&gt;
-&lt;pre&gt;
-ReportSuccess &quot;Build Dynamic Framework Project&quot;	
 
-****     Build Dynamic Framework Project SUCCESS      ****
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;ReportSuccess&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Build Dynamic Framework Project&quot;&lt;/span&gt;	
 
-&lt;/pre&gt;
+&lt;span class=&quot;o&quot;&gt;****&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;Build&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Dynamic&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Framework&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Project&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SUCCESS&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;****&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;需要打印错误标志时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;ReportFailure&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：&lt;/p&gt;
-&lt;pre&gt;
-ReportFailure		
 
-****     line 10 test.sh REPORTED FAILURE     ****
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;ReportFailure&lt;/span&gt;		
+
+&lt;span class=&quot;o&quot;&gt;****&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;REPORTED&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FAILURE&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;****&lt;/span&gt;
 
 
-    CALLER LIST
- - line 10 a test.sh
- - line 14 b test.sh
- - line 17 main test.sh
+    &lt;span class=&quot;n&quot;&gt;CALLER&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LIST&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;非关键命令，如svn操作，cp命令执行前请调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;BlankLine&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;打印一个空行&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：&lt;/p&gt;
-&lt;pre&gt;
-source ./logForShell.sh [Shell]
-Show &quot;Using TAG to LOG&quot;
 
-2018-09-11 [10:08:26] [Shell] Using TAG to LOG
-&lt;/pre&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;./&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logForShell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sh&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Shell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Show&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Using TAG to LOG&quot;&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;2018&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;09&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;08&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;26&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Shell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TAG&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LOG&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3&gt;其他规范&lt;/h3&gt;
