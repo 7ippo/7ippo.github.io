@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 06 Nov 2018 16:06:07 +0800</pubDate>
-    <lastBuildDate>Tue, 06 Nov 2018 16:06:07 +0800</lastBuildDate>
+    <pubDate>Tue, 06 Nov 2018 19:12:23 +0800</pubDate>
+    <lastBuildDate>Tue, 06 Nov 2018 19:12:23 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -20,11 +20,11 @@
 &lt;li&gt;
 执行脚本
 &lt;blockquote&gt;
-&lt;p&gt;python apkPermissionsCheck.py -path [ directory ] &lt;br /&gt;
+&lt;p&gt;&lt;font size=&quot;3&quot;&gt;python apkPermissionsCheck.py -path [ directory ] &lt;br /&gt;
 # -path/--path 检查某个路径下的所有apk &lt;br /&gt;
 或 &lt;br /&gt;
 python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) &lt;br /&gt;
-# -apkname/--apkname 检查若干当前路径下的apk文件&lt;/p&gt;
+# -apkname/--apkname 检查若干当前路径下的apk文件&lt;/font&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;/li&gt;
 &lt;/ol&gt;

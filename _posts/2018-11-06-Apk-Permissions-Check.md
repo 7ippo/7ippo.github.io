@@ -17,11 +17,11 @@ tags: 安卓 工具 Python XML解析 ET
 <li>
 执行脚本
 <blockquote>
-<p>python apkPermissionsCheck.py -path [ directory ] <br />
+<p><font size="3">python apkPermissionsCheck.py -path [ directory ] <br />
 # -path/--path 检查某个路径下的所有apk <br />
 或 <br />
 python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
-# -apkname/--apkname 检查若干当前路径下的apk文件</p>
+# -apkname/--apkname 检查若干当前路径下的apk文件</font></p>
 </blockquote>
 </li>
 </ol>
