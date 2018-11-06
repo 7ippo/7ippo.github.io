@@ -4,15 +4,15 @@ title: 'Apk Permissions Check'
 subtitle: '利用ElementTree解析Apk权限检查工具'
 date: 2018-09-28
 categories: 技术
-cover: 'https://7ippo.github.io/assets/img/Manhattan.jpg'
+cover: 'https://7ippo.github.io/assets/img/hero.jpg'
 tags: 安卓 工具 Python XML解析 ET
 ---
 
 <h2>目的</h2>
-<p>反编译解析xml文件，检查其中是否存在不必要的权限声明，作为分发安卓包前工具流程的一部分。</p>
+<p>反编译apk并解析xml文件，检查其中是否存在白名单外的权限声明，作为分发安卓包前工具链的一部分。</p>
 <h2>使用说明</h2>
 <ol>
-<li>使用前请配置必要权限集合:NECESSARYPERMISSIONSSET</li>
+<li>使用前请配置必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被检查警告</li>
 <li>需要将apktool.jar放置在同目录下</li>
 <li>
 执行脚本
@@ -25,9 +25,12 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
 </blockquote>
 </li>
 </ol>
-<p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github☆</a></p>
+
 <h2>Code</h2>
+<p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github Repo☆</a></p>
+<pre>
 {% highlight python %}
+
 import os
 import re
 import argparse
@@ -112,4 +115,6 @@ if __name__ == '__main__':
             folder_name = re.sub(r'\.apk$', '', apks)
             warnings_permissions = checkPermissionsList(folder_name)
             reportPermissionsWarnings(warnings_permissions)
+
 {% endhighlight %}
+</pre>

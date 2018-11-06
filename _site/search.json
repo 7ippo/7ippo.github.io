@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "Apk Permissions Check",
+      "tags"     : "安卓 工具 Python XML解析 ET",
+      "url"      : "/2018/09/28/Apk-Permissions-Check.html"
+    } ,
+  
+    {
       "title"    : "Log for Shell",
       "tags"     : "Shell 脚本规范 日志",
       "url"      : "/2018/09/28/Log-for-Shell.html"
