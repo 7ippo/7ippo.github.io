@@ -65,7 +65,7 @@ tags: Shell 脚本规范 日志
 <li>命名时，除非某个单词有业内通用的缩写简写，否则不要使用单词缩写简写命名，<strong>特别不要把自己平时的缩写简写写入公共脚本</strong></li>
 </ul>
 <h3>日志输出规范</h3>
-<p>编写了一套Shell的日志工具脚本，目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
+<p>编写了一套Shell的日志工具脚本:[☆logForShell代码☆](https://github.com/7ippo/logForShell)。目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
 <ol>
 <li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。</li>
 <li>
@@ -162,29 +162,26 @@ fi
 <li>
 <p>引用命令输出时，使用$()而不用反引号``</p>
 <blockquote>
-<pre>`pwd` => $(pwd)</pre>
+<p><font size="3">`pwd` => $(pwd)</font></p>
 </blockquote>
 </li>
 <li>
 <p>打印变量时，把变量名和变量值一起打印</p>
 <blockquote>
-<pre>如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</pre>
+<p><font size="3">如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</font></p>
 </blockquote>
 </li>
 <li>
 定义函数时在函数名前加上<em>function</em>:
-<blockquote>
-<pre>
+{% highlight python %}
 function UpperCamelCase(){
 	...
 }
-</pre>
-</blockquote>
+{% endhighlight %}
 </li>
 <li>
 if-else流程控制，then和条件判断请写在同一行:
-<blockquote>
-<pre>
+{% highlight python %}
 if [ ... ];then
   ...
 elif [ ... ]; then
@@ -192,14 +189,13 @@ elif [ ... ]; then
 else
   ...
 fi
-</pre>
-</blockquote>
+{% endhighlight %}
 </li>
 <li>区分$0与$BASH_SOURCE的区别，需要打印当前执行脚本名时使用$BASH_SOURCE
 <br/>
 <br/></li>
 </ol>
-## [logForShell代码](https://github.com/7ippo/logForShell)
+## [☆logForShell代码☆](https://github.com/7ippo/logForShell)
 {% highlight python %}
 #!/bin/bash
 
