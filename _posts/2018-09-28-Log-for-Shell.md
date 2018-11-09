@@ -141,13 +141,12 @@ Show "Using TAG to LOG"
 <li>
 <p>变量使用时要加花括号</p>
 <blockquote>
-<pre>$Ditch => ${Ditch}</pre>
+<code>$Ditch => ${Ditch}</code>
 </blockquote>
 </li>
 <li>
-规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：
-<blockquote>
-<pre>
+规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：</li>
+{% highlight go %}
 function HandleError(){
 returnVal=$?
 if [ $retVal -ne 0 ]; then
@@ -156,32 +155,29 @@ if [ $retVal -ne 0 ]; then
     exit 0
 fi
 }
-</pre>
-</blockquote>
-</li>
+{% endhighlight %}
 <li>
-<p>引用命令输出时，使用$()而不用反引号``</p>
+<code>引用命令输出时，使用$()而不用反引号``</code>
 <blockquote>
-<p><font size="3">`pwd` => $(pwd)</font></p>
+<code><font size="3">`pwd` => $(pwd)</font></code>
 </blockquote>
 </li>
 <li>
 <p>打印变量时，把变量名和变量值一起打印</p>
 <blockquote>
-<p><font size="3">如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</font></p>
+<code><font size="3">如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</font></code>
 </blockquote>
 </li>
 <li>
-定义函数时在函数名前加上<em>function</em>:
-{% highlight python %}
+定义函数时在函数名前加上<em>function</em>:</li>
+{% highlight go %}
 function UpperCamelCase(){
 	...
 }
 {% endhighlight %}
-</li>
 <li>
-if-else流程控制，then和条件判断请写在同一行:
-{% highlight python %}
+if-else流程控制，then和条件判断请写在同一行:</li>
+{% highlight go %}
 if [ ... ];then
   ...
 elif [ ... ]; then
@@ -190,7 +186,7 @@ else
   ...
 fi
 {% endhighlight %}
-</li>
+
 <li>区分$0与$BASH_SOURCE的区别，需要打印当前执行脚本名时使用$BASH_SOURCE
 <br/>
 <br/></li>
