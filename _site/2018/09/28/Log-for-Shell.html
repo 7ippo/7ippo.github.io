@@ -162,9 +162,9 @@ Author: Ray-Eldath
 <ol>
 <li>日志止于出错位置，并且能够明确指出错误位置</li>
 <li>能够看到执行脚本的脚本名与执行时的具体参数</li>
-<li>关键日志和非关键日志区分开来</li>
+<li>关键日志和非关键日志进行区分</li>
 <li>不打印看起来没有意义或没有人会看的日志</li>
-<li>调试脚本时打印的辅助日志，调试完成后请<strong>务必</strong>删掉</li>
+<li>调试脚本时打印的辅助日志，调试完成后<strong>务必</strong>删掉</li>
 </ol>
 </li>
 </ul>
@@ -199,7 +199,7 @@ Author: Ray-Eldath
 <li>命名时，除非某个单词有业内通用的缩写简写，否则不要使用单词缩写简写命名，<strong>特别不要把自己平时的缩写简写写入公共脚本</strong></li>
 </ul>
 <h3>日志输出规范</h3>
-<p>编写了一套Shell的日志工具脚本:[☆logForShell代码☆](https://github.com/7ippo/logForShell)。目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
+<p>编写了一套Shell的日志工具脚本:<a href="https://github.com/7ippo/logForShell">☆logForShell代码☆</a>。目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
 <ol>
 <li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。</li>
 <li>
@@ -269,7 +269,7 @@ Show "Using TAG to LOG"
 <li>
 <p>变量使用时要加花括号</p>
 </li>
-<pre><code class="language-python">$Ditch =&gt; ${Ditch}</code></pre>
+<blockquote><pre>$Ditch =&gt; ${Ditch}</pre></blockquote>
 <li>
 规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：</li>
 <pre><code class="language-go">function HandleError(){
@@ -284,17 +284,17 @@ fi
 <li>
 <code>引用命令输出时，使用$()而不用反引号``</code>
 </li>
-<pre><code class="language-python">`pwd` =&gt; $(pwd)</code></pre>
+<blockquote><pre>`pwd` =&gt; $(pwd)</pre></blockquote>
 <li>
 <p>打印变量时，把变量名和变量值一起打印</p>
 </li>
-<pre><code class="language-python">如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</code></pre>
+<blockquote><pre>如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</pre></blockquote>
 <li>
 定义函数时在函数名前加上<em>function</em>:</li>
-<pre><code class="language-go">function UpperCamelCase(){
+<blockquote><pre>function UpperCamelCase(){
 	...
 }
-</code></pre>
+</pre></blockquote>
 <li>
 if-else流程控制，then和条件判断请写在同一行:</li>
 <pre><code class="language-python">if [ ... ];then
