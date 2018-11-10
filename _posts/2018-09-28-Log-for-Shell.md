@@ -161,16 +161,16 @@ fi
 </li>
 <li>
 <p>引用命令输出时，使用$()而不用反引号``</p>
-<blockquote>
-<p><font size="3">`pwd` => $(pwd)</font></p>
-</blockquote>
 </li>
+{% highlight python %}
+`pwd` => $(pwd)
+{% endhighlight %}
 <li>
 <p>打印变量时，把变量名和变量值一起打印</p>
-<blockquote>
-<p><font size="3">如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</font></p>
-</blockquote>
 </li>
+{% highlight python %}
+如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</font></p>
+{% endhighlight %}
 <li>
 定义函数时在函数名前加上<em>function</em>:
 {% highlight python %}
