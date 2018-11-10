@@ -28,9 +28,7 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
 
 <h2>Code</h2>
 <p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github Repo☆</a></p>
-<pre>
-{% highlight python %}
-
+<pre><code class="language-python">
 import os
 import re
 import argparse
@@ -116,5 +114,5 @@ if __name__ == '__main__':
             warnings_permissions = checkPermissionsList(folder_name)
             reportPermissionsWarnings(warnings_permissions)
 
-{% endhighlight %}
+</code>
 </pre>

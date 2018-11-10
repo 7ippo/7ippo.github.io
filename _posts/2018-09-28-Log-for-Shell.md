@@ -36,7 +36,7 @@ tags: Shell 脚本规范 日志
 </ul>
 <h2>文件部署</h2>
 
-{% highlight python %}
+<pre><code class="language-python">
 >build_scripts
     >bin  业务脚本
     >lib  引用库
@@ -51,7 +51,7 @@ tags: Shell 脚本规范 日志
         >log*  日志
         ...
     >server  服务脚本
-{% endhighlight %}
+</code></pre>
 <ul>
 <li>local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。</li>
 <li>带星号*的目录不会纳入版本控制系统</li>
@@ -70,47 +70,42 @@ tags: Shell 脚本规范 日志
 <li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。</li>
 <li>
 <p>脚本开始时，调用&nbsp;<strong><em>BeforeShell</em></strong>&nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：</p>
-{% highlight python %}
-BeforeShell $@
+<pre><code class="language-python">BeforeShell $@
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
 2018-09-05 [17:52:21]    +   test.sh -n -r -android 90   +
 2018-09-05 [17:52:21]
-{% endhighlight %}
+</code></pre>
 </li>
 <li>
 <p>脚本执行步骤时，打印步骤序号和步骤名称。调用&nbsp;<strong><em>Step</em></strong>&nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：</p>
-{% highlight python %}
-Step 1 "Copy Unity Resource"
+<pre><code class="language-python">Step 1 "Copy Unity Resource"
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
 2018-09-05 [17:52:21]
-{% endhighlight %}
+</code></pre>
 </li>
 <li>
 <p>脚本结束时，调用&nbsp;<strong><em>AfterShell</em></strong>&nbsp;函数。该函数会打印脚本结束标志：</p>
-{% highlight python %}
-AfterShell
+<pre><code class="language-python">AfterShell
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  FINISH   +
-{% endhighlight %}
+</code></pre>
 </li>
 <li>
 <p>需要打印关键步骤成功的标志时，调用&nbsp;<strong><em>ReportSuccess</em></strong>&nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：</p>
-{% highlight python %}
-ReportSuccess "Build Dynamic Framework Project"	
+<pre><code class="language-python">ReportSuccess "Build Dynamic Framework Project"	
 
 ****     Build Dynamic Framework Project SUCCESS      ****
 
-{% endhighlight %}
+</code></pre>
 </li>
 <li>
 <p>需要打印错误标志时，调用&nbsp;<strong><em>ReportFailure</em></strong>&nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：</p>
-{% highlight python %}
-ReportFailure		
+<pre><code class="language-python">ReportFailure		
 
 ****     line 10 test.sh REPORTED FAILURE     ****
 
@@ -120,19 +115,18 @@ ReportFailure
  - line 14 b test.sh
  - line 17 main test.sh
 
-{% endhighlight %}
+</code></pre>
 </li>
 <li>
 <p>非关键命令，如svn操作，cp命令执行前请调用&nbsp;<strong><em>BlankLine</em></strong>&nbsp;打印一个空行</p>
 </li>
 <li>
 <p>如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：</p>
-{% highlight python %}
-source ./logForShell.sh [Shell]
+<pre><code class="language-python">source ./logForShell.sh [Shell]
 Show "Using TAG to LOG"
 
 2018-09-11 [10:08:26] [Shell] Using TAG to LOG
-{% endhighlight %}
+</code></pre>
 </li>
 </ol>
 <h3>其他规范</h3>
@@ -141,13 +135,10 @@ Show "Using TAG to LOG"
 <li>
 <p>变量使用时要加花括号</p>
 </li>
-{% highlight python %}
-$Ditch => ${Ditch}
-{% endhighlight %}
+<pre><code class="language-python">$Ditch => ${Ditch}</code></pre>
 <li>
 规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：</li>
-{% highlight go %}
-function HandleError(){
+<pre><code class="language-go">function HandleError(){
 returnVal=$?
 if [ $retVal -ne 0 ]; then
     Show " error exit status "$returnVal" last command"
@@ -155,45 +146,38 @@ if [ $retVal -ne 0 ]; then
     exit 0
 fi
 }
-{% endhighlight %}
+</code></pre>
 <li>
 <code>引用命令输出时，使用$()而不用反引号``</code>
 </li>
-{% highlight python %}
-`pwd` => $(pwd)
-{% endhighlight %}
+<pre><code class="language-python">`pwd` => $(pwd)</code></pre>
 <li>
 <p>打印变量时，把变量名和变量值一起打印</p>
 </li>
-{% highlight python %}
-如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</font></p>
-{% endhighlight %}
+<pre><code class="language-python">如Show "$PLATFORM",至少应该写成Show "PLATFORM:$PLATFORM"</code></pre>
 <li>
 定义函数时在函数名前加上<em>function</em>:</li>
-{% highlight go %}
-function UpperCamelCase(){
+<pre><code class="language-go">function UpperCamelCase(){
 	...
 }
-{% endhighlight %}
+</code></pre>
 <li>
 if-else流程控制，then和条件判断请写在同一行:</li>
-{% highlight go %}
-if [ ... ];then
+<pre><code class="language-python">if [ ... ];then
   ...
 elif [ ... ]; then
   ...
 else
   ...
 fi
-{% endhighlight %}
+</code></pre>
 
 <li>区分$0与$BASH_SOURCE的区别，需要打印当前执行脚本名时使用$BASH_SOURCE
 <br/>
 <br/></li>
 </ol>
 ## [☆logForShell代码☆](https://github.com/7ippo/logForShell)
-{% highlight python %}
-#!/bin/bash
+<pre><code class="language-python">#!/bin/bash
 
 # 全局执行结果标志位，有一步出错后日志不会继续输出
 # 考虑到子Shell与父Shell进程间通信，使用与该文件同目录下的tag文件作为标志位进行信息传递和判断
@@ -304,4 +288,4 @@ function CleanFlagBeforeStart(){
 		rm -f ${GLOBAL_FAIL_FLAG}
 	fi
 }
-{% endhighlight %}
+</code></pre>
