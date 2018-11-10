@@ -109,7 +109,7 @@ Author: Ray-Eldath
 
 
   <header
-    class="g-banner post-header post-pattern-circuitBoard bgcolor-default "
+    class="g-banner post-header post-pattern-glamorous bgcolor-default "
     data-theme="default"
   >
     <div class="post-wrapper">
@@ -166,93 +166,93 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
 
 <h2>Code</h2>
 <p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github Repo☆</a></p>
-<pre>
+<pre><code class="language-python">
+import os
+import re
+import argparse
+import xml.etree.ElementTree as ET
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="n">ET</span>
+parser = argparse.ArgumentParser()
+parser.add_argument('--path', '-path', required=False,
+                    help='Optional, Directory path of a group of apk files')
+parser.add_argument('--apkname', '-apkname', required=False,
+                    help='Optional, Several apk files\' names', nargs='+')
 
-<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--path'</span><span class="p">,</span> <span class="s">'-path'</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s">'Optional, Directory path of a group of apk files'</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--apkname'</span><span class="p">,</span> <span class="s">'-apkname'</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s">'Optional, Several apk files</span><span class="se">\'</span><span class="s"> names'</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">'+'</span><span class="p">)</span>
-
-<span class="n">NECESSARYPERMISSIONSSET</span> <span class="o">=</span> <span class="p">{</span><span class="s">'android.permission.RECEIVE_USER_PRESENT'</span><span class="p">,</span>
-                           <span class="s">'android.permission.MOUNT_UNMOUNT_FILESYSTEMS'</span><span class="p">,</span>
-                           <span class="s">'android.permission.CAMERA'</span><span class="p">,</span>
-                           <span class="s">'android.permission.WRITE_EXTERNAL_STORAGE'</span><span class="p">,</span>
-                           <span class="s">'android.permission.READ_EXTERNAL_STORAGE'</span><span class="p">,</span>
-                           <span class="s">'android.permission.RECORD_AUDIO'</span><span class="p">}</span>
-
-
-<span class="k">def</span> <span class="nf">deCompile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">apktool_command</span> <span class="o">=</span> <span class="s">"java -jar apktool.jar d -f "</span> <span class="o">+</span> <span class="n">filename</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">apktool_command</span><span class="p">)</span>
+NECESSARYPERMISSIONSSET = {'android.permission.RECEIVE_USER_PRESENT',
+                           'android.permission.MOUNT_UNMOUNT_FILESYSTEMS',
+                           'android.permission.CAMERA',
+                           'android.permission.WRITE_EXTERNAL_STORAGE',
+                           'android.permission.READ_EXTERNAL_STORAGE',
+                           'android.permission.RECORD_AUDIO'}
 
 
-<span class="k">def</span> <span class="nf">checkPermissionsList</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">"./"</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s">"/AndroidManifest.xml"</span><span class="p">)</span>
-    <span class="n">ET</span><span class="o">.</span><span class="n">register_namespace</span><span class="p">(</span>
-        <span class="s">'android'</span><span class="p">,</span> <span class="s">'http://schemas.android.com/apk/res/android'</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">)</span>
-    <span class="n">manifest_tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">)</span>
-    <span class="n">manifest_root</span> <span class="o">=</span> <span class="n">manifest_tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
-    <span class="n">uses_permission_list</span> <span class="o">=</span> <span class="n">manifest_root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">"uses-permission"</span><span class="p">)</span>
-
-    <span class="n">warnings_permissions</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">uses_permission_list</span><span class="p">:</span>
-        <span class="n">permission_name</span> <span class="o">=</span> <span class="n">permission</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">'{http://schemas.android.com/apk/res/android}name'</span><span class="p">]</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r'^(android\.permission)\..*'</span><span class="p">,</span> <span class="n">permission_name</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">permission_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NECESSARYPERMISSIONSSET</span><span class="p">:</span>
-                <span class="k">if</span><span class="p">(</span><span class="n">permission_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">warnings_permissions</span><span class="p">):</span>
-                    <span class="n">warnings_permissions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">permission_name</span><span class="p">)</span>
-    <span class="n">warnings_permissions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">warnings_permissions</span>
+def deCompile(filename):
+    apktool_command = "java -jar apktool.jar d -f " + filename
+    os.system(apktool_command)
 
 
-<span class="k">def</span> <span class="nf">reportPermissionsWarnings</span><span class="p">(</span><span class="n">warnings_permissions</span><span class="p">):</span>
-    <span class="n">warning_nums</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">warnings_permissions</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
-    <span class="k">if</span> <span class="n">warning_nums</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'========{}========'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">"Checking Result..."</span><span class="p">))</span>
-        <span class="k">print</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'**CLEAR ~**</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'There is 0 WARNING Android permission in : {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">warnings_permissions</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'========{}========'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">"Checking Result..."</span><span class="p">))</span>
-        <span class="k">print</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'**WARNING !**</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">'{} unnecessary permissions founded in : {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">warning_nums</span><span class="p">,</span> <span class="n">warnings_permissions</span><span class="p">[</span><span class="n">warning_nums</span><span class="p">]))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">warning_nums</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">'        {}</span><span class="se">\n</span><span class="s">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">warnings_permissions</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-    <span class="k">return</span>
+def checkPermissionsList(filename):
+    manifest_path = os.path.join("./" + filename + "/AndroidManifest.xml")
+    ET.register_namespace(
+        'android', 'http://schemas.android.com/apk/res/android')
+    print(manifest_path)
+    manifest_tree = ET.parse(manifest_path)
+    manifest_root = manifest_tree.getroot()
+    uses_permission_list = manifest_root.findall("uses-permission")
+
+    warnings_permissions = []
+    for permission in uses_permission_list:
+        permission_name = permission.attrib['{http://schemas.android.com/apk/res/android}name']
+        if(re.search(r'^(android\.permission)\..*', permission_name)):
+            if permission_name not in NECESSARYPERMISSIONSSET:
+                if(permission_name not in warnings_permissions):
+                    warnings_permissions.append(permission_name)
+    warnings_permissions.append(filename)
+    return warnings_permissions
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">apkname</span><span class="p">):</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
-        <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">apks</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">r'apk$'</span><span class="p">,</span> <span class="n">apks</span><span class="p">)):</span>
-                <span class="k">print</span><span class="p">()</span>
-                <span class="n">deCompile</span><span class="p">(</span><span class="n">apks</span><span class="p">)</span>
-                <span class="n">folder_name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r'\.apk$'</span><span class="p">,</span> <span class="s">''</span><span class="p">,</span> <span class="n">apks</span><span class="p">)</span>
-                <span class="n">warnings_permissions</span> <span class="o">=</span> <span class="n">checkPermissionsList</span><span class="p">(</span><span class="n">folder_name</span><span class="p">)</span>
-                <span class="n">reportPermissionsWarnings</span><span class="p">(</span><span class="n">warnings_permissions</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">apkname</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">apks</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">apkname</span><span class="p">:</span>
-            <span class="n">deCompile</span><span class="p">(</span><span class="n">apks</span><span class="p">)</span>
-            <span class="n">folder_name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r'\.apk$'</span><span class="p">,</span> <span class="s">''</span><span class="p">,</span> <span class="n">apks</span><span class="p">)</span>
-            <span class="n">warnings_permissions</span> <span class="o">=</span> <span class="n">checkPermissionsList</span><span class="p">(</span><span class="n">folder_name</span><span class="p">)</span>
-            <span class="n">reportPermissionsWarnings</span><span class="p">(</span><span class="n">warnings_permissions</span><span class="p">)</span></code></pre></figure>
+def reportPermissionsWarnings(warnings_permissions):
+    warning_nums = len(warnings_permissions)-1
+    if warning_nums == 0:
+        print()
+        print('========{}========'.format("Checking Result..."))
+        print()
+        print('**CLEAR ~**\n')
+        print('There is 0 WARNING Android permission in : {}'.format(
+            warnings_permissions[0]))
+    else:
+        print()
+        print('========{}========'.format("Checking Result..."))
+        print()
+        print('**WARNING !**\n')
+        print('{} unnecessary permissions founded in : {}'.format(
+            warning_nums, warnings_permissions[warning_nums]))
+        for i in range(warning_nums):
+            print('        {}\n'.format(warnings_permissions[i]))
+    return
 
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    if not(args.path) and not(args.apkname):
+        parser.print_help()
+        exit(0)
+    if args.path:
+        for apks in os.listdir(args.path):
+            if(re.search(r'apk$', apks)):
+                print()
+                deCompile(apks)
+                folder_name = re.sub(r'\.apk$', '', apks)
+                warnings_permissions = checkPermissionsList(folder_name)
+                reportPermissionsWarnings(warnings_permissions)
+    elif args.apkname:
+        for apks in args.apkname:
+            deCompile(apks)
+            folder_name = re.sub(r'\.apk$', '', apks)
+            warnings_permissions = checkPermissionsList(folder_name)
+            reportPermissionsWarnings(warnings_permissions)
+
+</code>
 </pre>
 
     </article>
@@ -309,10 +309,6 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
       
     </section>
     
-    <section class="post-footer-item comment">
-        <div id="disqus_thread"></div>
-    </section>
-    
   </section>
 
   <footer class="g-footer">
@@ -354,24 +350,6 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
     });
   </script>
 
-  
-  <script>
-    /**
-     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-    /*
-    var disqus_config = function () {
-    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    */
-    (function() { // DON'T EDIT BELOW THIS LINE
-      var d = document, s = d.createElement('script');
-      s.src = 'https://liaokeyu.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', +new Date());
-      (d.head || d.body).appendChild(s);
-    })();
-  </script>
   
 
   <script src="/assets/js/prism.js"></script>
