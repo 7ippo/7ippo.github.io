@@ -9,10 +9,10 @@ tags: 安卓 工具 Python XML解析 ET
 ---
 
 <h2>目的</h2>
-<p>反编译apk并解析xml文件，检查其中是否存在白名单外的权限声明，作为分发安卓包前工具链的一部分。</p>
+<p>反编译apk并解析xml文件，检查其中是否存在设定白名单外的权限声明。该工具可以作为分发安卓包前工具链的一部分。</p>
 <h2>使用说明</h2>
 <ol>
-<li>使用前请配置必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被检查警告</li>
+<li>使用前请配置apjPermissionsCheck.py中的必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被警告打印到控制台</li>
 <li>需要将apktool.jar放置在同目录下</li>
 <li>
 执行脚本
