@@ -34,10 +34,10 @@ tags: Shell 脚本规范 日志
 </ol>
 </li>
 </ul>
-<h2>文件部署</h2>
+<h2>脚本部署结构</h2>
 
 <pre><code class="language-python">
->build_scripts
+>scripts
     >bin  业务脚本
     >lib  引用库
         >tools  内部工具
