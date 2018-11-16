@@ -5,17 +5,17 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 13 Nov 2018 16:49:24 +0800</pubDate>
-    <lastBuildDate>Tue, 13 Nov 2018 16:49:24 +0800</lastBuildDate>
+    <pubDate>Fri, 16 Nov 2018 09:45:45 +0800</pubDate>
+    <lastBuildDate>Fri, 16 Nov 2018 09:45:45 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
         <title>Apk Permissions Check</title>
         <description>&lt;h2&gt;目的&lt;/h2&gt;
-&lt;p&gt;反编译apk并解析xml文件，检查其中是否存在白名单外的权限声明，作为分发安卓包前工具链的一部分。&lt;/p&gt;
+&lt;p&gt;反编译apk并解析xml文件，检查其中是否存在设定白名单外的权限声明。该工具可以作为分发安卓包前工具链的一部分。&lt;/p&gt;
 &lt;h2&gt;使用说明&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;使用前请配置必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被检查警告&lt;/li&gt;
+&lt;li&gt;使用前请配置apkPermissionsCheck.py中的必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被警告打印到控制台&lt;/li&gt;
 &lt;li&gt;需要将apktool.jar放置在同目录下&lt;/li&gt;
 &lt;li&gt;
 执行脚本
@@ -29,7 +29,7 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) &lt;br /&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2&gt;Code&lt;/h2&gt;
+&lt;h2&gt;apkPermissionsCheck Code&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/7ippo/ApkPermissionsCheck&quot;&gt;☆Github Repo☆&lt;/a&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;
 import os
@@ -67,7 +67,8 @@ def checkPermissionsList(filename):
 
     warnings_permissions = []
     for permission in uses_permission_list:
-        permission_name = permission.attrib['{http://schemas.android.com/apk/res/android}name']
+        permission_name = permission.attrib[
+            '{http://schemas.android.com/apk/res/android}name']
         if(re.search(r'^(android\.permission)\..*', permission_name)):
             if permission_name not in NECESSARYPERMISSIONSSET:
                 if(permission_name not in warnings_permissions):
@@ -119,6 +120,42 @@ if __name__ == '__main__':
 
 &lt;/code&gt;
 &lt;/pre&gt;
+&lt;h2&gt;Another&lt;/h2&gt;
+&lt;p&gt;介于公司对AndroidManifest合并的逻辑太过粗暴导致重复权限声明&amp;lt;uses-permission&amp;gt;多达四五十个，遂顺手写了另一个小工具removeRedundantPermissions，同样解析AndroidManifest.xml，删除重复的权限声明&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;font size=&quot;3&quot;&gt;python removeRedundantPermissions.py -xml/--xml [ AndroidManifest1.xml ] ( [AndroidManifest2.xml] ...)&lt;br /&gt;
+# -xml/--xml 删除若干AndroidManifest.xml中的重复权限声明 &lt;/font&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;removeRedundantPermissions Code&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/7ippo/ApkPermissionsCheck&quot;&gt;☆Github Repo☆&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;
+import argparse
+import xml.etree.ElementTree as ET
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--xml', '-xml', required=True,
+                    help='Several XML files', nargs='+')
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    if args.xml:
+        for xml in args.xml:
+            ET.register_namespace(
+                'android', 'http://schemas.android.com/apk/res/android')
+            manifest_tree = ET.parse(xml)
+            manifest_root = manifest_tree.getroot()
+            uses_permission_list = manifest_root.findall(&quot;uses-permission&quot;)
+            permission_list = []
+            for permission in uses_permission_list:
+                permission_name = permission.attrib[
+                    '{http://schemas.android.com/apk/res/android}name']
+                if permission_name not in permission_list:
+                    permission_list.append(permission_name)
+                else:
+                    manifest_root.remove(permission)
+            manifest_tree.write(xml)
+&lt;/code&gt;
+&lt;/pre&gt;
 </description>
         <pubDate>Tue, 06 Nov 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/2018/11/06/Apk-Permissions-Check.html</link>
@@ -129,8 +166,6 @@ if __name__ == '__main__':
         <category>工具</category>
         
         <category>Python</category>
-        
-        <category>XML解析</category>
         
         <category>ET</category>
         
@@ -167,10 +202,10 @@ if __name__ == '__main__':
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2&gt;文件部署&lt;/h2&gt;
+&lt;h2&gt;脚本部署结构&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;
-&amp;gt;build_scripts
+&amp;gt;scripts
     &amp;gt;bin  业务脚本
     &amp;gt;lib  引用库
         &amp;gt;tools  内部工具

@@ -1,18 +1,18 @@
 ---
 layout: post
 title: 'Apk Permissions Check'
-subtitle: '利用ElementTree解析Apk权限检查工具'
+subtitle: '利用ElementTree的Apk权限检查工具'
 date: 2018-11-06
 categories: 技术
 cover: 'https://7ippo.github.io/assets/img/hero.jpg'
-tags: 安卓 工具 Python XML解析 ET
+tags: 安卓 工具 Python ET
 ---
 
 <h2>目的</h2>
 <p>反编译apk并解析xml文件，检查其中是否存在设定白名单外的权限声明。该工具可以作为分发安卓包前工具链的一部分。</p>
 <h2>使用说明</h2>
 <ol>
-<li>使用前请配置apjPermissionsCheck.py中的必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被警告打印到控制台</li>
+<li>使用前请配置apkPermissionsCheck.py中的必要权限集合:NECESSARYPERMISSIONSSET。集合外的权限将会被警告打印到控制台</li>
 <li>需要将apktool.jar放置在同目录下</li>
 <li>
 执行脚本
@@ -26,7 +26,7 @@ python apkPermissionsCheck.py -apkname [ apk1 ] ( [apk2] ... ) <br />
 </li>
 </ol>
 
-<h2>Code</h2>
+<h2>apkPermissionsCheck Code</h2>
 <p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github Repo☆</a></p>
 <pre><code class="language-python">
 import os
@@ -64,7 +64,8 @@ def checkPermissionsList(filename):
 
     warnings_permissions = []
     for permission in uses_permission_list:
-        permission_name = permission.attrib['{http://schemas.android.com/apk/res/android}name']
+        permission_name = permission.attrib[
+            '{http://schemas.android.com/apk/res/android}name']
         if(re.search(r'^(android\.permission)\..*', permission_name)):
             if permission_name not in NECESSARYPERMISSIONSSET:
                 if(permission_name not in warnings_permissions):
@@ -116,12 +117,13 @@ if __name__ == '__main__':
 
 </code>
 </pre>
-<p>介于公司对AndroidManifest合并的逻辑太过粗暴导致重复权限生命\<uses-permission\>多达四五十个，遂顺手写了另一个小工具，同样解析AndroidManifest.xml，删除重复的权限</p>
+<h2>Another</h2>
+<p>介于公司对AndroidManifest合并的逻辑太过粗暴导致重复权限声明&lt;uses-permission&gt;多达四五十个，遂顺手写了另一个小工具removeRedundantPermissions，同样解析AndroidManifest.xml，删除重复的权限声明</p>
 <blockquote>
-<p><font size="3">python removeRedundantPermissions.py -xml/--xml [ AndroidManifest1.xml ] ( [AndroidManifest1.xml] ...)<br />
+<p><font size="3">python removeRedundantPermissions.py -xml/--xml [ AndroidManifest1.xml ] ( [AndroidManifest2.xml] ...)<br />
 # -xml/--xml 删除若干AndroidManifest.xml中的重复权限声明 </font></p>
 </blockquote>
-<h2>Code</h2>
+<h2>removeRedundantPermissions Code</h2>
 <p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github Repo☆</a></p>
 <pre><code class="language-python">
 import argparse
@@ -142,7 +144,8 @@ if __name__ == '__main__':
             uses_permission_list = manifest_root.findall("uses-permission")
             permission_list = []
             for permission in uses_permission_list:
-                permission_name = permission.attrib['{http://schemas.android.com/apk/res/android}name']
+                permission_name = permission.attrib[
+                    '{http://schemas.android.com/apk/res/android}name']
                 if permission_name not in permission_list:
                     permission_list.append(permission_name)
                 else:
