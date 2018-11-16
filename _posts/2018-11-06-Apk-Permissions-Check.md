@@ -116,3 +116,37 @@ if __name__ == '__main__':
 
 </code>
 </pre>
+<p>介于公司对AndroidManifest合并的逻辑太过粗暴导致重复权限生命\<uses-permission\>多达四五十个，遂顺手写了另一个小工具，同样解析AndroidManifest.xml，删除重复的权限</p>
+<blockquote>
+<p><font size="3">python removeRedundantPermissions.py -xml/--xml [ AndroidManifest1.xml ] ( [AndroidManifest1.xml] ...)<br />
+# -xml/--xml 删除若干AndroidManifest.xml中的重复权限声明 </font></p>
+</blockquote>
+<h2>Code</h2>
+<p><a href="https://github.com/7ippo/ApkPermissionsCheck">☆Github Repo☆</a></p>
+<pre><code class="language-python">
+import argparse
+import xml.etree.ElementTree as ET
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--xml', '-xml', required=True,
+                    help='Several XML files', nargs='+')
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    if args.xml:
+        for xml in args.xml:
+            ET.register_namespace(
+                'android', 'http://schemas.android.com/apk/res/android')
+            manifest_tree = ET.parse(xml)
+            manifest_root = manifest_tree.getroot()
+            uses_permission_list = manifest_root.findall("uses-permission")
+            permission_list = []
+            for permission in uses_permission_list:
+                permission_name = permission.attrib['{http://schemas.android.com/apk/res/android}name']
+                if permission_name not in permission_list:
+                    permission_list.append(permission_name)
+                else:
+                    manifest_root.remove(permission)
+            manifest_tree.write(xml)
+</code>
+</pre>
