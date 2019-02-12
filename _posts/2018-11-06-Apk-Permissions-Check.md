@@ -4,7 +4,7 @@ title: 'Apk Permissions Check'
 subtitle: '利用ElementTree的Apk权限检查工具'
 date: 2018-11-06
 categories: 技术
-cover: 'https://7ippo.github.io/assets/img/hero.jpg'
+cover: 'https://i.loli.net/2019/02/12/5c626fbda2e1c.jpg'
 tags: 安卓 工具 Python ET
 ---
 
