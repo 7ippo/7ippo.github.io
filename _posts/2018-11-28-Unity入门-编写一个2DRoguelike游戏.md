@@ -14,9 +14,9 @@ tags: Unity C#
 <p>对这个游戏以及Unity有了一些浅薄的理解:  
 </p>
 <ol>
-<li>我们看到的游戏中的物体都被看做是一个对象，<strong>GameObject</strong>。  
+<li><p>我们看到的游戏中的物体都被看做是一个对象，<strong>GameObject</strong>。</p>
 </li>
-<li>对象的形态外貌（<strong>Sprite Render</strong>）由我们赋予，比如人物场景等任何元素的样子。外形是对象的一个属性，我们可以赋值成一些贴图。  
+<li><p>对象的形态外貌（<strong>Sprite Render</strong>）由我们赋予，比如人物场景等任何元素的样子。外形是对象的一个属性，我们可以赋值成一些贴图。</p>
 </li>
 <li>
 <p>对象的动画由一帧一帧的图片组成，动画（<strong>Animator</strong>）也是对象的一个可以被添加的属性，可以被添加移除以达到复用效果的属性更应该被称为组件（<strong>Component</strong>）。我们可以设置动画播放的快慢，是否连续播放，是否不可被打断等动画效果，也可以通过代码控制动画播放的时机。</p>
@@ -32,10 +32,10 @@ tags: Unity C#
 <li>
 <p>对象组件Component的理解：为了让我们的对象具有某些特性，我们还需要添加一些Component组件，其实际上是让这个对象拥有多一些其他类所拥有的方法和属性。比如这个Demo中，我们把主角和敌人视作可以检测碰撞的刚体，所以都加了Box Collider 2D和Rigidbody 2D两个组件。在控制这两种对象时，我们就可以使用这两种类中的方法来检测碰撞，然后扣取主角的生命值。墙体只检测碰撞来阻止敌人和主角移动，所以都添加Box Collider 2D组件。至于对象之间的互动，何时互动，我们都是通过C#代码来操控的。</p>
 </li>
-<li>地图大小固定是8x8的方块，因为是Roguelike的游戏，墙（可以被主角攻击打碎），敌人，地面上的水果食物都是根据关数在一个范围内随机生成（UnityEngine的Random类），在8x8地图上随机摆放，下一关入口则固定在右上方，主角每一关一开始都出现在左下角。<br />
-<img src="https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png" alt="Game" />  
+<li><p>地图大小固定是8x8的方块，因为是Roguelike的游戏，墙（可以被主角攻击打碎），敌人，地面上的水果食物都是根据关数在一个范围内随机生成（UnityEngine的Random类），在8x8地图上随机摆放，下一关入口则固定在右上方，主角每一关一开始都出现在左下角。<br />
+<img src="https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png" alt="Game" /></p>
 </li>
-<li>这个demo还涉及一些简单的UI和音频，分别通过Text类和AudioSource类来实现，通过脚本设置内容，在移动或被攻击的时候去更新内容，字体和颜色等属性可以在Unity中通过Text Component来改，也可以通过脚本GetComponent来修改。   
+<li><p>这个demo还涉及一些简单的UI和音频，分别通过Text类和AudioSource类来实现，通过脚本设置内容，在移动或被攻击的时候去更新内容，字体和颜色等属性可以在Unity中通过Text Component来改，也可以通过脚本GetComponent来修改。</p>   
 </li>
 </ol>
 <h2>游戏设计需要面向对象</h2>
