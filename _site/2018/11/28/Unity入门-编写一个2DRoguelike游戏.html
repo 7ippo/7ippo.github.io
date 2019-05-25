@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity入门:编写一个2D Roguelike游戏 - Ting's blog</title>
+    <meta name="author"  content="周子博">
+    <meta name="description" content="Unity入门:编写一个2D Roguelike游戏">
+    <meta name="keywords"  content="Unity, C#">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Unity入门:编写一个2D Roguelike游戏 - Ting's blog">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:4000/2018/11/28/Unity%E5%85%A5%E9%97%A8-%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA2DRoguelike%E6%B8%B8%E6%88%8F.html">
+    <meta property="og:description" content="What is the purpose of LIFE">
+    <meta property="og:site_name" content="Ting's blog">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-glamorous bgcolor-default "
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="http://localhost:4000/tags#Unity" class="post-tag">Unity</a>
+          
+            <a href="http://localhost:4000/tags#C%23" class="post-tag">C#</a>
+          
+        
+      </div>
+      <h1>Unity入门:编写一个2D Roguelike游戏</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>周子博</span>
+        <time class="post-meta-item" datetime="18-11-28"><i class="iconfont icon-date"></i>28 Nov 2018</time>
+      </div>
+    </div>
+    
+    <div class="filter"></div>
+      <div class="post-cover" style="background: url('https://i.loli.net/2019/05/25/5ce90eeb26bc628914.jpg') center no-repeat; background-size: cover;"></div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+    <h2 class="post-subtitle">我的第一个Unity项目</h2>
+    
+
+    <article class="markdown-body">
+      <p>跑完了Unity官方的Basic Tutorial Demo后，意犹未尽的下载了一个Tutorial Project Demo:2D Roguelike。跟着官方的<a href="https://unity3d.com/cn/learn/tutorials/s/2d-roguelike-tutorial">教程</a>从头开始做了一个Roguelike类型的2D生存游戏，每一关随机生成地图，食物和敌人。玩家要尽可能到达更高的关数。每天晚上跟着码代码和理解，花了两天时间终于build出来了windows版本的游戏，自己玩了玩还挺有意思，虽然有一个碰撞的bug...不过也算是上手了Unity的编辑器，对游戏这个概念有一个从代码到动画表现上的多层次理解。<br />
+<img src="https://i.loli.net/2019/05/25/5ce905c5492e939016.png" alt="Windows Build" /></p>
+<h2>对游戏以及Unity一些浅薄的理解</h2>
+<p>对这个游戏以及Unity有了一些浅薄的理解:  
+</p>
+<ol>
+<li>我们看到的游戏中的物体都被看做是一个对象，<strong>GameObject</strong>。  
+</li>
+<li>对象的形态外貌（<strong>Sprite Render</strong>）由我们赋予，比如人物场景等任何元素的样子。外形是对象的一个属性，我们可以赋值成一些贴图。  
+</li>
+<li>
+<p>对象的动画由一帧一帧的图片组成，动画（<strong>Animator</strong>）也是对象的一个可以被添加的属性，可以被添加移除以达到复用效果的属性更应该被称为组件（<strong>Component</strong>）。我们可以设置动画播放的快慢，是否连续播放，是否不可被打断等动画效果，也可以通过代码控制动画播放的时机。</p>
+<blockquote>
+<p>关于动画有一个有意思的事情，就是动画有限状态机。其负责播放动画，以及在不同动画状态间来回切换。<br />
+<img src="https://i.loli.net/2019/05/25/5ce905c55bbff23067.png" alt="AnimationController" /><br />
+比如Demo中的主角，当玩家没有指令时，为状态一：这个状态下动画控制器（Animator Controller）就负责循环播放“PlayerIdle”（待机）这个动画，表现是主角一直在“呼吸抖动”<br />
+<img src="https://i.loli.net/2019/05/25/5ce905c55cc8646305.png" alt="AnimationController2" /><br />
+当触发被攻击或者破坏墙壁的这两件事件时，代码通过Animator  Controller切换动画状态。被攻击事件时切换到“PlayerChop”状态，预先设定是进入这个状态后播放一次然后退出，所以主角动画表现是被攻击晃了一下，然后又回到“PlayerIdle”这个状态，循环播放待机动画。<br />
+也就是说，动画控制器负责播放动画（包括播放几次，速度快慢，几个动画状态），代码控制怎么在动画状态之间切换，何时进入，何时退出。</p>
+</blockquote>
+</li>
+<li>
+<p>对象组件Component的理解：为了让我们的对象具有某些特性，我们还需要添加一些Component组件，其实际上是让这个对象拥有多一些其他类所拥有的方法和属性。比如这个Demo中，我们把主角和敌人视作可以检测碰撞的刚体，所以都加了Box Collider 2D和Rigidbody 2D两个组件。在控制这两种对象时，我们就可以使用这两种类中的方法来检测碰撞，然后扣取主角的生命值。墙体只检测碰撞来阻止敌人和主角移动，所以都添加Box Collider 2D组件。至于对象之间的互动，何时互动，我们都是通过C#代码来操控的。</p>
+</li>
+<li>地图大小固定是8x8的方块，因为是Roguelike的游戏，墙（可以被主角攻击打碎），敌人，地面上的水果食物都是根据关数在一个范围内随机生成（UnityEngine的Random类），在8x8地图上随机摆放，下一关入口则固定在右上方，主角每一关一开始都出现在左下角。<br />
+<img src="https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png" alt="Game" />  
+</li>
+<li>这个demo还涉及一些简单的UI和音频，分别通过Text类和AudioSource类来实现，通过脚本设置内容，在移动或被攻击的时候去更新内容，字体和颜色等属性可以在Unity中通过Text Component来改，也可以通过脚本GetComponent来修改。   
+</li>
+</ol>
+<h2>游戏设计需要面向对象</h2>
+<p>设计这些游戏对象的方法，我们肯定是采用面向对象的编程方法，极大的节省了代码量和维护成本，更好理解对象之间的行为方式。对于这个很简单的Roguelike游戏，我们可以设计这么几个类：</p>
+<ol>
+<li>GameManager类：用于管理整个游戏基本的初始化，随机地图生成，以及游戏基本逻辑（每个回合敌人都会移动），还有过场动画，角色死亡动画等;</li>
+<li>MovingObject类：考虑到主角和敌人都会移动，可以设计这样一个类，用于解决对象的移动表现（从一个地块到相邻的地块其实动画上可以有很多表现形式，具体怎么表现需要代码决定），是否可以移动（是否遇到障碍了）以及处理对象之间的碰撞关系（设计一个抽象类，由具体类去实现）;</li>
+<li>Player类：继承MovingObject类，处理详细的逻辑，比如向墙壁、食物、敌人移动分别是什么表现，还得检查食物是否小于0（死亡）;</li>
+<li>Enemy类：有点像写AI的移动逻辑了，每个回合什么表现，遇到主角时播放攻击动画等都由这个类控制;</li>
+<li>BoardManager类：地图场景的管理类，具体怎么生成随机地图，怎么生成墙体、食物、敌人，随机位置还不可以重复;</li>
+<li>Wall类：除了周围的碎石，场景中间的石块也是有表现的，可以被击碎，所以也要写一个具体的类来描述这一类对象;</li>
+<li>SoundManager类：管理背景音乐的循环播放。  
+</li>
+</ol>
+<p>采用面向对象的编程方法，设计由顶向下，对整体的概念就会非常清晰，可以一点一点实现细节，也不会出现后期发现设计有问题，要推倒重来的情况。如果你思维很健壮，能考虑很多情况和可能性，还可以避免很多bug，亦或者是使很多bug更容易理解。比如这个例子中，只有主角和敌人可以移动，那就设计一个MovingObject的类，把二者通用的属性和方法都写进去，然后单独设计主角和敌人时，只需要继承这个类，实现独有的逻辑即可。  
+</p>
+<h2>也只是刚刚入门</h2>
+<p>经过了这么一个demo，基本有了对小型简单游戏的设计理解：</p>
+<ol>
+<li>有了一个比较好的idea后，能描述出游戏的雏形，核心玩法是什么，特色是什么，实现机制是什么？比如Roguelike，就是地牢生存，特点是随机事件；</li>
+<li>思考如何设计游戏中的对象，和对象间的互动；</li>
+<li>在纸上画出游戏的各个元素，动画，原型，音效，用代码合理的组织起来；</li>
+<li>通过代码实现具体表现。</li>
+</ol>
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="http://localhost:4000/assets/img/profile.jpg" alt="">
+      </div>
+      <div class="author-name" rel="author">周子博</div>
+      <div class="bio">
+        <p>爱生活，爱游戏，爱姬瑶</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="//weibo.com/swazz" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/7ippo" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2018/11/06/Apk-Permissions-Check.html" class="read-next-link"></a>
+          <section>
+            <span>Apk Permissions Check</span>
+            <p>目的反编译apk并解析xml文件，检查其中是否存在设定白名单外的权限声明。该工具可以作为分发安卓包前工具链的一部分...</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="https://i.loli.net/2019/02/12/5c626fbda2e1c.jpg" alt="">
+          
+      </div>
+      
+    </section>
+    
+    <section class="post-footer-item comment">
+        <div id="disqus_thread"></div>
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>Ting's blog ©
+  
+  
+    2017
+    -
+  
+  2019
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+  <script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://tingsven.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>
