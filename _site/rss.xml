@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 22 Jun 2019 10:43:51 +0800</pubDate>
-    <lastBuildDate>Sat, 22 Jun 2019 10:43:51 +0800</lastBuildDate>
+    <pubDate>Sat, 22 Jun 2019 11:41:05 +0800</pubDate>
+    <lastBuildDate>Sat, 22 Jun 2019 11:41:05 +0800</lastBuildDate>
     <generator>Jekyll v3.8.4</generator>
     
       <item>
@@ -152,11 +152,9 @@ expires    epoch;
         <link>http://localhost:4000/2019/06/21/%E6%B5%85%E8%B0%88%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%B8%8EH5%E6%B8%B8%E6%88%8F%E7%9A%84%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5.html</link>
         <guid isPermaLink="true">http://localhost:4000/2019/06/21/%E6%B5%85%E8%B0%88%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%B8%8EH5%E6%B8%B8%E6%88%8F%E7%9A%84%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5.html</guid>
         
-        <category>HTTP</category>
-        
         <category>H5</category>
         
-        <category>缓存</category>
+        <category>Cache</category>
         
         
         <category>H5</category>
@@ -383,13 +381,11 @@ if __name__ == '__main__':
         <link>http://localhost:4000/2018/11/06/Apk-Permissions-Check.html</link>
         <guid isPermaLink="true">http://localhost:4000/2018/11/06/Apk-Permissions-Check.html</guid>
         
-        <category>安卓</category>
-        
-        <category>工具</category>
+        <category>Android</category>
         
         <category>Python</category>
         
-        <category>ET</category>
+        <category>工具</category>
         
         
         <category>技术</category>
@@ -686,9 +682,7 @@ function CleanFlagBeforeStart(){
         
         <category>Shell</category>
         
-        <category>脚本规范</category>
-        
-        <category>日志</category>
+        <category>工具</category>
         
         
         <category>技术</category>
@@ -720,8 +714,6 @@ function CleanFlagBeforeStart(){
         <pubDate>Tue, 18 Apr 2017 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/2017/04/18/hello-jekyll.html</link>
         <guid isPermaLink="true">http://localhost:4000/2017/04/18/hello-jekyll.html</guid>
-        
-        <category>jekyll</category>
         
         
       </item>

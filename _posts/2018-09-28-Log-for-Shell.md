@@ -1,11 +1,11 @@
 ---
 layout: post
 title: 'Log for Shell'
-subtitle: '以及Shell脚本规范'
+subtitle: 'Shell堆栈日志工具以及代码规范'
 date: 2018-09-28
 categories: 技术
 cover: 'https://i.loli.net/2019/02/12/5c626fc358a0d.jpg'
-tags: Shell 脚本规范 日志
+tags: Shell 工具
 ---
 
 <h2>目标</h2>
