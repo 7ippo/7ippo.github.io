@@ -327,6 +327,11 @@
   margin: 0;
 }
 
+.markdown-body blockquote p{
+  font-size: 15px;
+  line-height: 1.8;
+}
+
 .markdown-body ul {
   list-style: disc;
 }
@@ -339,6 +344,7 @@
   padding-left: 0;
   margin-top: 0;
   margin-bottom: 0;
+  line-height: 1.7;
 }
 
 .markdown-body ol ol,
