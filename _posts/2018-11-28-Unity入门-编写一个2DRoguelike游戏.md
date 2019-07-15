@@ -4,7 +4,6 @@ title: 'Unity入门:编写一个2D Roguelike游戏'
 subtitle: '我的第一个Unity项目'
 date: 2018-11-28
 categories: 技术
-cover: 'https://i.loli.net/2019/05/25/5ce90eeb26bc628914.jpg'
 tags: Unity C#
 ---
 

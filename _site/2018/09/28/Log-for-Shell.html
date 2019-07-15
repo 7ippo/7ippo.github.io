@@ -163,6 +163,7 @@ Author: Ray-Eldath
 <li>关键日志和非关键日志进行区分</li>
 <li>不打印看起来没有意义或没有人会看的日志</li>
 <li>调试脚本时打印的辅助日志，调试完成后<strong>务必</strong>删掉</li>
+<li>生产环境中执行脚本<strong>不要带-x选项</strong></li>
 </ol>
 </li>
 </ul>
@@ -199,7 +200,22 @@ Author: Ray-Eldath
 <h3>日志输出规范</h3>
 <p>编写了一套Shell的日志工具脚本:<a href="https://github.com/7ippo/logForShell">☆logForShell代码☆</a>。目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
 <ol>
-<li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因执行失败而留下的标志。</li>
+<li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因脚本执行失败而留下的标志文件，该标志会阻止日志继续输出。</li>
+<li>
+<p>所有日志通过调用&nbsp;<strong><em>Show</em></strong>&nbsp;函数输出：</p>
+<pre><code class="language-python">Show "Log For Shell"
+
+2018-09-05 [17:50:24] Log For Shell
+</code></pre>
+</li>
+<li>
+<p>如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：</p>
+<pre><code class="language-python">source ./logForShell.sh [Shell]
+Show "Using TAG to LOG"
+
+2018-09-11 [10:08:26] [Shell] Using TAG to LOG
+</code></pre>
+</li>
 <li>
 <p>脚本开始时，调用&nbsp;<strong><em>BeforeShell</em></strong>&nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：</p>
 <pre><code class="language-python">BeforeShell $@
@@ -250,15 +266,7 @@ Author: Ray-Eldath
 </code></pre>
 </li>
 <li>
-<p>非关键命令，如svn操作，cp命令执行前请调用&nbsp;<strong><em>BlankLine</em></strong>&nbsp;打印一个空行</p>
-</li>
-<li>
-<p>如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：</p>
-<pre><code class="language-python">source ./logForShell.sh [Shell]
-Show "Using TAG to LOG"
-
-2018-09-11 [10:08:26] [Shell] Using TAG to LOG
-</code></pre>
+<p>非关键命令，如svn操作，拷贝命令执行前请调用&nbsp;<strong><em>BlankLine</em></strong>&nbsp;打印一个空行</p>
 </li>
 </ol>
 <h3>其他规范</h3>
