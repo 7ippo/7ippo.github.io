@@ -5,9 +5,66 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 15 Jul 2019 04:41:15 -0700</pubDate>
-    <lastBuildDate>Mon, 15 Jul 2019 04:41:15 -0700</lastBuildDate>
+    <pubDate>Thu, 01 Aug 2019 09:18:41 -0700</pubDate>
+    <lastBuildDate>Thu, 01 Aug 2019 09:18:41 -0700</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>一首诗</title>
+        <description>&lt;p&gt;你我都是孩子，&lt;/p&gt;
+
+&lt;p&gt;你却像我的影子，&lt;/p&gt;
+
+&lt;p&gt;陪伴是彼此存活的方式，&lt;/p&gt;
+
+&lt;p&gt;也让你我成为彼此最珍贵的，最难以割舍的&lt;/p&gt;
+
+&lt;p&gt;挚友。&lt;/p&gt;
+
+&lt;p&gt;热切的讨论让我们忘了明天，&lt;/p&gt;
+
+&lt;p&gt;嬉笑和打闹留在了这个房间，&lt;/p&gt;
+
+&lt;p&gt;以至于分别时会止不住想念。&lt;/p&gt;
+
+&lt;p&gt;过了多少日子依然会想起，&lt;/p&gt;
+
+&lt;p&gt;和你认识是在南京湛蓝清澈的秋天。&lt;/p&gt;
+
+&lt;p&gt;或许是从那时起，我便不再像年轻时一样空谈往后，&lt;/p&gt;
+
+&lt;p&gt;而是知道了余生漫漫，道阻且长。&lt;/p&gt;
+
+&lt;p&gt;不过有你，路走起来也不那么苦涩，&lt;/p&gt;
+
+&lt;p&gt;因为你一笑，&lt;/p&gt;
+
+&lt;p&gt;我就拥有了整个世界。&lt;/p&gt;
+
+&lt;p&gt;近来托朋友给你带了香榭的落叶，&lt;/p&gt;
+
+&lt;p&gt;又计划着带你去远方看碧草蓝天。&lt;/p&gt;
+
+&lt;p&gt;心有所想，若有所思&lt;/p&gt;
+
+&lt;p&gt;全系着你的影子。&lt;/p&gt;
+
+&lt;p&gt;我最珍爱的挚友，&lt;/p&gt;
+
+&lt;p&gt;你的每一步，也是我丈量自己的样子，&lt;/p&gt;
+
+&lt;p&gt;你活着，就是我存活的方式。&lt;/p&gt;
+</description>
+        <pubDate>Thu, 01 Aug 2019 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000/2019/08/01/%E4%B8%80%E9%A6%96%E8%AF%97.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/08/01/%E4%B8%80%E9%A6%96%E8%AF%97.html</guid>
+        
+        <category>随笔</category>
+        
+        
+        <category>lover</category>
+        
+      </item>
     
       <item>
         <title>浅谈浏览器缓存机制与H5游戏的缓存策略</title>
