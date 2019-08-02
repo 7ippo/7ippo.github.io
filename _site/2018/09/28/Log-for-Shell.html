@@ -200,6 +200,11 @@ Author: Ray-Eldath
 <h3>日志输出规范</h3>
 <p>编写了一套Shell的日志工具脚本:<a href="https://github.com/7ippo/logForShell">☆logForShell代码☆</a>。目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。</p>
 <ol>
+<li>
+<p>Usage 使用方法：</p>
+<pre><code class="language-python">source ./logForShell.sh "default"
+</code></pre>
+</li>
 <li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因脚本执行失败而留下的标志文件，该标志会阻止日志继续输出。</li>
 <li>
 <p>所有日志通过调用&nbsp;<strong><em>Show</em></strong>&nbsp;函数输出：</p>
