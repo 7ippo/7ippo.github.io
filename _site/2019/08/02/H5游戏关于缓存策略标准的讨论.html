@@ -161,7 +161,7 @@ Author: Ray-Eldath
 <blockquote>
 <p>注意，ETag作为缓存指示正在被大型网站弃用：主要原因是大部分CDN服务器开启了gzip压缩，而同一份文件(主要是css/js，图片压缩率不高一般不会压缩)在不同配置下执行gzip压缩后无法保证其唯一性，这会导致ETag失效，所以<a href="https://help.aliyun.com/knowledge_detail/40071.html">nginx官方在开启gzip模块后会移除ETag</a>。另外如果可以忽略在1秒内多次更新的情况，使用Last-Modified可以实现同样的功能，还能节约服务器计算资源。IETF没有规定ETag的计算方法，具体实现由不同服务器(Apache Nginx Tengine)自己决定。所以ETag是否会因为负载均衡策略导致同一份资源在不同服务器上计算结果不同我们不得而知，为了不浪费带宽资源，还是建议<strong>关闭ETag</strong>。</p>
 </blockquote>
-<p><img src="https://i.loli.net/2019/08/01/5d429eaab482f33401.png" alt="gzip与ETag" width="742" height="588" /><br />
+<p><img src="https://i.loli.net/2019/08/01/5d429eaab482f33401.png" alt="gzip与ETag" width="742" /><br />
 <em>*从缓存文件中可以看到内容编码是gzip便不会有ETag指示*</em></p>
 <p><strong>弊端</strong>：</p>
 <p>直接走协商缓存，跳过了强缓存命中的阶段，每次请求资源时都会发Validation请求给服务器校验资源是否最新。对于不频繁更新的一些资源来说，服务器频繁建立TCP连接的开销应该纳入考量，这样消耗服务器带宽和计算资源是否有必要还需要讨论。如果可以接受每请求一个资源都发起一个网络请求，那所有资源都使用该策略即可。</p>
