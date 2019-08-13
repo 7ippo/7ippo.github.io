@@ -3,6 +3,7 @@ layout: post
 title: 'Log for Shell'
 subtitle: 'Shell堆栈日志工具以及代码规范'
 date: 2018-09-28
+author: 周子博
 categories: 技术
 cover: 'https://i.loli.net/2019/02/12/5c626fc358a0d.jpg'
 tags: Shell 工具

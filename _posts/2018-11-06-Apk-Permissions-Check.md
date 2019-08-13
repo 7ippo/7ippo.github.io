@@ -3,6 +3,7 @@ layout: post
 title: 'Apk Permissions Check'
 subtitle: '利用ElementTree库解析apk检查AndroidManifest'
 date: 2018-11-06
+author: 周子博
 categories: 技术
 cover: 'https://i.loli.net/2019/02/12/5c626fbda2e1c.jpg'
 tags: Android Python 工具
