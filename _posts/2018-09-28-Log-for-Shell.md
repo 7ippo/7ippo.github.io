@@ -2,6 +2,7 @@
 layout: post
 title: 'Log for Shell'
 subtitle: 'Shell堆栈日志工具以及代码规范'
+description: 'Shell脚本编写规范，注重简单明了不耦合，便于维护增删，分步执行，日志清晰。编写了一个简单的Shell脚本日志工具，可以实现问题快速定位，打印Shell调用堆栈以及分步、格式化日志'
 date: 2018-09-28
 author: 周子博
 categories: 技术

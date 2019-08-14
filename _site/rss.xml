@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 13 Aug 2019 17:59:11 +0800</pubDate>
-    <lastBuildDate>Tue, 13 Aug 2019 17:59:11 +0800</lastBuildDate>
+    <pubDate>Wed, 14 Aug 2019 11:49:04 +0800</pubDate>
+    <lastBuildDate>Wed, 14 Aug 2019 11:49:04 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -112,7 +112,7 @@
         
         <category>H5</category>
         
-        <category>Cache</category>
+        <category>缓存</category>
         
         
         <category>H5</category>
@@ -322,7 +322,7 @@ expires    epoch;
         
         <category>H5</category>
         
-        <category>Cache</category>
+        <category>缓存</category>
         
         
         <category>H5</category>

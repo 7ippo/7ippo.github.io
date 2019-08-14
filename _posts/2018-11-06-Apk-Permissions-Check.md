@@ -2,6 +2,7 @@
 layout: post
 title: 'Apk Permissions Check'
 subtitle: '利用ElementTree库解析apk检查AndroidManifest'
+description: '用python的Elementree库解析安卓apk中的Androidanifest库，编写一些处理工具。检查apk声明的权限列表，删除重复声明的安卓组件'
 date: 2018-11-06
 author: 周子博
 categories: 技术
