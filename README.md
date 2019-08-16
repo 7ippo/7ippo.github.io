@@ -1,6 +1,6 @@
 # My personal blog
 
-[![](https://img.shields.io/badge/visit-@tingsven.com-blue.svg)](https://tingsven.com)
+[![](https://img.shields.io/badge/visit-tingsven.com-ff69b4.svg)](https://tingsven.com)
 
 基于Jekyll的博客主题模板，简洁轻量。
 
