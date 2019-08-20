@@ -4,6 +4,9 @@ description: 'What is the purpose of LIFE'
 keyword: '周子博 Webgl H5 Python Unity tingsven'
 url: 'https://7ippo.github.io/' # your host
 
+# Google Analytics
+google_analytics: UA-146060169-1
+
 # if you don't need baseurl, you should leave this value blank.
 baseurl: ''
 
@@ -76,4 +79,3 @@ permalink: /:year/:month/:day/:title.html
 
 # Plugins
 plugins: [jekyll-paginate, jekyll-seo-tag]
-
