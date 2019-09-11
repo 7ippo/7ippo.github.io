@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Chrome调试关联本地sourcemap文件 | Tingsven’s blog</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Chrome调试关联本地sourcemap文件" />
+<meta name="author" content="zpo" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="使用Chrome dev-tool查看混淆代码报错堆栈时关联本地sourcemap文件对其进行解析，映射源码" />
+<meta property="og:description" content="使用Chrome dev-tool查看混淆代码报错堆栈时关联本地sourcemap文件对其进行解析，映射源码" />
+<link rel="canonical" href="http://localhost:4000/2019/09/11/Chrome%E8%B0%83%E8%AF%95%E5%85%B3%E8%81%94%E6%9C%AC%E5%9C%B0sourcemap%E6%96%87%E4%BB%B6.html" />
+<meta property="og:url" content="http://localhost:4000/2019/09/11/Chrome%E8%B0%83%E8%AF%95%E5%85%B3%E8%81%94%E6%9C%AC%E5%9C%B0sourcemap%E6%96%87%E4%BB%B6.html" />
+<meta property="og:site_name" content="Tingsven’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-09-11T00:00:00+08:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Chrome调试关联本地sourcemap文件","dateModified":"2019-09-11T00:00:00+08:00","datePublished":"2019-09-11T00:00:00+08:00","url":"http://localhost:4000/2019/09/11/Chrome%E8%B0%83%E8%AF%95%E5%85%B3%E8%81%94%E6%9C%AC%E5%9C%B0sourcemap%E6%96%87%E4%BB%B6.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/09/11/Chrome%E8%B0%83%E8%AF%95%E5%85%B3%E8%81%94%E6%9C%AC%E5%9C%B0sourcemap%E6%96%87%E4%BB%B6.html"},"author":{"@type":"Person","name":"zpo"},"description":"使用Chrome dev-tool查看混淆代码报错堆栈时关联本地sourcemap文件对其进行解析，映射源码","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="keywords"  content="Chrome, 浏览器">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-146060169-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-146060169-1');
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-glamorous bgcolor-default post-no-cover"
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="http://localhost:4000/tags#Chrome" class="post-tag">Chrome</a>
+          
+            <a href="http://localhost:4000/tags#%E6%B5%8F%E8%A7%88%E5%99%A8" class="post-tag">浏览器</a>
+          
+        
+      </div>
+      <h1>Chrome调试关联本地sourcemap文件</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>zpo</span>
+        <time class="post-meta-item" datetime="19-09-11"><i class="iconfont icon-date"></i>11 Sep 2019</time>
+      </div>
+    </div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+    <h2 class="post-subtitle">针对线上混淆代码与堆栈的调试方法</h2>
+    
+
+    <article class="markdown-body">
+      <h2 id="why">Why</h2>
+
+<p>外网发布环境都是被混淆的JavaScript代码，因为发布环境下不会保存或关联sourcemap(否则混淆没有任何意义了)，所以日志与报错的堆栈都指向混淆后的代码。开发人员持有sourcemap文件，除了有本地解析映射的需求外，有时也存在直接调试外网混淆代码的需求，这时候就可以关联上本地的sourcemap文件，对线上的混淆代码进行映射和解析，直观反映成源码，可以通过Chrome自带功能解决该需求。</p>
+
+<h2 id="准备">准备</h2>
+
+<ul>
+  <li>本地有对应线上混淆JavaScript文件的sourcemap文件</li>
+</ul>
+
+<h2 id="方法">方法</h2>
+
+<ol>
+  <li>
+    <p>F12打开Chrome - dev-tool - Sources<br />
+<img src="https://i.loli.net/2019/09/10/TIt6r3jyeOfMbQB.png" alt="步骤1.png" /></p>
+  </li>
+  <li>
+    <p>选中被混淆的代码，或者通过控制台的链接打开被混淆的代码<br />
+<img src="https://i.loli.net/2019/09/10/BQN51ou4vdqnteI.png" alt="步骤2.png" /></p>
+  </li>
+  <li>
+    <p>右键 - Add source map<br />
+<img src="https://i.loli.net/2019/09/10/BqWGS4PQCbfw5Xc.png" alt="步骤3.png" /></p>
+  </li>
+  <li>
+    <p>通过file协议选择本地的map文件,先在浏览器地址栏中输入确保可以访问到。<br />
+e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
+<img src="https://i.loli.net/2019/09/10/sYdumbNcy2XJ5Qa.png" alt="步骤4.png" /></p>
+  </li>
+  <li>
+    <p>添加后Sources左侧栏出现源码<br />
+<img src="https://i.loli.net/2019/09/10/XAC2MaUj9yqlvKt.png" alt="步骤5.png" /></p>
+  </li>
+  <li>
+    <p>回到控制台发现已经映射到源码了<br />
+<img src="https://i.loli.net/2019/09/10/C9kYeTNK83L6ZUd.png" alt="步骤6.png" /></p>
+  </li>
+</ol>
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="http://localhost:4000/assets/img/profile.jpg" alt="">
+      </div>
+      <div class="author-name" rel="author">周子博</div>
+      <div class="bio">
+        <p>爱Vera，爱生活，爱游戏</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="//weibo.com/swazz" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/7ippo" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2019/08/02/H5%E6%B8%B8%E6%88%8F%E5%85%B3%E4%BA%8E%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%E6%A0%87%E5%87%86%E7%9A%84%E8%AE%A8%E8%AE%BA.html" class="read-next-link"></a>
+          <section>
+            <span>H5游戏缓存策略的讨论</span>
+            <p>缓存策略的几个思考点对于H5游戏，缓存的使用主要考虑几点：热更新在确保缓存命中率的情况下，合理控制缓存大小尽可能减...</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="https://i.loli.net/2019/08/06/WegjI3rcV9qt4wd.jpg" alt="">
+          
+      </div>
+      
+    </section>
+    
+    <section class="post-footer-item comment">
+        <div id="disqus_thread"></div>
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>Tingsven's blog ©
+  
+  
+    2017
+    -
+  
+  2019
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+  <script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://tingsven.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>
