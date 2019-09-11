@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 11 Sep 2019 10:51:45 +0800</pubDate>
-    <lastBuildDate>Wed, 11 Sep 2019 10:51:45 +0800</lastBuildDate>
+    <pubDate>Wed, 11 Sep 2019 15:28:18 +0800</pubDate>
+    <lastBuildDate>Wed, 11 Sep 2019 15:28:18 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -79,7 +79,7 @@ e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
 &lt;p&gt;通过&lt;strong&gt;版本控制&lt;/strong&gt;，通过gulp工具添加md5后缀改资源文件名，可以实现热更。当资源发生更新，通过版本管理工具同步更新引用该资源的位置，指向新的文件。请求的url发生变化，浏览器便不会读取缓存。假如再通过&lt;code&gt;Cache-Control:max-age&lt;/code&gt;或&lt;code&gt;Expire&lt;/code&gt;设置一个很长的缓存有效期，比如1年，那么在没有发布更新时，缓存的使用率是100%，且不会发生网络请求。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;弊端&lt;/strong&gt;：&lt;/p&gt;
 &lt;p&gt;当大文件采取版本管理频繁更新时，会出现缓存大小膨胀的情况。e.g.一份压缩后2.3M的主逻辑js文件&lt;code&gt;bundle-md5.js&lt;/code&gt;，如果发布10次更新，每次更新生成不同的文件名。那么如果用户恰好在每次更新后打开游戏，便会在浏览器内存中缓存11份不同md5后缀的该文件，直接占用25.3M的缓存空间，这还只是更新内容的一小部分。缓存大小随更新发布的急速膨胀也会导致触发某些浏览器环境如小程序中的限制：缓存大小达到一定标准(&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/base-ability/file-system.html&quot;&gt;微信小游戏50MB限制&lt;/a&gt;)，后续请求的结果将无法写入缓存。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eab611c431148.png&quot; alt=&quot;Chrome中的多份同文件缓存&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eab611c431148.png&quot; alt=&quot;Chrome中的多份同文件缓存&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*使用&lt;code&gt;ChromeCacheViewer&lt;/code&gt;可以看到存在多份同文件不同后缀名的缓存*&lt;/em&gt;&lt;/p&gt;
 &lt;h3&gt;&lt;code&gt;Cache-Control:no-cache&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;优势&lt;/strong&gt;：&lt;/p&gt;
@@ -87,7 +87,7 @@ e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
 &lt;blockquote&gt;
 &lt;p&gt;注意，ETag作为缓存指示正在被大型网站弃用：主要原因是大部分CDN服务器开启了gzip压缩，而同一份文件(主要是css/js，图片压缩率不高一般不会压缩)在不同配置下执行gzip压缩后无法保证其唯一性，这会导致ETag失效，所以&lt;a href=&quot;https://help.aliyun.com/knowledge_detail/40071.html&quot;&gt;nginx官方在开启gzip模块后会移除ETag&lt;/a&gt;。另外如果可以忽略在1秒内多次更新的情况，使用Last-Modified可以实现同样的功能，还能节约服务器计算资源。IETF没有规定ETag的计算方法，具体实现由不同服务器(Apache Nginx Tengine)自己决定。所以ETag是否会因为负载均衡策略导致同一份资源在不同服务器上计算结果不同我们不得而知，为了不浪费带宽资源，还是建议&lt;strong&gt;关闭ETag&lt;/strong&gt;。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eaab482f33401.png&quot; alt=&quot;gzip与ETag&quot; width=&quot;742&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eaab482f33401.png&quot; alt=&quot;gzip与ETag&quot; width=&quot;742&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*从缓存文件中可以看到内容编码是gzip便不会有ETag指示*&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;弊端&lt;/strong&gt;：&lt;/p&gt;
 &lt;p&gt;直接走协商缓存，跳过了强缓存命中的阶段，每次请求资源时都会发Validation请求给服务器校验资源是否最新。对于不频繁更新的一些资源来说，服务器频繁建立TCP连接的开销应该纳入考量，这样消耗服务器带宽和计算资源是否有必要还需要讨论。如果可以接受每请求一个资源都发起一个网络请求，那所有资源都使用该策略即可。&lt;/p&gt;
@@ -244,7 +244,7 @@ e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
 &lt;p&gt;浏览器在缓存中找到该资源的缓存指示，根据指示选择之后的缓存策略。根据是否需要向服务器重新发起HTTP请求，我们可以将缓存过程分为两个部分，分别是强缓存和协商缓存。&lt;/p&gt;
 &lt;h4&gt;1)强缓存阶段&lt;/h4&gt;
 &lt;p&gt;不会向服务器发送请求，直接从缓存中读取资源，在chrome控制台的Network选项中可以看到该请求返回200的状态码，并且Size栏显示from disk cache(从硬盘缓存读取)或from memory cache(从内存缓存读取)。&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c3f553ed4f29614.png&quot; alt=&quot;图1，强缓存命中&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c3f553ed4f29614.png&quot; alt=&quot;图1，强缓存命中&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 强缓存可以通过设置三种 HTTP Header 实现：&lt;code&gt;Expires&lt;/code&gt;，&lt;code&gt;Pragma&lt;/code&gt; 和 &lt;code&gt;Cache-Control&lt;/code&gt;。&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;Expires: Wed, 19 Jun 2019 15:00:00 GMT&lt;/code&gt;&lt;/pre&gt;
 &lt;blockquote&gt;
@@ -256,7 +256,7 @@ e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
 &lt;p&gt;&lt;strong&gt;Pragma&lt;/strong&gt; :&lt;br /&gt;
 &lt;strong&gt;HTTP/1.0&lt;/strong&gt;的产物，属于HTTP请求与响应通用的头部字段，只有一个&lt;code&gt;no-cache&lt;/code&gt;命令，行为与&lt;code&gt;Cache-Control: no-cache&lt;/code&gt;一致，优先级低于&lt;code&gt;Cache-Control&lt;/code&gt;。作为请求头时作用是强制要求缓存服务器在返回缓存的版本之前将请求提交到源头服务器进行验证，确保返回最新资源(强制刷新时浏览器会在请求头中加入&lt;code&gt;Pragma:no-cache&lt;/code&gt;)。作为响应头时行为不统一，依赖浏览器具体实现，所以该字段不可靠。MDN建议只在需要兼容 &lt;code&gt;HTTP/1.0&lt;/code&gt; 客户端的场合下应用 Pragma 首部。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9f23dfecd58526.png&quot; alt=&quot;强刷新请求头中的Pragma字段与Cache-Control字段&quot; /&gt;  
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9f23dfecd58526.png&quot; alt=&quot;强刷新请求头中的Pragma字段与Cache-Control字段&quot; data-action=&quot;zoom&quot; /&gt;  
 &lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;Cache-control: must-revalidate,no-cache,no-store,no-transform,public,private,proxy-revalidate,max-age=&amp;lt;seconds&amp;gt;,s-maxage=&amp;lt;seconds&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;blockquote&gt;
@@ -280,7 +280,7 @@ If-Modified-Since: Wed, 19 Jun 2019 15:00:00 GMT&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Last-Modified/If-Modified-Since&lt;/strong&gt;:&lt;br /&gt;
 服务器会在响应头部添加&lt;code&gt;Last-Modified&lt;/code&gt;字段，值为资源在服务器上的最后修改时间。浏览器将该缓存指示同缓存结果一同存入缓存中。浏览器请求资源时，如果存在&lt;code&gt;Last-Modified&lt;/code&gt;字段，会把该值通过&lt;code&gt;If-Modified-Since&lt;/code&gt;字段添加到请求头中。服务器再次收到这个资源请求，会根据&lt;code&gt;If-Modified-Since&lt;/code&gt;中的值与服务器中该资源的最后修改时间对比。如果没有变化，返回304和空的响应体，浏览器直接从缓存读取。如果If-Modified-Since的时间小于服务器中这个资源的最后修改时间，说明文件有更新，于是返回新的资源文件和200。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c40d1e448c35360.png&quot; alt=&quot;Last-Modified Example&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c40d1e448c35360.png&quot; alt=&quot;Last-Modified Example&quot; data-action=&quot;zoom&quot; /&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;ETag: W/&amp;quot;2251799814418149-5669-2019-06-18T12:14:19.152Z&amp;quot;
 If-None-Match: W/&amp;quot;2251799814418149-5669-2019-06-18T12:14:19.152Z&amp;quot;&lt;/code&gt;&lt;/pre&gt;
 &lt;blockquote&gt;
@@ -297,9 +297,9 @@ If-None-Match: W/&amp;quot;2251799814418149-5669-2019-06-18T12:14:19.152Z&amp;qu
 &lt;ol&gt;
 &lt;li&gt;地址栏回车：浏览器先查看请求资源有无缓存，无缓存则向服务器请求资源。若该资源有缓存则根据缓存指示采用对应缓存策略。先查找强缓存，强缓存有效则直接使用缓存200(from cache)，强缓存无效则走协商缓存返回304 Not Modified或返回最新资源200&lt;/li&gt;
 &lt;li&gt;F5/ctrl+R：刷新页面。仅请求该页面，并跳过强缓存阶段，走协商缓存，所以会向服务器发送协商请求，返回304 Not Modified或返回最新资源200。注意：该页面所引用的资源不会跳过强缓存，且对Chrome而言，在页面通过地址栏回车的方式打开与页面相同URL的行为等同于刷新&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c3ee62087918381.png&quot; alt=&quot;图7：F5刷新逻辑&quot; /&gt;&lt;/li&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c3ee62087918381.png&quot; alt=&quot;图7：F5刷新逻辑&quot; data-action=&quot;zoom&quot; /&gt;&lt;/li&gt;
 &lt;li&gt;ctrl+F5/ctrl+shift+R：强制刷新页面及页面所引用的资源，跳过所有缓存阶段，无论如何都会向服务器发送请求，强制返回最新资源200&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c3f0d7522c59021.png&quot; alt=&quot;图8强刷&quot; /&gt;&lt;/li&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c3f0d7522c59021.png&quot; alt=&quot;图8强刷&quot; data-action=&quot;zoom&quot; /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2&gt;H5游戏应该选择怎样的缓存策略&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;游戏入口index.html确保不被缓存，游戏依赖的资源文件通过gulp构建工具做版本管理&lt;/strong&gt;。&lt;/p&gt;
@@ -318,12 +318,12 @@ expires    epoch;
 
 // 注:expires epoch语法等同于设置Expires字段为Thu, 01 Jan 1970 00:00:01 GMT以及Cache-Control字段为no-cache
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c4766e27bf98921.png&quot; alt=&quot;nginx设置后&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c4766e27bf98921.png&quot; alt=&quot;nginx设置后&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*上图为nginx设置应用在&lt;a href=&quot;http://develop.h5game.com/h5client1/web/index.html&quot;&gt;内网H5RPG项目&lt;/a&gt;的结果*&lt;/em&gt;  
 &lt;/p&gt;
 &lt;h2&gt;不同浏览器环境的表现验证&lt;/h2&gt;
 &lt;p&gt;缓存机制的逻辑最终还是由浏览器来实现，部分浏览器不一定严格遵守W3C的规范，为此需要验证不同浏览器环境下我们选择的缓存策略表现。我们选择&lt;a href=&quot;http://develop.h5game.com/h5client1/web/index.html&quot;&gt;内网H5RPG项目&lt;/a&gt;来进行多种浏览器环境的测试。nginx设置如下:&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c7b516a40c14526.jpg&quot; alt=&quot;nginx设置&quot; /&gt;&lt;/p&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c7b516a40c14526.jpg&quot; alt=&quot;nginx设置&quot; data-action=&quot;zoom&quot; /&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;验证方法：&lt;/p&gt;
 &lt;p&gt;PC开热点让手机连接，在不同的浏览器环境中测试我们使用的缓存策略，使用Wireshark抓包查看请求和响应。&lt;/p&gt;
@@ -336,12 +336,12 @@ expires    epoch;
 &lt;h3&gt;Chrome&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;测试环境&lt;/strong&gt;: &lt;em&gt;Chrome 74.0.3729.169(Release)(64 bit)&lt;/em&gt;&lt;br /&gt;
 &lt;strong&gt;是否有请求&lt;/strong&gt;:&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c7e8a6f56d95279.png&quot; alt=&quot;Chrome第二次请求&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c7e8a6f56d95279.png&quot; alt=&quot;Chrome第二次请求&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;strong&gt;结论&lt;/strong&gt;: 只有两个请求，分别是index.html以及version.json，并且使用协商缓存返回304，其余资源都是直接读取缓存。符合预期。&lt;/p&gt;
 &lt;h3&gt;Safari&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;测试环境&lt;/strong&gt;: &lt;em&gt;iPhone 7 iOS 12.2&lt;/em&gt;&lt;br /&gt;
 &lt;strong&gt;是否有请求&lt;/strong&gt;:&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c812e6e33774720.png&quot; alt=&quot;Safari第二次请求&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c812e6e33774720.png&quot; alt=&quot;Safari第二次请求&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;strong&gt;结论&lt;/strong&gt;: 只有两个请求，分别是index.html以及version.json，并且使用协商缓存返回304，其余资源都是直接读取缓存。符合预期。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;使用iPhone Safari测试，需要关闭无痕模式&lt;/p&gt;
@@ -349,21 +349,21 @@ expires    epoch;
 &lt;h3&gt;Wechat Browser&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;测试环境&lt;/strong&gt;: &lt;em&gt;WeChat 7.0.4&lt;/em&gt;&lt;br /&gt;
 &lt;strong&gt;是否有请求&lt;/strong&gt;:&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c83aee434831989.png&quot; alt=&quot;微信浏览器第二次请求&quot; /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c83aee434831989.png&quot; alt=&quot;微信浏览器第二次请求&quot; data-action=&quot;zoom&quot; /&gt;
 &lt;strong&gt;结论&lt;/strong&gt;: 同样只有两个请求，并且使用协商缓存返回304，其余资源都是读取缓存。符合预期。&lt;/p&gt;
 &lt;h3&gt;X5 Core(TBS) apk&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;测试环境&lt;/strong&gt;: &lt;em&gt;TBS V4.5 43646&lt;/em&gt;&lt;br /&gt;
 &lt;strong&gt;是否有请求&lt;/strong&gt;:&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9a3604ea782416.png&quot; alt=&quot;X5内核默认设置不缓存&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9a3604ea782416.png&quot; alt=&quot;X5内核默认设置不缓存&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*demo默认设置不使用缓存，相当于强刷*&lt;/em&gt;  
 &lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9a82afa7273901.png&quot; alt=&quot;修改CacheMode后符合预期&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9a82afa7273901.png&quot; alt=&quot;修改CacheMode后符合预期&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*设置WebView CacheMode后使用协商缓存*&lt;/em&gt;  
 &lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;结论&lt;/strong&gt;: X5 WebView默认情况下不使用缓存，所有GET请求都会带上no-cache请求头去获取最新资源，每次进入apk都相当于强制刷新。需要设置&lt;code&gt;CacheMode&lt;/code&gt;，设置后正常走协商缓存，符合预期。&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;webSetting.setCacheMode(IX5WebSettings.DEFAULT_CACHE_CAPACITY);&lt;/code&gt;&lt;/pre&gt;
 &lt;h2&gt;最后制作一张流程图&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9e04485d821258.png&quot; alt=&quot;GET请求浏览器缓存流程图&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/06/21/5d0c9e04485d821258.png&quot; alt=&quot;GET请求浏览器缓存流程图&quot; data-action=&quot;zoom&quot; /&gt;&lt;/p&gt;
 &lt;h3&gt;参考链接&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&quot;&gt;HTTP 缓存 - MDN&lt;/a&gt;&lt;/li&gt;
@@ -387,7 +387,7 @@ expires    epoch;
       <item>
         <title>Unity入门:编写一个2D Roguelike游戏</title>
         <description>&lt;p&gt;跑完了Unity官方的Basic Tutorial Demo后，意犹未尽的下载了一个Tutorial Project Demo:2D Roguelike。跟着官方的&lt;a href=&quot;https://unity3d.com/cn/learn/tutorials/s/2d-roguelike-tutorial&quot;&gt;教程&lt;/a&gt;从头开始做了一个Roguelike类型的2D生存游戏，每一关随机生成地图，食物和敌人。玩家要尽可能到达更高的关数。每天晚上跟着码代码和理解，花了两天时间终于build出来了windows版本的游戏，自己玩了玩还挺有意思，虽然有一个碰撞的bug...不过也算是上手了Unity的编辑器，对游戏这个概念有一个从代码到动画表现上的多层次理解。&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c5492e939016.png&quot; alt=&quot;Windows Build&quot; /&gt;&lt;/p&gt;
+&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c5492e939016.png&quot; alt=&quot;Windows Build&quot; data-action=&quot;zoom&quot; /&gt;&lt;/p&gt;
 &lt;h2&gt;对游戏以及Unity一些浅薄的理解&lt;/h2&gt;
 &lt;p&gt;对这个游戏以及Unity有了一些浅薄的理解:  
 &lt;/p&gt;
@@ -400,9 +400,9 @@ expires    epoch;
 &lt;p&gt;对象的动画由一帧一帧的图片组成，动画（&lt;strong&gt;Animator&lt;/strong&gt;）也是对象的一个可以被添加的属性，可以被添加移除以达到复用效果的属性更应该被称为组件（&lt;strong&gt;Component&lt;/strong&gt;）。我们可以设置动画播放的快慢，是否连续播放，是否不可被打断等动画效果，也可以通过代码控制动画播放的时机。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;关于动画有一个有意思的事情，就是动画有限状态机。其负责播放动画，以及在不同动画状态间来回切换。&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c55bbff23067.png&quot; alt=&quot;AnimationController&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c55bbff23067.png&quot; alt=&quot;AnimationController&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 比如Demo中的主角，当玩家没有指令时，为状态一：这个状态下动画控制器（Animator Controller）就负责循环播放“PlayerIdle”（待机）这个动画，表现是主角一直在“呼吸抖动”&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c55cc8646305.png&quot; alt=&quot;AnimationController2&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c55cc8646305.png&quot; alt=&quot;AnimationController2&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 当触发被攻击或者破坏墙壁的这两件事件时，代码通过Animator  Controller切换动画状态。被攻击事件时切换到“PlayerChop”状态，预先设定是进入这个状态后播放一次然后退出，所以主角动画表现是被攻击晃了一下，然后又回到“PlayerIdle”这个状态，循环播放待机动画。&lt;br /&gt;
 也就是说，动画控制器负责播放动画（包括播放几次，速度快慢，几个动画状态），代码控制怎么在动画状态之间切换，何时进入，何时退出。&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -411,7 +411,7 @@ expires    epoch;
 &lt;p&gt;对象组件Component的理解：为了让我们的对象具有某些特性，我们还需要添加一些Component组件，其实际上是让这个对象拥有多一些其他类所拥有的方法和属性。比如这个Demo中，我们把主角和敌人视作可以检测碰撞的刚体，所以都加了Box Collider 2D和Rigidbody 2D两个组件。在控制这两种对象时，我们就可以使用这两种类中的方法来检测碰撞，然后扣取主角的生命值。墙体只检测碰撞来阻止敌人和主角移动，所以都添加Box Collider 2D组件。至于对象之间的互动，何时互动，我们都是通过C#代码来操控的。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;p&gt;地图大小固定是8x8的方块，因为是Roguelike的游戏，墙（可以被主角攻击打碎），敌人，地面上的水果食物都是根据关数在一个范围内随机生成（UnityEngine的Random类），在8x8地图上随机摆放，下一关入口则固定在右上方，主角每一关一开始都出现在左下角。&lt;br /&gt;
-&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png&quot; alt=&quot;Game&quot; /&gt;&lt;/p&gt;
+&lt;img src=&quot;https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png&quot; alt=&quot;Game&quot; data-action=&quot;zoom&quot; /&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;p&gt;这个demo还涉及一些简单的UI和音频，分别通过Text类和AudioSource类来实现，通过脚本设置内容，在移动或被攻击的时候去更新内容，字体和颜色等属性可以在Unity中通过Text Component来改，也可以通过脚本GetComponent来修改。&lt;/p&gt;   
 &lt;/li&gt;

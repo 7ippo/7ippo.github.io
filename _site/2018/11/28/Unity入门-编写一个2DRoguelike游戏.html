@@ -28,7 +28,10 @@
     <link rel="stylesheet" href="/assets/css/share.min.css">
     <link rel="stylesheet" href="/assets/css/app.min.css">
     <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/zoom.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/assets/js/transition.js"></script>
+    <script src="/assets/js/zoom.js"></script>
 	
 	<!--
 Author: Ray-Eldath
@@ -155,7 +158,7 @@ Author: Ray-Eldath
 
     <article class="markdown-body">
       <p>跑完了Unity官方的Basic Tutorial Demo后，意犹未尽的下载了一个Tutorial Project Demo:2D Roguelike。跟着官方的<a href="https://unity3d.com/cn/learn/tutorials/s/2d-roguelike-tutorial">教程</a>从头开始做了一个Roguelike类型的2D生存游戏，每一关随机生成地图，食物和敌人。玩家要尽可能到达更高的关数。每天晚上跟着码代码和理解，花了两天时间终于build出来了windows版本的游戏，自己玩了玩还挺有意思，虽然有一个碰撞的bug...不过也算是上手了Unity的编辑器，对游戏这个概念有一个从代码到动画表现上的多层次理解。<br />
-<img src="https://i.loli.net/2019/05/25/5ce905c5492e939016.png" alt="Windows Build" /></p>
+<img src="https://i.loli.net/2019/05/25/5ce905c5492e939016.png" alt="Windows Build" data-action="zoom" /></p>
 <h2>对游戏以及Unity一些浅薄的理解</h2>
 <p>对这个游戏以及Unity有了一些浅薄的理解:  
 </p>
@@ -168,9 +171,9 @@ Author: Ray-Eldath
 <p>对象的动画由一帧一帧的图片组成，动画（<strong>Animator</strong>）也是对象的一个可以被添加的属性，可以被添加移除以达到复用效果的属性更应该被称为组件（<strong>Component</strong>）。我们可以设置动画播放的快慢，是否连续播放，是否不可被打断等动画效果，也可以通过代码控制动画播放的时机。</p>
 <blockquote>
 <p>关于动画有一个有意思的事情，就是动画有限状态机。其负责播放动画，以及在不同动画状态间来回切换。<br />
-<img src="https://i.loli.net/2019/05/25/5ce905c55bbff23067.png" alt="AnimationController" /><br />
+<img src="https://i.loli.net/2019/05/25/5ce905c55bbff23067.png" alt="AnimationController" data-action="zoom" /><br />
 比如Demo中的主角，当玩家没有指令时，为状态一：这个状态下动画控制器（Animator Controller）就负责循环播放“PlayerIdle”（待机）这个动画，表现是主角一直在“呼吸抖动”<br />
-<img src="https://i.loli.net/2019/05/25/5ce905c55cc8646305.png" alt="AnimationController2" /><br />
+<img src="https://i.loli.net/2019/05/25/5ce905c55cc8646305.png" alt="AnimationController2" data-action="zoom" /><br />
 当触发被攻击或者破坏墙壁的这两件事件时，代码通过Animator  Controller切换动画状态。被攻击事件时切换到“PlayerChop”状态，预先设定是进入这个状态后播放一次然后退出，所以主角动画表现是被攻击晃了一下，然后又回到“PlayerIdle”这个状态，循环播放待机动画。<br />
 也就是说，动画控制器负责播放动画（包括播放几次，速度快慢，几个动画状态），代码控制怎么在动画状态之间切换，何时进入，何时退出。</p>
 </blockquote>
@@ -179,7 +182,7 @@ Author: Ray-Eldath
 <p>对象组件Component的理解：为了让我们的对象具有某些特性，我们还需要添加一些Component组件，其实际上是让这个对象拥有多一些其他类所拥有的方法和属性。比如这个Demo中，我们把主角和敌人视作可以检测碰撞的刚体，所以都加了Box Collider 2D和Rigidbody 2D两个组件。在控制这两种对象时，我们就可以使用这两种类中的方法来检测碰撞，然后扣取主角的生命值。墙体只检测碰撞来阻止敌人和主角移动，所以都添加Box Collider 2D组件。至于对象之间的互动，何时互动，我们都是通过C#代码来操控的。</p>
 </li>
 <li><p>地图大小固定是8x8的方块，因为是Roguelike的游戏，墙（可以被主角攻击打碎），敌人，地面上的水果食物都是根据关数在一个范围内随机生成（UnityEngine的Random类），在8x8地图上随机摆放，下一关入口则固定在右上方，主角每一关一开始都出现在左下角。<br />
-<img src="https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png" alt="Game" /></p>
+<img src="https://i.loli.net/2019/05/25/5ce905c57b0dc60751.png" alt="Game" data-action="zoom" /></p>
 </li>
 <li><p>这个demo还涉及一些简单的UI和音频，分别通过Text类和AudioSource类来实现，通过脚本设置内容，在移动或被攻击的时候去更新内容，字体和颜色等属性可以在Unity中通过Text Component来改，也可以通过脚本GetComponent来修改。</p>   
 </li>
