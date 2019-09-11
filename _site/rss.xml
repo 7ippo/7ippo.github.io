@@ -5,9 +5,199 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 11 Sep 2019 19:30:35 +0800</pubDate>
-    <lastBuildDate>Wed, 11 Sep 2019 19:30:35 +0800</lastBuildDate>
+    <pubDate>Wed, 11 Sep 2019 21:18:44 +0800</pubDate>
+    <lastBuildDate>Wed, 11 Sep 2019 21:18:44 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>js混淆堆栈本地解析映射工具</title>
+        <description>&lt;h2 id=&quot;为什么要写这个工具&quot;&gt;为什么要写这个工具&lt;/h2&gt;
+
+&lt;p&gt;发布环境的产品都经过压缩混淆，并且没有attach sourcemap。因此前端收集到的错误堆栈都是被混淆过的，文件与行号列号变量名都可能发生了变化。因此需要通过sourcemap文件映射到源码上去。如果使用typescript编译+压缩混淆生成的sourcemap文件，可以直接映射到typescript源码。因此针对前端&lt;code class=&quot;highlighter-rouge&quot;&gt;window.onerror&lt;/code&gt;捕获到的错误堆栈写了这样一个工具用于解析与映射，已经在&lt;a href=&quot;https://www.npmjs.com/package/sourcemapping&quot;&gt;npm&lt;/a&gt;发布。&lt;br /&gt;
+&lt;img src=&quot;https://i.loli.net/2019/09/11/ynP6tEe3Nwo9Tpb.png&quot; alt=&quot;npm发布.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;使用方法&quot;&gt;使用方法&lt;/h2&gt;
+
+&lt;p&gt;需要传入3个参数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;window.onerror&lt;/code&gt;中捕获的&lt;code class=&quot;highlighter-rouge&quot;&gt;JSON.stringfy(errorObj.stack)&lt;/code&gt;即需要被解析的堆栈字符串
+    &lt;blockquote&gt;
+      &lt;p&gt;e.g.&lt;br /&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11&lt;/code&gt;&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;window.onerror&lt;/code&gt;捕获的&lt;code class=&quot;highlighter-rouge&quot;&gt;errorMessage&lt;/code&gt;即错误信息
+    &lt;blockquote&gt;
+      &lt;p&gt;e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;Uncaught ReferenceError: a is not defined&lt;/code&gt;&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;存放sourcemap文件的路径，绝对路径或相对路径都可以
+    &lt;blockquote&gt;
+      &lt;p&gt;e.g. &lt;code class=&quot;highlighter-rouge&quot;&gt;./test&lt;/code&gt;&lt;br /&gt;
+注意：sourcemap文件命名规则为各压缩混淆工具的默认规则，即:javascript文件名.map，需要直接存放在传入的路径下&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;Usage: sourcemapping [options]
+
+Options:
+  -v, --version         output the version number
+  -s, --stack &amp;lt;string&amp;gt;  stack string which can obtain from JSON.stringfy(Error.stack)
+  -i, --msg &amp;lt;string&amp;gt;    error message. e.g. Uncaught ReferenceError: a is not defined
+  -m, --map &amp;lt;string&amp;gt;    sourcemap dir path. Where to find sourcemap
+  -h, --help            output usage information
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;sourcemapping -s &quot;ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11&quot; -i &quot;Uncaught ReferenceError: exclued is not defined&quot; -m &quot;./test&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;输出&quot;&gt;输出&lt;/h2&gt;
+
+&lt;p&gt;默认输出到控制台&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;----Sourcemap Result----
+Uncaught ReferenceError: exclued is not defined
+    at Logline (../src/logline.js:62:31)
+    at (index.js:15:11)
+------------------------
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;github源码&quot;&gt;&lt;a href=&quot;https://github.com/7ippo/sourcemapping&quot;&gt;☆Github源码☆&lt;/a&gt;&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;// sourcemapping.ts
+#!/usr/bin/env node
+
+import * as path from 'path';
+import * as ErrorStackParser from 'error-stack-parser';
+import * as commander from 'commander';
+import { readFileSync, existsSync } from 'fs';
+import { SourceMapConsumer } from 'source-map';
+
+let raw_stack_string_array: string[];
+
+function stackStringProcess(value: any, previous: any): string {
+    // input '\n' will be translated into '\\n' and cause ErrorStackParser parsing failure
+    raw_stack_string_array = value.split(String.raw`\n`);
+    return raw_stack_string_array.join('\n');
+}
+
+function printToConsole(error_msg: string, stack_frames: ErrorStackParser.StackFrame[]): void {
+    console.log(&quot;----Sourcemap Result----&quot;)
+    console.log(error_msg);
+    for (const frame of stack_frames) {
+        let msg = &quot;    at &quot;;
+        if (frame.functionName) msg += frame.functionName + &quot; &quot;;
+        msg += &quot;(&quot;;
+        if (frame.fileName) msg += frame.fileName + &quot;:&quot;;
+        if (frame.lineNumber) msg += frame.lineNumber + &quot;:&quot;;
+        if (frame.columnNumber) msg += frame.columnNumber;
+        msg += &quot;)&quot;;
+        console.log(msg);
+    }
+    console.log(&quot;------------------------&quot;)
+}
+
+async function loadAllConsumer(dir_path: string, stack_frame_array: ErrorStackParser.StackFrame[],
+    sourcemap_map: Map&amp;lt;string, SourceMapConsumer&amp;gt;) {
+    // 一次性把堆栈中用到的sourcemap读进内存
+    const sourcemap_list = new Set();
+    const regExp = /.+\/(.+)$/;
+    for (const frame of stack_frame_array) {
+        if (frame.hasOwnProperty('fileName')) {
+            const name = regExp.exec(frame.fileName)[1];
+            frame.fileName = name;
+            if (!sourcemap_list.has(name)) {
+                sourcemap_list.add(name);
+                let sourcemap_filepath = path.join(dir_path, name + '.map');
+                if (existsSync(sourcemap_filepath)) {
+                    let sourcemap: any;
+                    try {
+                        sourcemap = JSON.parse(readFileSync(sourcemap_filepath, 'utf-8'))
+                    } catch (error) {
+                        console.error('Read&amp;amp;Parse sourcemap:' + sourcemap_filepath + 'failed. ' + error.toString());
+                        process.exit(0);
+                    }
+                    const consumer = await new SourceMapConsumer(sourcemap);
+                    !sourcemap_map.has(name) &amp;amp;&amp;amp; sourcemap_map.set(name, consumer);
+                }
+            }
+        }
+    }
+}
+
+const program = new commander.Command();
+program.version('0.0.1', '-v, --version');
+program.option('-s, --stack &amp;lt;string&amp;gt;', 'stack string which can obtain from JSON.stringfy(Error.stack)', stackStringProcess);
+program.option('-i, --msg &amp;lt;string&amp;gt;', 'error message. e.g. Uncaught ReferenceError: a is not defined');
+program.option('-m, --map &amp;lt;string&amp;gt;', 'sourcemap dir path. Where to find sourcemap');
+program.parse(process.argv);
+
+if (program.stack &amp;amp;&amp;amp; program.msg &amp;amp;&amp;amp; program.map) {
+    let error_obj: Error = {
+        'stack': program.stack,
+        'message': program.msg,
+        'name': program.msg.split(':')[0]
+    }
+    let stack_frame_array: ErrorStackParser.StackFrame[] = [];
+    try {
+        stack_frame_array = ErrorStackParser.parse(error_obj)
+    } catch (error) {
+        console.error('ErrorStackParser parsing failed' + error.toString());
+        process.exit(0);
+    }
+
+    const sourcemap_map = new Map&amp;lt;string, SourceMapConsumer&amp;gt;();
+
+    // 加载全部要用到的sourcemap文件
+    loadAllConsumer(program.map, stack_frame_array, sourcemap_map).then(() =&amp;gt; {
+        // 遍历解析stack_frame_array
+        stack_frame_array.forEach(stack_frame =&amp;gt; {
+            let name = stack_frame.fileName;
+            if (sourcemap_map.has(name)) {
+                let consumer = sourcemap_map.get(name);
+                let origin = consumer.originalPositionFor({
+                    line: stack_frame.lineNumber,
+                    column: stack_frame.columnNumber
+                });
+                if (origin.line) stack_frame.lineNumber = origin.line;
+                if (origin.column) stack_frame.columnNumber = origin.column;
+                if (origin.source) stack_frame.fileName = origin.source;
+                if (origin.name) stack_frame.functionName = origin.name;
+            }
+        });
+
+        // 打印结果
+        printToConsole(program.msg, stack_frame_array);
+    });
+
+    // 解析结束后destroy所有consumer
+    for (let consumer of Array.from(sourcemap_map.values())) {
+        consumer.destroy();
+    }
+} else {
+    console.error(&quot;No error stack string OR error msg string OR sourcemap dir found. Please Check input.&quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+        <pubDate>Wed, 11 Sep 2019 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2019/09/11/JavaScript%E6%B7%B7%E6%B7%86%E5%A0%86%E6%A0%88%E8%A7%A3%E6%9E%90%E6%98%A0%E5%B0%84%E5%B7%A5%E5%85%B7.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/09/11/JavaScript%E6%B7%B7%E6%B7%86%E5%A0%86%E6%A0%88%E8%A7%A3%E6%9E%90%E6%98%A0%E5%B0%84%E5%B7%A5%E5%85%B7.html</guid>
+        
+        <category>H5</category>
+        
+        <category>npm</category>
+        
+        <category>工具</category>
+        
+        
+        <category>H5</category>
+        
+      </item>
     
       <item>
         <title>Chrome调试关联本地sourcemap文件</title>
