@@ -2,7 +2,6 @@
 layout: post
 title: 'js混淆堆栈本地解析映射工具'
 subtitle: 'sourcemapping - 我为node社区贡献的第一个npm工具'
-description: '基于本地sourcemap文件对收集到的经过混淆的JavaScript报错堆栈进行解析，映射到源码'
 cover: 'https://i.loli.net/2019/09/11/DwE4xOzsCRGyt9H.jpg'
 date: 2019-09-11
 author: zpo

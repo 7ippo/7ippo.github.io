@@ -2,7 +2,6 @@
 layout: post
 title: 'Chrome调试关联本地sourcemap文件'
 subtitle: '针对线上混淆代码与堆栈的调试方法'
-description: '使用Chrome dev-tool查看混淆代码报错堆栈时关联本地sourcemap文件对其进行解析，映射源码'
 date: 2019-09-11
 author: zpo
 categories: H5
