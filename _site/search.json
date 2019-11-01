@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "Laya编译发布优化",
+      "tags"     : "H5 Laya",
+      "url"      : "/2019/11/01/Laya%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83%E4%BC%98%E5%8C%96.html"
+    } ,
+  
+    {
       "title"    : "js混淆堆栈本地解析映射工具",
       "tags"     : "H5 npm 工具",
       "url"      : "/2019/09/11/JavaScript%E6%B7%B7%E6%B7%86%E5%A0%86%E6%A0%88%E8%A7%A3%E6%9E%90%E6%98%A0%E5%B0%84%E5%B7%A5%E5%85%B7.html"
