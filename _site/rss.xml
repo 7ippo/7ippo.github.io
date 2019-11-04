@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 01 Nov 2019 23:04:37 +0800</pubDate>
-    <lastBuildDate>Fri, 01 Nov 2019 23:04:37 +0800</lastBuildDate>
+    <pubDate>Mon, 04 Nov 2019 10:19:34 +0800</pubDate>
+    <lastBuildDate>Mon, 04 Nov 2019 10:19:34 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -16,10 +16,10 @@
 &lt;p&gt;随着游戏开发的推进，越来越多的功能和内容被添加，IDE的编译与发布也越来越慢，逐渐暴露了一些流程问题。&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;我们使用2.0的IDE版本，在什么也不修改的情况下，bundle体积已经膨胀到29MB。其中20MB都是browserify打包生成的符号文件sourcemap的内容，被base64编码后添加到bundle的最后一行。&lt;/li&gt;
-  &lt;li&gt;编译太慢，稍微改动一点点内容便要花1分钟去编译，然后测试。&lt;/li&gt;
-  &lt;li&gt;假设把sourcemap的内容独立出去，bundle也有9.4MB之大，uglify压缩后也有4MB多。日后稍微更新一点内容，这个庞大的文件就要用户去重新下载。倘若频繁更新发布，网络请求对服务器造成的负担不说，对用户而言加载速度则是很大问题。&lt;/li&gt;
-  &lt;li&gt;发布时勾选Laya IDE中的压缩混淆js选项，js被混淆，却不会生成映射到typescript源码的符号文件。这对发布后收集错误堆栈时的解析有很大影响。&lt;/li&gt;
+  &lt;li&gt;bundle文件过大需要拆分。假设把sourcemap的内容独立出去，bundle也有9.4MB之大，uglify压缩后也有4MB多。日后稍微更新一点内容，这个庞大的文件就要用户去重新下载。倘若频繁更新发布，网络请求对服务器造成的负担不说，对用户而言加载速度则是很大问题。&lt;/li&gt;
+  &lt;li&gt;编译速度太慢。稍微改动一点点内容便要花1分钟去编译与查看效果。&lt;/li&gt;
+  &lt;li&gt;browserify打包生成内嵌sourcemap导致bundle膨胀。我们使用2.0的IDE版本，在什么也不修改的情况下，bundle体积已经膨胀到30MB。其中21MB都是browserify打包生成的符号文件sourcemap的内容，被base64编码后添加到bundle的最后一行。&lt;/li&gt;
+  &lt;li&gt;Laya压缩混淆js不生成符号文件。发布时勾选Laya IDE中的压缩混淆js选项，js被混淆，却不会生成映射到typescript源码的符号文件。这对发布后收集错误堆栈时的解析有很大影响。&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Laya IDE的编译与发布实际上是在IDE安装目录的node环境下执行工程目录下.laya文件夹中的gulp脚本。所以基于以上问题，我对Laya IDE的编译发布脚本做了一些改动。&lt;/p&gt;
@@ -28,7 +28,7 @@
 
 &lt;h2 id=&quot;拆分bundle&quot;&gt;拆分bundle&lt;/h2&gt;
 
-&lt;p&gt;首先解决bundle过大的问题。browserify工具没有提供很好的解决方案，但是我们可以很轻松的用webpack对其进行模块拆分。二者都是将typescript进行模块打包，但是webpack很友好的提供了splitChunks的插件，简单配置一下我们就能将bundle拆分若干分符合我们大小要求的文件。这也是我们微信小游戏分包使用的策略。&lt;/p&gt;
+&lt;p&gt;首先解决bundle过大的问题。browserify工具没有提供很好的解决方案，但是我们可以很轻松的用webpack对其进行模块拆分。二者都是将typescript进行模块打包，但是webpack很友好的提供了splitChunks的插件，简单配置一下我们就能将bundle拆分若干份符合我们大小要求的文件。这也是我们微信小游戏分包使用的策略。&lt;/p&gt;
 
 &lt;p&gt;首先我们全局安装拆分需要的npm工具。由于我们使用typescript编写项目，所以还需要安装typescript编译需要的一些包。&lt;/p&gt;
 
@@ -36,7 +36,7 @@
 npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-plugin
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;其中，在工程根路径下只需要链接全局安装的ts-loader clean-webpack-plugin两个包，修改tsconfig.json：&lt;/p&gt;
+&lt;p&gt;其中，在工程根路径下只需要链接全局安装的&lt;code class=&quot;highlighter-rouge&quot;&gt;ts-loader&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;clean-webpack-plugin&lt;/code&gt;两个包，修改tsconfig.json：&lt;/p&gt;
 
 &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;compilerOptions&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -93,7 +93,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;在工程目录执行webpack打包后，就可以在dist文件夹下看到拆分后的bundle了。将其引入index.js中即可运行查看效果，推荐在bin目录使用&lt;a href=&quot;https://www.npmjs.com/package/live-server&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;live-server&lt;/code&gt;&lt;/a&gt;快速搭建http服务器查看效果。&lt;/p&gt;
+&lt;p&gt;在工程目录执行webpack打包后，就可以在dist文件夹下看到拆分后的bundle了。将其引入index.js中即可运行查看效果，推荐在bin目录使用&lt;a href=&quot;https://www.npmjs.com/package/live-server&quot;&gt;live-server&lt;/a&gt;快速搭建http服务器查看效果。&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;webpack拆分出来的模块可以异步加载，可以打乱顺序引入index.js中运行，这也是微信小游戏分包的关键。&lt;/p&gt;
@@ -101,14 +101,15 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 
 &lt;h2 id=&quot;加快编译速度&quot;&gt;加快编译速度&lt;/h2&gt;
 
-&lt;p&gt;目前工程体量里，typescript源文件有1000多个，执行一次编译需要耗时50多秒。编译时间之久，导致很难实现&lt;code class=&quot;highlighter-rouge&quot;&gt;编写代码-浏览器查看效果-修改代码-浏览器自动刷新查看效果&lt;/code&gt;这样理想的工作流了。不过可以通过增量编译来加快编译速度，尽可能实现理想的工作流。关于增量编译可以有三种实现。&lt;/p&gt;
+&lt;p&gt;目前工程体量里，typescript源文件有1000多个，执行一次编译需要耗时50多秒。编译时间之久，导致很难实现编写代码-浏览器查看效果-修改代码-浏览器自动刷新查看效果这样理想的工作流了。不过可以通过增量编译来加快编译速度，尽可能实现理想的工作流。关于增量编译可以有三种实现。&lt;/p&gt;
 
 &lt;h3 id=&quot;tsc--w&quot;&gt;tsc -w&lt;/h3&gt;
 
 &lt;p&gt;在Laya2.0版本以前，项目并不会用import，export去管理模块关系，每个js文件都是全局执行，顺序引入，所以可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;tsc -w -p . --outDir bin/js&lt;/code&gt;命令开启typescript增量编译输出js文件，然后用脚本处理index.js依照依赖关系顺序引入执行。使用&lt;code class=&quot;highlighter-rouge&quot;&gt;-w&lt;/code&gt;选项开启增量编译后，每修改一个typescript文件就会在毫秒内编译成js。浏览器刷新后就能立刻看到效果。这是最符合理想情况的开发环境了，但是考虑到现有的项目都是模块化编写，写法不同于全局变量的方式，不同模块间都有import与export引用关系。使用&lt;code class=&quot;highlighter-rouge&quot;&gt;tsc&lt;/code&gt;编译出来的js文件并不能顺序执行，这也是需要打包的原因。所以最后也没有使用这种方案。&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;想要获取源码文件的依赖关系顺序，可以使用&lt;a href=&quot;https://github.com/dependents/node-dependency-tree&quot;&gt;dependency-tree&lt;/a&gt;工具。想要浏览器监测到文件变化自动刷新，推荐使用&lt;a href=&quot;https://www.npmjs.com/package/webpack-dev-server&quot;&gt;webpack-dev-server&lt;/a&gt;或者是&lt;a href=&quot;https://www.npmjs.com/package/live-server&quot;&gt;live-server&lt;/a&gt;，使用webpack打包或者自行修改一些js代码时，比起耗费编译的大量时间用Laya的运行调试来看效果，不如使用本地工具快速跑一个http服务器来测试。&lt;/p&gt;
+  &lt;p&gt;想要获取源码文件的依赖关系顺序，可以使用&lt;a href=&quot;https://github.com/dependents/node-dependency-tree&quot;&gt;dependency-tree&lt;/a&gt;工具。&lt;br /&gt;
+想要浏览器监测到文件变化自动刷新，推荐使用&lt;a href=&quot;https://www.npmjs.com/package/webpack-dev-server&quot;&gt;webpack-dev-server&lt;/a&gt;或者是&lt;a href=&quot;https://www.npmjs.com/package/live-server&quot;&gt;live-server&lt;/a&gt;工具，使用webpack打包或者自行修改一些js代码时，比起耗费编译的大量时间用Laya的运行调试来看效果，不如使用本地工具快速跑一个http服务器来测试。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&quot;watchify&quot;&gt;watchify&lt;/h3&gt;
@@ -122,7 +123,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;watchify gulp-util
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;以下提供编译脚本compile.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
+&lt;p&gt;然后修改Laya工程根目录.laya中的compile.js编译脚本，以下提供compile.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
 
 &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;//添加引用watchify&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;watchify&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;watchify&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -187,7 +188,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;watchify gulp-util
 npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;exorcist
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;以下提供compile.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
+&lt;p&gt;然后修改Laya工程根目录.laya中的compile.js编译脚本，以下提供compile.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
 
 &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 提取分离sourcemap&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exorcist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;exorcist&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
@@ -233,7 +234,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;exorcist
 npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;gulp-sourcemaps
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;以下提供发布脚本publish.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
+&lt;p&gt;然后修改Laya工程根目录.laya中的publish.js发布脚本，以下提供publish.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
 
 &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 引入gulp-sourcemaps生成sourcemap&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sourcemaps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;gulp-sourcemaps&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
