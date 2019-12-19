@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="/assets/css/share.min.css">
     <link rel="stylesheet" href="/assets/css/app.min.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.4.0/dist/lazyload.min.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-146060169-1"></script>
 <script>
@@ -35,13 +36,14 @@
 </script>
 </head>
 
+
 <body>
-    <!--[if lt IE 10]>
+  <!--[if lt IE 10]>
 <div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
 <![endif]-->
-    <input id="nm-switch" type="hidden" value="true">
-    <div class="visible">
-      <header class="g-header">
+  <input id="nm-switch" type="hidden" value="true">
+  <div class="visible">
+    <header class="g-header">
     <div class="g-logo">
       <a href="/"></a>
     </div>
@@ -74,7 +76,7 @@
                 
                 <div class="post-cover">
                     <a class="post-link" href="/2018/11/06/Apk-Permissions-Check.html" title="Apk Permissions Check"></a>
-                    <img src="https://i.loli.net/2019/02/12/5c626fbda2e1c.jpg" href="/2018/11/06/Apk-Permissions-Check.html" alt="">
+                    <img data-src="https://i.loli.net/2019/02/12/5c626fbda2e1c.jpg" href="/2018/11/06/Apk-Permissions-Check.html" alt="">
                 </div>
                 
                 <section class="post-preview">
@@ -105,7 +107,7 @@
                 
                 <div class="post-cover">
                     <a class="post-link" href="/2018/09/28/Log-for-Shell.html" title="Log for Shell"></a>
-                    <img src="https://i.loli.net/2019/02/12/5c626fc358a0d.jpg" href="/2018/09/28/Log-for-Shell.html" alt="">
+                    <img data-src="https://i.loli.net/2019/02/12/5c626fc358a0d.jpg" href="/2018/09/28/Log-for-Shell.html" alt="">
                 </div>
                 
                 <section class="post-preview">
@@ -275,8 +277,12 @@
 </footer>
 
 
-    </div>
-    <script src="/assets/js/prism.js"></script>
-    <script src="/assets/js/index.min.js"></script>
+  </div>
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+  <script>
+    var lazyLoadInstance = new LazyLoad({});
+  </script>
 </body>
+
 </html>
