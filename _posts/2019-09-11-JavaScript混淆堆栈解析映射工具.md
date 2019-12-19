@@ -29,7 +29,7 @@ tags: H5 npm 工具
   > e.g. `./test`  
   > 注意：sourcemap文件命名规则为各压缩混淆工具的默认规则，即:javascript文件名.map，需要直接存放在传入的路径下
 
-<pre><code class="language-python">Usage: sourcemapping [options]
+<pre><code class="language-shell">Usage: sourcemapping [options]
 
 Options:
   -v, --version         output the version number
@@ -42,14 +42,14 @@ Options:
 
 For example:
 
-<pre><code class="language-python">sourcemapping -s "ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11" -i "Uncaught ReferenceError: exclued is not defined" -m "./test"
+<pre><code class="language-shell">sourcemapping -s "ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11" -i "Uncaught ReferenceError: exclued is not defined" -m "./test"
 </code></pre>
 
 ## 输出
 
 默认输出到控制台
 
-<pre><code class="language-python">----Sourcemap Result----
+<pre><code class="language-shell">----Sourcemap Result----
 Uncaught ReferenceError: exclued is not defined
     at Logline (../src/logline.js:62:31)
     at (index.js:15:11)
@@ -58,7 +58,7 @@ Uncaught ReferenceError: exclued is not defined
 
 ## [☆Github源码☆](https://github.com/7ippo/sourcemapping)
 
-<pre><code class="language-javascript">// sourcemapping.ts
+<pre><code class="language-typescript">// sourcemapping.ts
 #!/usr/bin/env node
 
 import * as path from 'path';
@@ -93,7 +93,7 @@ function printToConsole(error_msg: string, stack_frames: ErrorStackParser.StackF
 
 async function loadAllConsumer(dir_path: string, stack_frame_array: ErrorStackParser.StackFrame[],
     sourcemap_map: Map&lt;string, SourceMapConsumer&gt;) {
-    // 一次性把堆栈中用到的sourcemap读进内存
+    // load all sourcemap files into memory
     const sourcemap_list = new Set();
     const regExp = /.+\/(.+)$/;
     for (const frame of stack_frame_array) {
@@ -142,9 +142,9 @@ if (program.stack && program.msg && program.map) {
 
     const sourcemap_map = new Map&lt;string, SourceMapConsumer&gt;();
 
-    // 加载全部要用到的sourcemap文件
+    // load all sourcemap files
     loadAllConsumer(program.map, stack_frame_array, sourcemap_map).then(() => {
-        // 遍历解析stack_frame_array
+        // parse stack_frame_array
         stack_frame_array.forEach(stack_frame => {
             let name = stack_frame.fileName;
             if (sourcemap_map.has(name)) {
@@ -160,11 +160,11 @@ if (program.stack && program.msg && program.map) {
             }
         });
 
-        // 打印结果
+        // print result
         printToConsole(program.msg, stack_frame_array);
     });
 
-    // 解析结束后destroy所有consumer
+    // destroy all consumers
     for (let consumer of Array.from(sourcemap_map.values())) {
         consumer.destroy();
     }

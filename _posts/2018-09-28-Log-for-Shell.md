@@ -39,8 +39,7 @@ tags: Shell 工具
 </ul>
 <h2>脚本部署结构</h2>
 
-<pre><code class="language-python">
->scripts
+<pre><code class="language-shell">>scripts
     >bin  业务脚本
     >lib  引用库
         >tools  内部工具
@@ -72,20 +71,20 @@ tags: Shell 工具
 <ol>
 <li>
 <p>Usage 使用方法：</p>
-<pre><code class="language-python">source ./logForShell.sh "default"
+<pre><code class="language-shell">source ./logForShell.sh "default"
 </code></pre>
 </li>
 <li><strong>入口脚本</strong>中，在调用任何日志方法之前，请先调用&nbsp;<strong><em>CleanFlagBeforeStart</em></strong>&nbsp;函数。该函数会清除上一次可能因脚本执行失败而留下的标志文件，该标志会阻止日志继续输出。</li>
 <li>
 <p>所有日志通过调用&nbsp;<strong><em>Show</em></strong>&nbsp;函数输出：</p>
-<pre><code class="language-python">Show "Log For Shell"
+<pre><code class="language-shell">Show "Log For Shell"
 
 2018-09-05 [17:50:24] Log For Shell
 </code></pre>
 </li>
 <li>
 <p>如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：</p>
-<pre><code class="language-python">source ./logForShell.sh [Shell]
+<pre><code class="language-shell">source ./logForShell.sh [Shell]
 Show "Using TAG to LOG"
 
 2018-09-11 [10:08:26] [Shell] Using TAG to LOG
@@ -93,7 +92,7 @@ Show "Using TAG to LOG"
 </li>
 <li>
 <p>脚本开始时，调用&nbsp;<strong><em>BeforeShell</em></strong>&nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：</p>
-<pre><code class="language-python">BeforeShell $@
+<pre><code class="language-shell">BeforeShell $@
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
@@ -103,7 +102,7 @@ Show "Using TAG to LOG"
 </li>
 <li>
 <p>脚本执行步骤时，打印步骤序号和步骤名称。调用&nbsp;<strong><em>Step</em></strong>&nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：</p>
-<pre><code class="language-python">Step 1 "Copy Unity Resource"
+<pre><code class="language-shell">Step 1 "Copy Unity Resource"
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
@@ -112,7 +111,7 @@ Show "Using TAG to LOG"
 </li>
 <li>
 <p>脚本结束时，调用&nbsp;<strong><em>AfterShell</em></strong>&nbsp;函数。该函数会打印脚本结束标志：</p>
-<pre><code class="language-python">AfterShell
+<pre><code class="language-shell">AfterShell
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  FINISH   +
@@ -120,7 +119,7 @@ Show "Using TAG to LOG"
 </li>
 <li>
 <p>需要打印关键步骤成功的标志时，调用&nbsp;<strong><em>ReportSuccess</em></strong>&nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：</p>
-<pre><code class="language-python">ReportSuccess "Build Dynamic Framework Project"	
+<pre><code class="language-shell">ReportSuccess "Build Dynamic Framework Project"	
 
 ****     Build Dynamic Framework Project SUCCESS      ****
 
@@ -128,7 +127,7 @@ Show "Using TAG to LOG"
 </li>
 <li>
 <p>需要打印错误标志时，调用&nbsp;<strong><em>ReportFailure</em></strong>&nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：</p>
-<pre><code class="language-python">ReportFailure		
+<pre><code class="language-shell">ReportFailure		
 
 ****     line 10 test.sh REPORTED FAILURE     ****
 
@@ -153,7 +152,7 @@ Show "Using TAG to LOG"
 <blockquote><pre>$Ditch => ${Ditch}</pre></blockquote>
 <li>
 规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：</li>
-<pre><code class="language-go">function HandleError(){
+<pre><code class="language-shell">function HandleError(){
 returnVal=$?
 if [ $retVal -ne 0 ]; then
     Show " error exit status "$returnVal" last command"
@@ -178,7 +177,7 @@ fi
 </pre></blockquote>
 <li>
 if-else流程控制，then和条件判断请写在同一行:</li>
-<pre><code class="language-python">if [ ... ];then
+<pre><code class="language-shell">if [ ... ];then
   ...
 elif [ ... ]; then
   ...
@@ -192,7 +191,7 @@ fi
 <br/></li>
 </ol>
 ## [☆logForShell代码☆](https://github.com/7ippo/logForShell)
-<pre><code class="language-python">#!/bin/bash
+<pre><code class="language-shell">#!/bin/bash
 
 # 全局执行结果标志位，有一步出错后日志不会继续输出
 # 考虑到子Shell与父Shell进程间通信，使用与该文件同目录下的tag文件作为标志位进行信息传递和判断

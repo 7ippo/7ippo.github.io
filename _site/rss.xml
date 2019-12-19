@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 04 Nov 2019 10:19:34 +0800</pubDate>
-    <lastBuildDate>Mon, 04 Nov 2019 10:19:34 +0800</lastBuildDate>
+    <pubDate>Thu, 19 Dec 2019 15:03:23 +0800</pubDate>
+    <lastBuildDate>Thu, 19 Dec 2019 15:03:23 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -38,7 +38,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 
 &lt;p&gt;其中，在工程根路径下只需要链接全局安装的&lt;code class=&quot;highlighter-rouge&quot;&gt;ts-loader&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;clean-webpack-plugin&lt;/code&gt;两个包，修改tsconfig.json：&lt;/p&gt;
 
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;compilerOptions&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;commonjs&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;es5&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
@@ -53,7 +53,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 
 &lt;p&gt;然后配置webpack：&lt;/p&gt;
 
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CleanWebpackPlugin&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;clean-webpack-plugin&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;distFolder&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;./dist&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 
@@ -125,7 +125,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;watchify gulp-util
 
 &lt;p&gt;然后修改Laya工程根目录.laya中的compile.js编译脚本，以下提供compile.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
 
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;//添加引用watchify&lt;/span&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;//添加引用watchify&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;watchify&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;watchify&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gutil&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;gulp-util&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
@@ -190,7 +190,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;exorcist
 
 &lt;p&gt;然后修改Laya工程根目录.laya中的compile.js编译脚本，以下提供compile.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
 
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 提取分离sourcemap&lt;/span&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 提取分离sourcemap&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exorcist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;exorcist&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;// 使用browserify，转换ts到js，并输出到bin/js目录&lt;/span&gt;
@@ -223,7 +223,8 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;exorcist
 
 &lt;h2 id=&quot;发布时生成sourcemap&quot;&gt;发布时生成sourcemap&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/11/01/iBYR5TsDKc7jyzo.jpg&quot; alt=&quot;laya发布&quot; data-action=&quot;zoom&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/11/01/iBYR5TsDKc7jyzo.jpg&quot; alt=&quot;laya发布&quot; data-action=&quot;zoom&quot; /&gt;
+*&lt;em&gt;laya发布界面&lt;/em&gt;*&lt;/p&gt;
 
 &lt;p&gt;发布时Laya提供压缩混淆js的选项，其使用&lt;code class=&quot;highlighter-rouge&quot;&gt;gulp-uglify&lt;/code&gt;进行压缩，却不生成sourcemap符号文件，给开发者日后解析外网收集的报错带来了不少困难。为此需要使用&lt;code class=&quot;highlighter-rouge&quot;&gt;gulp-sourcemaps&lt;/code&gt;，在uglify压缩过程生成sourcemap文件，并且最好还能与上一步&lt;code class=&quot;highlighter-rouge&quot;&gt;browserify&lt;/code&gt;打包分离出来的sourcemap文件合并成一个map文件，可以直接从js混淆后代码映射到typescript源码。为此需要npm安装&lt;code class=&quot;highlighter-rouge&quot;&gt;gulp-sourcemaps&lt;/code&gt;:&lt;/p&gt;
 
@@ -236,7 +237,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;gulp-sourcemaps
 
 &lt;p&gt;然后修改Laya工程根目录.laya中的publish.js发布脚本，以下提供publish.js&lt;strong&gt;&lt;em&gt;添加或修改&lt;/em&gt;&lt;/strong&gt;的部分用于参考:&lt;/p&gt;
 
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 引入gulp-sourcemaps生成sourcemap&lt;/span&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 引入gulp-sourcemaps生成sourcemap&lt;/span&gt;
 &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sourcemaps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ideModuleDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;gulp-sourcemaps&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;cm&quot;&gt;/**
  * ...
@@ -336,7 +337,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;gulp-sourcemaps
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;Usage: sourcemapping [options]
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;Usage: sourcemapping [options]
 
 Options:
   -v, --version         output the version number
@@ -349,14 +350,14 @@ Options:
 
 &lt;p&gt;For example:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;sourcemapping -s &quot;ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11&quot; -i &quot;Uncaught ReferenceError: exclued is not defined&quot; -m &quot;./test&quot;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;sourcemapping -s &quot;ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11&quot; -i &quot;Uncaught ReferenceError: exclued is not defined&quot; -m &quot;./test&quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&quot;输出&quot;&gt;输出&lt;/h2&gt;
 
 &lt;p&gt;默认输出到控制台&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;----Sourcemap Result----
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;----Sourcemap Result----
 Uncaught ReferenceError: exclued is not defined
     at Logline (../src/logline.js:62:31)
     at (index.js:15:11)
@@ -365,7 +366,7 @@ Uncaught ReferenceError: exclued is not defined
 
 &lt;h2 id=&quot;github源码&quot;&gt;&lt;a href=&quot;https://github.com/7ippo/sourcemapping&quot;&gt;☆Github源码☆&lt;/a&gt;&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;// sourcemapping.ts
+&lt;pre&gt;&lt;code class=&quot;language-typescript&quot;&gt;// sourcemapping.ts
 #!/usr/bin/env node
 
 import * as path from 'path';
@@ -400,7 +401,7 @@ function printToConsole(error_msg: string, stack_frames: ErrorStackParser.StackF
 
 async function loadAllConsumer(dir_path: string, stack_frame_array: ErrorStackParser.StackFrame[],
     sourcemap_map: Map&amp;lt;string, SourceMapConsumer&amp;gt;) {
-    // 一次性把堆栈中用到的sourcemap读进内存
+    // load all sourcemap files into memory
     const sourcemap_list = new Set();
     const regExp = /.+\/(.+)$/;
     for (const frame of stack_frame_array) {
@@ -449,9 +450,9 @@ if (program.stack &amp;amp;&amp;amp; program.msg &amp;amp;&amp;amp; program.map)
 
     const sourcemap_map = new Map&amp;lt;string, SourceMapConsumer&amp;gt;();
 
-    // 加载全部要用到的sourcemap文件
+    // load all sourcemap files
     loadAllConsumer(program.map, stack_frame_array, sourcemap_map).then(() =&amp;gt; {
-        // 遍历解析stack_frame_array
+        // parse stack_frame_array
         stack_frame_array.forEach(stack_frame =&amp;gt; {
             let name = stack_frame.fileName;
             if (sourcemap_map.has(name)) {
@@ -467,11 +468,11 @@ if (program.stack &amp;amp;&amp;amp; program.msg &amp;amp;&amp;amp; program.map)
             }
         });
 
-        // 打印结果
+        // print result
         printToConsole(program.msg, stack_frame_array);
     });
 
-    // 解析结束后destroy所有consumer
+    // destroy all consumers
     for (let consumer of Array.from(sourcemap_map.values())) {
         consumer.destroy();
     }
@@ -565,7 +566,7 @@ e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
 &lt;p&gt;通过&lt;strong&gt;版本控制&lt;/strong&gt;，通过gulp工具添加md5后缀改资源文件名，可以实现热更。当资源发生更新，通过版本管理工具同步更新引用该资源的位置，指向新的文件。请求的url发生变化，浏览器便不会读取缓存。假如再通过&lt;code&gt;Cache-Control:max-age&lt;/code&gt;或&lt;code&gt;Expire&lt;/code&gt;设置一个很长的缓存有效期，比如1年，那么在没有发布更新时，缓存的使用率是100%，且不会发生网络请求。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;弊端&lt;/strong&gt;：&lt;/p&gt;
 &lt;p&gt;当大文件采取版本管理频繁更新时，会出现缓存大小膨胀的情况。e.g.一份压缩后2.3M的主逻辑js文件&lt;code&gt;bundle-md5.js&lt;/code&gt;，如果发布10次更新，每次更新生成不同的文件名。那么如果用户恰好在每次更新后打开游戏，便会在浏览器内存中缓存11份不同md5后缀的该文件，直接占用25.3M的缓存空间，这还只是更新内容的一小部分。缓存大小随更新发布的急速膨胀也会导致触发某些浏览器环境如小程序中的限制：缓存大小达到一定标准(&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/base-ability/file-system.html&quot;&gt;微信小游戏50MB限制&lt;/a&gt;)，后续请求的结果将无法写入缓存。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eab611c431148.png&quot; alt=&quot;Chrome中的多份同文件缓存&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eab611c431148.png&quot; alt=&quot;Chrome中的多份同文件缓存&quot; width=&quot;500&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*使用&lt;code&gt;ChromeCacheViewer&lt;/code&gt;可以看到存在多份同文件不同后缀名的缓存*&lt;/em&gt;&lt;/p&gt;
 &lt;h3&gt;&lt;code&gt;Cache-Control:no-cache&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;优势&lt;/strong&gt;：&lt;/p&gt;
@@ -573,7 +574,7 @@ e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map
 &lt;blockquote&gt;
 &lt;p&gt;注意，ETag作为缓存指示正在被大型网站弃用：主要原因是大部分CDN服务器开启了gzip压缩，而同一份文件(主要是css/js，图片压缩率不高一般不会压缩)在不同配置下执行gzip压缩后无法保证其唯一性，这会导致ETag失效，所以&lt;a href=&quot;https://help.aliyun.com/knowledge_detail/40071.html&quot;&gt;nginx官方在开启gzip模块后会移除ETag&lt;/a&gt;。另外如果可以忽略在1秒内多次更新的情况，使用Last-Modified可以实现同样的功能，还能节约服务器计算资源。IETF没有规定ETag的计算方法，具体实现由不同服务器(Apache Nginx Tengine)自己决定。所以ETag是否会因为负载均衡策略导致同一份资源在不同服务器上计算结果不同我们不得而知，为了不浪费带宽资源，还是建议&lt;strong&gt;关闭ETag&lt;/strong&gt;。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eaab482f33401.png&quot; alt=&quot;gzip与ETag&quot; width=&quot;742&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2019/08/01/5d429eaab482f33401.png&quot; alt=&quot;gzip与ETag&quot; width=&quot;500&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
 &lt;em&gt;*从缓存文件中可以看到内容编码是gzip便不会有ETag指示*&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;弊端&lt;/strong&gt;：&lt;/p&gt;
 &lt;p&gt;直接走协商缓存，跳过了强缓存命中的阶段，每次请求资源时都会发Validation请求给服务器校验资源是否最新。对于不频繁更新的一些资源来说，服务器频繁建立TCP连接的开销应该纳入考量，这样消耗服务器带宽和计算资源是否有必要还需要讨论。如果可以接受每请求一个资源都发起一个网络请求，那所有资源都使用该策略即可。&lt;/p&gt;
@@ -1136,8 +1137,7 @@ if __name__ == '__main__':
 &lt;/ul&gt;
 &lt;h2&gt;脚本部署结构&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;
-&amp;gt;scripts
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;&amp;gt;scripts
     &amp;gt;bin  业务脚本
     &amp;gt;lib  引用库
         &amp;gt;tools  内部工具
@@ -1169,20 +1169,20 @@ if __name__ == '__main__':
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Usage 使用方法：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;source ./logForShell.sh &quot;default&quot;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;source ./logForShell.sh &quot;default&quot;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;入口脚本&lt;/strong&gt;中，在调用任何日志方法之前，请先调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;CleanFlagBeforeStart&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会清除上一次可能因脚本执行失败而留下的标志文件，该标志会阻止日志继续输出。&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;所有日志通过调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;Show&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数输出：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;Show &quot;Log For Shell&quot;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;Show &quot;Log For Shell&quot;
 
 2018-09-05 [17:50:24] Log For Shell
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;source ./logForShell.sh [Shell]
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;source ./logForShell.sh [Shell]
 Show &quot;Using TAG to LOG&quot;
 
 2018-09-11 [10:08:26] [Shell] Using TAG to LOG
@@ -1190,7 +1190,7 @@ Show &quot;Using TAG to LOG&quot;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;脚本开始时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;BeforeShell&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;BeforeShell $@
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;BeforeShell $@
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
@@ -1200,7 +1200,7 @@ Show &quot;Using TAG to LOG&quot;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;脚本执行步骤时，打印步骤序号和步骤名称。调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;Step&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;Step 1 &quot;Copy Unity Resource&quot;
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;Step 1 &quot;Copy Unity Resource&quot;
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
@@ -1209,7 +1209,7 @@ Show &quot;Using TAG to LOG&quot;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;脚本结束时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;AfterShell&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会打印脚本结束标志：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;AfterShell
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;AfterShell
 
 2018-09-05 [17:52:21]
 2018-09-05 [17:52:21]    +   test.sh  FINISH   +
@@ -1217,7 +1217,7 @@ Show &quot;Using TAG to LOG&quot;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;需要打印关键步骤成功的标志时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;ReportSuccess&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;ReportSuccess &quot;Build Dynamic Framework Project&quot;	
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;ReportSuccess &quot;Build Dynamic Framework Project&quot;	
 
 ****     Build Dynamic Framework Project SUCCESS      ****
 
@@ -1225,7 +1225,7 @@ Show &quot;Using TAG to LOG&quot;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;需要打印错误标志时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;ReportFailure&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;ReportFailure		
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;ReportFailure		
 
 ****     line 10 test.sh REPORTED FAILURE     ****
 
@@ -1250,7 +1250,7 @@ Show &quot;Using TAG to LOG&quot;
 &lt;blockquote&gt;&lt;pre&gt;$Ditch =&amp;gt; ${Ditch}&lt;/pre&gt;&lt;/blockquote&gt;
 &lt;li&gt;
 规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：&lt;/li&gt;
-&lt;pre&gt;&lt;code class=&quot;language-go&quot;&gt;function HandleError(){
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;function HandleError(){
 returnVal=$?
 if [ $retVal -ne 0 ]; then
     Show &quot; error exit status &quot;$returnVal&quot; last command&quot;
@@ -1275,7 +1275,7 @@ fi
 &lt;/pre&gt;&lt;/blockquote&gt;
 &lt;li&gt;
 if-else流程控制，then和条件判断请写在同一行:&lt;/li&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;if [ ... ];then
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;if [ ... ];then
   ...
 elif [ ... ]; then
   ...
@@ -1289,7 +1289,7 @@ fi
 &lt;br /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&quot;logforshell代码&quot;&gt;&lt;a href=&quot;https://github.com/7ippo/logForShell&quot;&gt;☆logForShell代码☆&lt;/a&gt;&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;#!/bin/bash
+&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#!/bin/bash
 
 # 全局执行结果标志位，有一步出错后日志不会继续输出
 # 考虑到子Shell与父Shell进程间通信，使用与该文件同目录下的tag文件作为标志位进行信息传递和判断
