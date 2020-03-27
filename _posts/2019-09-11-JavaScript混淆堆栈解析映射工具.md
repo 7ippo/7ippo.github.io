@@ -16,17 +16,16 @@ tags: H5 npm 工具
 
 ## 使用方法
 
-需要传入3个参数：
+需要传入2个参数：
 
-- `window.onerror`中捕获的`JSON.stringfy(errorObj.stack)`即需要被解析的堆栈字符串
+- window.onerror中捕获的JSON.stringfy(errorObj.stack)即需要被解析的堆栈字符串
   > e.g.  
-  > `ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11`
-
-- `window.onerror`捕获的`errorMessage`即错误信息
-  > e.g. `Uncaught ReferenceError: a is not defined`
+  > ReferenceError: exclued is not defined\n   
+  >   at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n   
+  >   at http://localhost:7777/aabbcc/index.js:15:11
 
 - 存放sourcemap文件的路径，绝对路径或相对路径都可以
-  > e.g. `./test`  
+  > e.g. ./test  
   > 注意：sourcemap文件命名规则为各压缩混淆工具的默认规则，即:javascript文件名.map，需要直接存放在传入的路径下
 
 <pre><code class="language-shell">Usage: sourcemapping [options]
@@ -34,7 +33,6 @@ tags: H5 npm 工具
 Options:
   -v, --version         output the version number
   -s, --stack &lt;string&gt;  stack string which can obtain from JSON.stringfy(Error.stack)
-  -i, --msg &lt;string&gt;    error message. e.g. Uncaught ReferenceError: a is not defined
   -m, --map &lt;string&gt;    sourcemap dir path. Where to find sourcemap
   -h, --help            output usage information
 
@@ -42,7 +40,7 @@ Options:
 
 For example:
 
-<pre><code class="language-shell">sourcemapping -s "ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11" -i "Uncaught ReferenceError: exclued is not defined" -m "./test"
+<pre><code class="language-shell">sourcemapping -s "ReferenceError: exclued is not defined\n    at getParameterByName (http://localhost:7777/aabbcc/logline.min.js:1:9827)\n    at http://localhost:7777/aabbcc/index.js:15:11" -m "./test"
 </code></pre>
 
 ## 输出
@@ -120,17 +118,22 @@ async function loadAllConsumer(dir_path: string, stack_frame_array: ErrorStackPa
 }
 
 const program = new commander.Command();
-program.version('0.0.1', '-v, --version');
+program.version('1.0.8', '-v, --version');
 program.option('-s, --stack &lt;string&gt;', 'stack string which can obtain from JSON.stringfy(Error.stack)', stackStringProcess);
-program.option('-i, --msg &lt;string&gt;', 'error message. e.g. Uncaught ReferenceError: a is not defined');
 program.option('-m, --map &lt;string&gt;', 'sourcemap dir path. Where to find sourcemap');
 program.parse(process.argv);
 
-if (program.stack && program.msg && program.map) {
+if (program.stack && program.map) {
+    const msgExp = /^(.+)\n/;
+    const msg = msgExp.exec(program.stack)[1];
+    if (!msg) {
+        console.error('Error message parsing failed, please check input stack which must contain error message. \ne.g. Uncaught ReferenceError: a is not defined\\n');
+        process.exit(0);
+    }
     let error_obj: Error = {
         'stack': program.stack,
-        'message': program.msg,
-        'name': program.msg.split(':')[0]
+        'message': msg,
+        'name': msg.split(':')[0]
     }
     let stack_frame_array: ErrorStackParser.StackFrame[] = [];
     try {
