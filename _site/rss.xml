@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 28 Mar 2020 11:57:45 +0800</pubDate>
-    <lastBuildDate>Sat, 28 Mar 2020 11:57:45 +0800</lastBuildDate>
+    <pubDate>Sat, 28 Mar 2020 14:20:00 +0800</pubDate>
+    <lastBuildDate>Sat, 28 Mar 2020 14:20:00 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -17,7 +17,7 @@
 
 &lt;p&gt;将发布的目录导入微信开发者工具中编译后，最容易出现的问题是一些已经引入的js文件中的全局变量报undefined，常见于我们自己写的js库。这个问题和微信的&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/framework/module.html&quot; target=&quot;_blank&quot;&gt;模块机制&lt;/a&gt;有关，微信的JavaScript引擎与浏览器中的不同，浏览器js执行时默认绑定全局变量到window域。在微信小游戏环境下，Laya导出的index.js中require引入的js文件并不会将其全局变量暴露给其他js文件调用。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/27/ZHkmqBbgrAWPFeC.png&quot; alt=&quot;模块机制.png&quot; data-action=&quot;zoom&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/27/ZHkmqBbgrAWPFeC.png&quot; alt=&quot;模块机制.png&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 80%;&quot; /&gt;&lt;br /&gt;
 *&lt;em&gt;微信小游戏的模块机制&lt;/em&gt;*&lt;/p&gt;
 
 &lt;p&gt;小游戏环境中其实也有一个类似浏览器中window的全局对象：GameGlobal，且微信官方对此做了一定的polyfill工作，其工程目录下的&lt;code class=&quot;highlighter-rouge&quot;&gt;weapp-adapter.js&lt;/code&gt;允许我们只要显示的将全局变量绑定到window域下，即可在其他文件里通过window调用。比如引入了logline.js第三方库，那在该文件中我们可以显示地绑定:&lt;/p&gt;
@@ -52,7 +52,7 @@
 
 &lt;p&gt;不出意外的话，到这一步已经可以在&lt;strong&gt;微信开发者工具&lt;/strong&gt;中跑通了（因为开发者工具中预览对包体大小没有限制）。记得检查一下是否在&lt;em&gt;详情 - 项目&lt;/em&gt;中勾选了&lt;em&gt;不检查合法域名与HTTPS&lt;/em&gt;。否则就要求网络请求均为https协议，WebSocket连接均为wss协议，且在微信后台&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/base-ability/network.html&quot; target=&quot;_blank&quot;&gt;配置&lt;/a&gt;后才可以继续运行，这也是真机上预览的要求。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/27/3JprQta7wPKUekB.png&quot; alt=&quot;不校验域名.png&quot; data-action=&quot;zoom&quot; height=&quot;600&quot; /&gt;    &lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/27/3JprQta7wPKUekB.png&quot; alt=&quot;不校验域名.png&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 60%;&quot; /&gt;    &lt;br /&gt;
 *&lt;em&gt;勾选不校验域名&lt;/em&gt;*&lt;/p&gt;
 
 &lt;h2 id=&quot;分包&quot;&gt;分包&lt;/h2&gt;
@@ -150,7 +150,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 
 &lt;p&gt;在根目录下运行&lt;code class=&quot;highlighter-rouge&quot;&gt;webpack&lt;/code&gt;，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个&lt;a href=&quot;/2019/09/11/JavaScript混淆堆栈解析映射工具.html&quot; target=&quot;_blank&quot;&gt;sourcemapping工具&lt;/a&gt;。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/28/nwtgkrBPoLDG5sy.png&quot; alt=&quot;dist分包结果.png&quot; data-action=&quot;zoom&quot; height=&quot;500&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/28/nwtgkrBPoLDG5sy.png&quot; alt=&quot;dist分包结果.png&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 60%;&quot; /&gt;&lt;br /&gt;
 *&lt;em&gt;webpack-splitChunks打包结果&lt;/em&gt;*&lt;/p&gt;
 
 &lt;p&gt;delete.js文件只是我们用来拆分bundle的一个产物，因为其模块也被其他模块所依赖，所以已经被打进公共代码块，故可以将其删除。剩余的js文件则随意分成几个部分，放入小游戏主包与分包中，使其满足4MB大小限制即可。通过微信的分包机制先加载主包，主包中最后再加载各个分包。webpack的加载机制保证了公共代码块乱序引入也可以正确的加载打包模块的依赖关系。所以尽量使主包接近4MB大小限制即可。关于微信的分包实现就不赘述，非常简单可以参考微信官方&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/base-ability/sub-packages.html&quot; target=&quot;_blank&quot;&gt;文档&lt;/a&gt;。&lt;/p&gt;
