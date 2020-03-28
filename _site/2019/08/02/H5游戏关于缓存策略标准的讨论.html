@@ -148,6 +148,7 @@ Author: Ray-Eldath
       <div class="post-meta">
         <span class="post-meta-item"><i class="iconfont icon-author"></i>周子博</span>
         <time class="post-meta-item" datetime="19-08-02"><i class="iconfont icon-date"></i>02 Aug 2019</time>
+        <i class="iconfont icon-search"></i> <span id="/2019/08/02/H5%E6%B8%B8%E6%88%8F%E5%85%B3%E4%BA%8E%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%E6%A0%87%E5%87%86%E7%9A%84%E8%AE%A8%E8%AE%BA.html" class="post-meta-item leancloud_visitors" data-flag-title="H5游戏缓存策略的讨论">-</span> 次阅读
       </div>
     </div>
     
@@ -343,6 +344,79 @@ Author: Ray-Eldath
   </section>
   <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
 </footer>
+
+<!-- 同时兼容http与https -->
+<script src="//cdn1.lncld.net/static/js/2.5.0/av-min.js"></script>
+<script>
+    // 第一个参数是appid，第二个参数是appkey，此处的只是示例
+    AV.initialize("EYgyitdcYOMWLdS6JfHNHD43-gzGzoHsz", "3hmJaI6a8V7rhyspVOMsr2oR");
+    // 自己创建的Class的名字
+    var name='Counter';
+    function createRecord(Counter){
+      // 设置 ACL
+      var acl = new AV.ACL();
+      acl.setPublicReadAccess(true);
+      acl.setPublicWriteAccess(true);
+      // 获得span的所有元素
+      var elements=document.getElementsByClassName('leancloud_visitors');
+      // 一次创建多条记录
+      var allcounter=[];
+      for (var i = 0; i < elements.length ; i++) {
+        // 若某span的内容不包括 '-' ，则不必创建记录
+        if(elements[i].textContent.indexOf('-') == -1){
+          continue;
+        }
+        var title = elements[i].getAttribute('data-flag-title');
+        var url = elements[i].id;
+        var newcounter = new Counter();
+        newcounter.setACL(acl);
+        newcounter.set("title", title);
+        newcounter.set("url", url);
+        newcounter.set("time", 1);
+        allcounter.push(newcounter);
+        // 顺便更新显示span为默认值0
+        elements[i].textContent=1;
+      }
+      AV.Object.saveAll(allcounter).then(function (todo) {
+        // 成功保存记录之后
+        console.log('New Record Success！');
+      }, function (error) {
+        // 异常错误 
+        console.error('创建记录失败: ' + error.message);
+      });
+    }
+    function showCount(Counter){
+      var $visitors = $(".leancloud_visitors");
+      if($visitors.length == 0) return;
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+      query.equalTo('url', url);
+      query.find().then(function (results) {
+        // 当获取到的记录为0时置默认值
+        if(results.length==0){
+          createRecord(Counter);
+          return;
+        }
+        // 将获取到的数据设置为text
+        var item = results[0];
+        var url = item.get('url');
+        var time = item.get('time');
+        var element = document.getElementById(url);
+        element.textContent = time + 1;
+        // 访问量+1
+        item.increment('time');
+        item.save().then(function (testObject) {
+        });
+      }, function (error) {
+        console.log('query error:'+error.message);
+      });
+    }
+    $(function() {
+      var Counter = AV.Object.extend(name);
+      showCount(Counter);
+    });
+</script>
 
 
   <script src="/assets/js/social-share.min.js"></script>
