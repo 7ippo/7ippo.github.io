@@ -238,7 +238,6 @@
 <!-- 同时兼容http与https -->
 <script src="//cdn1.lncld.net/static/js/2.5.0/av-min.js"></script>
 <script>
-    // 第一个参数是appid，第二个参数是appkey，此处的只是示例
     AV.initialize("EYgyitdcYOMWLdS6JfHNHD43-gzGzoHsz", "3hmJaI6a8V7rhyspVOMsr2oR");
     // 自己创建的Class的名字
     var name='Counter';
@@ -264,15 +263,15 @@
         newcounter.set("url", url);
         newcounter.set("time", 1);
         allcounter.push(newcounter);
-        // 顺便更新显示span为默认值0
+        // 顺便更新显示span为默认值1
         elements[i].textContent=1;
       }
       AV.Object.saveAll(allcounter).then(function (todo) {
         // 成功保存记录之后
-        console.log('New Record Success！');
+        console.log('New Visit Record Success');
       }, function (error) {
         // 异常错误 
-        console.error('创建记录失败: ' + error.message);
+        console.error('New Visit Record Fail: ' + error.message);
       });
     }
     function showCount(Counter){
@@ -299,7 +298,7 @@
         item.save().then(function (testObject) {
         });
       }, function (error) {
-        console.log('query error:'+error.message);
+        console.log('save error:'+error.message);
       });
     }
     $(function() {
