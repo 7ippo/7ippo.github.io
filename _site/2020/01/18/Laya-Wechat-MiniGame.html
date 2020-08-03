@@ -11,13 +11,13 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Laya引擎为了H5游戏上线微信等小游戏平台的无缝对接做了许多工作，但是项目上线微信小游戏还是遇到了不少的问题。不过都已经一一解决，现在把收获的经验和解决问题的方法和同学们分享一下。以下我就按照从Laya发布小游戏开始，问题可能出现的顺序简单讨论一下。" />
 <meta property="og:description" content="Laya引擎为了H5游戏上线微信等小游戏平台的无缝对接做了许多工作，但是项目上线微信小游戏还是遇到了不少的问题。不过都已经一一解决，现在把收获的经验和解决问题的方法和同学们分享一下。以下我就按照从Laya发布小游戏开始，问题可能出现的顺序简单讨论一下。" />
-<link rel="canonical" href="http://localhost:4000/2020/01/18/Laya%E9%A1%B9%E7%9B%AE%E8%BD%BB%E6%9D%BE%E4%B8%8A%E7%BA%BF%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F.html" />
-<meta property="og:url" content="http://localhost:4000/2020/01/18/Laya%E9%A1%B9%E7%9B%AE%E8%BD%BB%E6%9D%BE%E4%B8%8A%E7%BA%BF%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F.html" />
+<link rel="canonical" href="http://localhost:4000/2020/01/18/Laya-Wechat-MiniGame.html" />
+<meta property="og:url" content="http://localhost:4000/2020/01/18/Laya-Wechat-MiniGame.html" />
 <meta property="og:site_name" content="Tingsven’s blog" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-01-18T00:00:00+08:00" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"Laya项目轻松上线微信小游戏","dateModified":"2020-01-18T00:00:00+08:00","datePublished":"2020-01-18T00:00:00+08:00","url":"http://localhost:4000/2020/01/18/Laya%E9%A1%B9%E7%9B%AE%E8%BD%BB%E6%9D%BE%E4%B8%8A%E7%BA%BF%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/01/18/Laya%E9%A1%B9%E7%9B%AE%E8%BD%BB%E6%9D%BE%E4%B8%8A%E7%BA%BF%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F.html"},"author":{"@type":"Person","name":"周子博"},"description":"Laya引擎为了H5游戏上线微信等小游戏平台的无缝对接做了许多工作，但是项目上线微信小游戏还是遇到了不少的问题。不过都已经一一解决，现在把收获的经验和解决问题的方法和同学们分享一下。以下我就按照从Laya发布小游戏开始，问题可能出现的顺序简单讨论一下。","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","headline":"Laya项目轻松上线微信小游戏","dateModified":"2020-01-18T00:00:00+08:00","datePublished":"2020-01-18T00:00:00+08:00","url":"http://localhost:4000/2020/01/18/Laya-Wechat-MiniGame.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/01/18/Laya-Wechat-MiniGame.html"},"author":{"@type":"Person","name":"周子博"},"description":"Laya引擎为了H5游戏上线微信等小游戏平台的无缝对接做了许多工作，但是项目上线微信小游戏还是遇到了不少的问题。不过都已经一一解决，现在把收获的经验和解决问题的方法和同学们分享一下。以下我就按照从Laya发布小游戏开始，问题可能出现的顺序简单讨论一下。","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="keywords"  content="H5, Laya, 小游戏">
@@ -148,7 +148,7 @@ Author: Ray-Eldath
       <div class="post-meta">
         <span class="post-meta-item"><i class="iconfont icon-author"></i>周子博</span>
         <time class="post-meta-item" datetime="20-01-18"><i class="iconfont icon-date"></i>18 Jan 2020</time>
-        <i class="iconfont icon-search"></i> <span id="/2020/01/18/Laya%E9%A1%B9%E7%9B%AE%E8%BD%BB%E6%9D%BE%E4%B8%8A%E7%BA%BF%E5%BE%AE%E4%BF%A1%E5%B0%8F%E6%B8%B8%E6%88%8F.html" class="post-meta-item leancloud_visitors" data-flag-title="Laya项目轻松上线微信小游戏">-</span> 次阅读
+        <i class="iconfont icon-search"></i> <span id="/2020/01/18/Laya-Wechat-MiniGame.html" class="post-meta-item leancloud_visitors" data-flag-title="Laya项目轻松上线微信小游戏">-</span> 次阅读
       </div>
     </div>
     
@@ -366,7 +366,7 @@ npm <span class="nb">link </span>ts-loader clean-webpack-plugin
 
       
       <div class="read-next-item">
-        <a href="/2019/11/01/Laya%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83%E4%BC%98%E5%8C%96.html" class="read-next-link"></a>
+        <a href="/2019/11/01/Laya-Compile-Optimization.html" class="read-next-link"></a>
           <section>
             <span>Laya编译发布优化</span>
             <p>Laya IDE编译与发布的一些问题随着游戏开发的推进，越来越多的功能和内容被添加，IDE的编译与发布也越来越慢，...</p>
