@@ -276,7 +276,7 @@ gulp.task("publish", ["version2"], function () {
 });
 ~~~
 
-> 外网收集的报错堆栈如何解析请参考我的另一篇文章[sourcemapping-JavaScript混淆堆栈解析映射工具](/2019/09/11/JavaScript混淆堆栈解析映射工具.html)
+> 外网收集的报错堆栈如何解析请参考我的另一篇文章[sourcemapping-JavaScript混淆堆栈解析映射工具](/2019/09/11/JavaScript-Source-Mapping.html)
 
 ## 关于Linux下命令行工具的讨论
 
