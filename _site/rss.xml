@@ -5,9 +5,567 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 03 Aug 2020 20:24:20 +0800</pubDate>
-    <lastBuildDate>Mon, 03 Aug 2020 20:24:20 +0800</lastBuildDate>
+    <pubDate>Mon, 15 Mar 2021 21:46:47 +0800</pubDate>
+    <lastBuildDate>Mon, 15 Mar 2021 21:46:47 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>基于第一个完整项目经验的性能分析与优化讨论(一)</title>
+        <description>&lt;h2 id=&quot;项目经历&quot;&gt;项目经历&lt;/h2&gt;
+
+&lt;p&gt;从2019年4月开始以引擎身份进入项目组开始，我可以说是从头到尾参与了H2项目的开发。从最开始的demo预研，立项讨论，再到开始开发2D的场景编辑器，到实现项目的基础模块和功能，包括性能问题的排查与优化，一直到2020年6月份最后收尾，这持续一年多的项目经验让我收获颇丰，也有了对游戏开发有了初步的理解。&lt;/p&gt;
+
+&lt;p&gt;在开始聊正文之前，先简单介绍一下项目性质。H2是基于&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎开发的多平台H5 RPG手游，以包括&lt;code class=&quot;highlighter-rouge&quot;&gt;Android/iOS Native&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;Android/iOS WebView&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;Chrome/Safari浏览器&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;微信/QQ小游戏&lt;/code&gt;等多种形式上线多个平台。这也是H5的优势：&lt;em&gt;一次开发，多端体验&lt;/em&gt; ，不过适配开发的内容也不少。&lt;/p&gt;
+
+&lt;p&gt;游戏的内容与形式就不提了，属于国漫IP衍生产品，玩法是典型的国内RPG风格，本文单纯从技术上分享我关于游戏性能优化的一些思考。&lt;/p&gt;
+
+&lt;h2 id=&quot;我参与了哪些性能相关的内容&quot;&gt;我参与了哪些性能相关的内容&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这部分主要是介绍我在H2项目中做的与性能优化相关的工作。关于性能优化相关的&lt;a href=&quot;#关于性能优化我的一些思考&quot;&gt;思考&lt;/a&gt;和普适性的优化&lt;a href=&quot;/2020/06/01/How-To-Analyze-And-Optimize-Performance-1.html&quot; target=&quot;_blank&quot;&gt;思路&lt;/a&gt;可以直接跳到对应部分。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;资源规格的设立和约定&quot;&gt;资源规格的设立和约定&lt;/h3&gt;
+
+&lt;p&gt;项目初期对美术资源规格的把控从基础层面决定了后期性能的表现与优化难度。而这除了通过demo进行粗略的性能验证以外，也需要大量的项目经验辅佐判断。我入组时，引擎这边预研的demo已经跑了起来，虽然只有一个简易的模型和一个2D背景。H2项目是我们第一次使用Laya引擎开发的项目，缺少很多经验和技术的积累。所以在很多不太熟悉的关键点上，需要讨论确立流程。&lt;/p&gt;
+
+&lt;p&gt;在项目立项早期，我作为引擎共同参与了包括美术、项目组、策划等决策人员出席的研讨会，会上确立了游戏的基本表现形式，比如是2.5D还是3D，美术资源的规格与游戏精度，比如贴图的分辨率，主角有多少个朝向，动画的类型是序列帧还是骨骼动画，如果是序列帧动画那是要具体多少帧，场景内最多容纳多少怪物等等。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/序列帧动画.gif&quot; alt=&quot;当时确定了主角动画用序列帧来实现&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*最终主角动画使用序列帧来实现，UI中人物用骨骼动画来展示*&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;因为考虑到整体游戏的风格和性能要求，骨骼动画并没有用作主角的展示，只是作为点缀加入到了部分UI之中。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;在这个阶段，通过经验选定一些内容的实现方式后还需要根据游戏的需求通过demo测一下基本的性能表现，比如可接受的情况下最多支持多少动画同屏播放。而这些性能测试的表现也间接影响了后续策划对游戏内容的一些规划。&lt;/p&gt;
+
+&lt;h3 id=&quot;公共图集&quot;&gt;公共图集&lt;/h3&gt;
+
+&lt;p&gt;图集是最常见的静态合批技术，通过将不同的图片优化合成为一张大图，并记录不同图片的位置大小等索引信息，达到以下效果：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;合成图集时会去除每张图片周围的空白区域，加上可以在整体上实施各种优化算法，合成图集后可以大大减少游戏包体和内存占用&lt;/li&gt;
+  &lt;li&gt;多个&lt;code class=&quot;highlighter-rouge&quot;&gt;Sprite&lt;/code&gt;如果渲染的是来自同一张图集的图片时，这些&lt;code class=&quot;highlighter-rouge&quot;&gt;Sprite&lt;/code&gt;可以使用同一个渲染批次来处理，大大减少CPU的运算时间，提高运行效率。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;合并渲染批次，是实时渲染里很多CPU优化技术的核心思路。合并渲染批次，相当于减少drawcall，即调用&lt;code class=&quot;highlighter-rouge&quot;&gt;DrawIndexedPrimitive&lt;/code&gt;(DirectX)或者&lt;code class=&quot;highlighter-rouge&quot;&gt;glDrawElements&lt;/code&gt;(OpenGL)的次数。主要针对的是CPU在两次drawcall之间的渲染状态改变比如切换到使用一个不同的材质，会导致显卡驱动中进行属于资源密集型&lt;code class=&quot;highlighter-rouge&quot;&gt;resource-intensive&lt;/code&gt;的一致性验证和转换的工作，而这部分性能开销在drawcall数量上去后十分可观。&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// drawcall&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;SetShader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Diffuse&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;SetTexture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;铁&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;DrawPrimitive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DeskVertexBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// another drawcall&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;SetShader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;VertexLight&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;SetTexture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;木&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;DrawPrimitive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ChairVertexBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Laya IDE内置了图集打包工具，打包会生成若干张png与一个json格式记录图集信息的atlas文件。一般情况下我们会将一个功能或UI面板中用到的图片打成一个图集来达到减少drawcall的目的，同时我们也会将各个功能通用的一些小图或组件打包成公共图集，持久的加载在内存中，避免对待普通图集时的清理，来减少drawcall数量和提升加载速度。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/图集.png&quot; alt=&quot;图集&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*图集*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/公共图集.png&quot; alt=&quot;公共图集&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*公共图集*&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;公共图集的优化效果则取决于各个功能模块的开发者，他们需要将多个功能/模块中通用的图片摘出，加入公共图集进行打包，而非独立打包。同时也需要考虑公共图集的大小和数量，因为长期驻存在内存中意味着内存规模的上升，这需要衡量和取舍。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;对象池技术&quot;&gt;对象池技术&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Object Pool&lt;/code&gt;对象池也是极其常见的性能优化技术，针对频繁、反复创建可重用对象的场景有很好的优化效果，比如游戏内的飘字，子弹，可重用的动画组件，场景内的角色怪物等等。对象池与内存池技术原理相似，都是考虑到频繁的内存申请与释放而引起的系统调用带来的性能开销。所以通过回收重用对象避免，能够有&lt;em&gt;一定&lt;/em&gt;的性能优化效果。不过优化效果因场景而异，在一些非常简单的使用场景下使用对象池技术反而会导致反向优化。&lt;/p&gt;
+
+&lt;p&gt;一般情况下，对象池的工作逻辑时这样的：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;在初始化阶段，对象池会创建若干同一类型的对象，并初始化一个记录各对象可用状态的表。&lt;/li&gt;
+  &lt;li&gt;每次需要创建对象时，改为向池借用一个对象，并且使用者自己做好初始化工作，同时记录表中更新该对象的可用状态。&lt;/li&gt;
+  &lt;li&gt;当用完对象需要销毁时，改为向池归还该对象，池则会做好清理和重用的工作，比如调用该对象的构造函数，同时记录表中更新该对象的可用状态。&lt;/li&gt;
+  &lt;li&gt;同时池应该也要具备自管理的一些机制，比如：
+    &lt;ul&gt;
+      &lt;li&gt;当没有可用对象时，需要拓展池的规模，保证能够正常的借出可用对象；&lt;/li&gt;
+      &lt;li&gt;而在一个对象创建高峰过后，也应该有一些策略来缩小池的大小，销毁池内的一些对象，即控制池规模在一定范围内；&lt;/li&gt;
+      &lt;li&gt;如果支持多线程，则在借出对象时需要做一些同步支持工作；&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;根据需求不同，池的规模大小也不同，如果池的规模过大，在初始化批量创建或者缩小池的批量销毁时，可能会导致单帧Update的耗时过高，引起帧数波峰变化，这种情况下可以通过摊帧解决。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 可供参考的对象池类结构&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ObjectPool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pool_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;PoolType&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           &lt;span class=&quot;c1&quot;&gt;// 池类型&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;obj_class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;                &lt;span class=&quot;c1&quot;&gt;// 对象类型&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;constructor_args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// 传入构造器的参数&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;max_obj_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;               &lt;span class=&quot;c1&quot;&gt;// 最大对象id，从1开始&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;obj_map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;                    &lt;span class=&quot;c1&quot;&gt;// 对象池: {pool_obj_id, object}&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;obj_cur_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;            &lt;span class=&quot;c1&quot;&gt;// 对象池当前数量&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;idle_key_map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{};&lt;/span&gt;               &lt;span class=&quot;c1&quot;&gt;// 记录对象信息空闲池: {pool_obj_id, boolean}&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;idle_key_cur_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;// 空闲池当前数量&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;retain_threshold&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// 池清理的下阈值: 池中对象数量&amp;lt;=此值, 则停止清理&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shrink_threshold&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;// 池清理的上阈值: 池中对象数量&amp;gt;=此值, 则可以清理&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shrink_check_time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;        &lt;span class=&quot;c1&quot;&gt;// 池清理的间隔时间&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;delay_create_flag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// 是否摊帧创建&lt;/span&gt;
+
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;inited&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pool_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;               &lt;span class=&quot;c1&quot;&gt;// 池ID&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;next_shrink_interval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// 下次池清理的剩余时间&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 构造对象池，传入对象类型，对象构造时的参数，池规模大小等信息&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 自动管理与摊帧创建&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 借出对象，同时具备拓展池规模的功能&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;RentObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 归还对象，同时检查是否需要缩小池规模&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;GiveBackObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 真正创建一个对象&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CreateOneObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 真正销毁一个对象&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DestroyObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 缩小池规模&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Shrink&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{...}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 一些统计、profile接口&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;cpu耗时分析工具与可视化性能报告&quot;&gt;CPU耗时分析工具与可视化性能报告&lt;/h3&gt;
+
+&lt;p&gt;在一些游戏场景或内容有肉眼可见的卡顿，或者平均帧数不达标，或者需要在开发的不同阶段对性能表现进行把控的时候，性能的量化和可视化工具就是一个非常重要的东西了。最常见的应该就是对CPU耗时的分析工具了，而这个大部分引擎和IDE都做了支持，比如&lt;code class=&quot;highlighter-rouge&quot;&gt;Unity Profile&lt;/code&gt;，可以详细到函数的执行栈和具体某个函数的执行时间。&lt;/p&gt;
+
+&lt;p&gt;Laya作为H5游戏引擎，我们可以使用Chrome的DevTool中的Performance来&lt;a href=&quot;https://developers.google.com/web/tools/chrome-devtools/evaluate-performance?hl=zh-cn&quot; target=&quot;_blank&quot;&gt;分析&lt;/a&gt;游戏的CPU耗时，同样可以看到每一帧的执行栈和具体耗时。除此之外，在JavaScript执行的过程中，我们还可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;performance&lt;/code&gt; API对一些我们关注的执行过程进行耗时测量和标记。随后在DevTool记录Performance Record过程中，我们标记和测量的结果都会显示在Timeline瀑布图中的Timings栏，我们还可以在Event栏中对这些标记进行检索和排序。&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A_End&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A_Result&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A_End&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;对此我们可以有很多应用，比如对所有协议的收发阶段进行标记和测量，并在性能报告中对协议的耗时进行检索和排序，就能够一眼看出哪些协议耗时过高或次数过多需要优化了。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/Chrome瀑布流.png&quot; alt=&quot;Chrome Timeline瀑布图&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*Chrome Timeline瀑布图*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;但是在使用Chrome的DevTool的过程中，我发现Chrome的瀑布流图表对异步过程的标记和测量存在bug。比如在需要测量的两个标记中如果存在其他未闭合的标记，虽然瀑布流的Timings栏会有记录，但是在Event栏却检索不到该记录，也无法根据耗时排序了。这个&lt;a href=&quot;https://bugs.chromium.org/p/chromium/issues/detail?id=1000097&amp;amp;q=&amp;amp;can=4&quot; target=&quot;_blank&quot;&gt;bug&lt;/a&gt;已经提交给了&lt;code class=&quot;highlighter-rouge&quot;&gt;crbug.com&lt;/code&gt;。但是至今还没修复，可能是和数据记录识别的方式有关系。&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A_End&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;B_End&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A_Result&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A_End&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;performance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;measure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;B_Result&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;B_End&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/Chrome瀑布流的bug.png&quot; alt=&quot;Chrome Timeline瀑布流的bug&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*Chrome Timeline瀑布图无法识别记录*&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;当然&lt;code class=&quot;highlighter-rouge&quot;&gt;performance&lt;/code&gt; API现阶段并没有被完全支持，在一些环境中(比如微信小游戏，Laya Native及Safari)，你可以考虑改用&lt;code class=&quot;highlighter-rouge&quot;&gt;console.time&lt;/code&gt;与&lt;code class=&quot;highlighter-rouge&quot;&gt;console.timeEnd&lt;/code&gt;来包裹一段执行过程，除了在console控制台输出计时外，记录也会显示在&lt;code class=&quot;highlighter-rouge&quot;&gt;DevTool&lt;/code&gt; - &lt;code class=&quot;highlighter-rouge&quot;&gt;Performance瀑布流&lt;/code&gt; - &lt;code class=&quot;highlighter-rouge&quot;&gt;Console栏&lt;/code&gt;中。或者你也可以封装一个profile工具，判断不同环境用不同的实现，或者空调用。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;值得注意的是，尽管Chrome自带的&lt;code class=&quot;highlighter-rouge&quot;&gt;Performance&lt;/code&gt;的瀑布流图表已经十分详尽，但是因为记录的内容太多，导致记录本身耗时（虽然可以关闭一些无关的记录选项，比如不关注执行栈时可以&lt;code class=&quot;highlighter-rouge&quot;&gt;disable JavaScript sample&lt;/code&gt;），且加载性能数据也非常耗时。实际上做游戏Profile时我们关心的其实只是很小的一部分，比如每个模块的耗时分布，每个协议的耗时，所以一般情况下还是需要自己做一些额外的工作，比如数据的筛选与可视化报告。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/json数据.png&quot; alt=&quot;Chrome 性能数据记录的格式&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*Chrome 性能数据记录的格式*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;在JavaScript中使用&lt;code class=&quot;highlighter-rouge&quot;&gt;performance&lt;/code&gt;或&lt;code class=&quot;highlighter-rouge&quot;&gt;console&lt;/code&gt;进行标记，并通过&lt;code class=&quot;highlighter-rouge&quot;&gt;DevTool&lt;/code&gt; - &lt;code class=&quot;highlighter-rouge&quot;&gt;Performance&lt;/code&gt; - &lt;code class=&quot;highlighter-rouge&quot;&gt;Record&lt;/code&gt; 产生性能数据后，通过观察输出的JSON数据格式，我们可以找到标记的一些数据特征，通过脚本筛选出来进行计算处理，输出成每个事件的耗时记录。再通过&lt;code class=&quot;highlighter-rouge&quot;&gt;ECharts&lt;/code&gt;工具绘制成图表，根据不同的需要输出不同的可视化报告。形成自动化流程后，每个开发阶段都能对游戏的性能有一个合理的把控了。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/json数据处理与报告.png&quot; alt=&quot;数据处理与可视化工具&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*数据处理与可视化工具脚本*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/每帧耗时分布.png&quot; alt=&quot;每帧Update耗时分析报告&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*每帧Update耗时分析报告*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/协议耗时.png&quot; alt=&quot;协议耗时报告&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*协议耗时报告*&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;ui打开速度的运行时监测&quot;&gt;UI打开速度的运行时监测&lt;/h3&gt;
+
+&lt;p&gt;UI打开速度是衡量UI性能的一个重要指标，为此我们做了一些相关的工作，用来收集那些需要优化的UI面板以及加载不同阶段的耗时信息。因为UI面板的打开关闭统一抽象成了一个基类，我们可以很方便的加入不同阶段的计时操作，并且只在内部测试环境下开启。&lt;/p&gt;
+
+&lt;p&gt;从创建一个UI面板开始计时，到显示出UI面板时停止，中间依次记录UI打开的若干阶段的耗时：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;加载资源阶段，包括下载时间，队列中的等待时间，图片解析的时间&lt;/li&gt;
+  &lt;li&gt;UI面板在显示前自身的逻辑执行阶段&lt;/li&gt;
+  &lt;li&gt;绑定监听事件阶段&lt;/li&gt;
+  &lt;li&gt;显示后UI面板的一些逻辑执行阶段&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Laya的资源加载并不会提供详细的计时信息，所以我们需要在&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya.Loader&lt;/code&gt;类中自行记录加载各阶段的耗时，这个需要对&lt;code class=&quot;highlighter-rouge&quot;&gt;laya.core.js&lt;/code&gt;进行一定的拓展，这里就不展开了。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;我们认为一个面板的打开耗时超过 &lt;em&gt;400ms&lt;/em&gt; 即需要优化（只考虑主观感受，不考虑网络环境和设备因素）。当每次打开检查耗时超过400ms时，信息会在本地被收集，除了在日志中打印，也会被上报到管理后台收集。在后台能看到不同设备上的UI打开速度超时报告，一般来说超过400ms打开速度的UI都应该进入待优化列表。&lt;/p&gt;
+
+&lt;p&gt;而具体需要优化的点则可以根据不同阶段的耗时来具体针对性排查和优化：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;比如加载慢，具体是哪个阶段慢？如果是等待时间长，则可能是一个UI所需资源数量过多，导致加载中存在等待的问题&lt;/li&gt;
+  &lt;li&gt;如果是下载时间长则考虑图片是否可以压缩，有损还是无损，有损的话可以接受怎样的精度？&lt;/li&gt;
+  &lt;li&gt;如果是具体逻辑执行阶段的明显耗时则根据具体代码来进行优化，比如对逻辑重的部分进行摊帧执行。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/UI打开速度监测.png&quot; alt=&quot;UI打开速度监测&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*UI打开速度监测和收集的部分代码*&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;静态资源标准检查工具的实现&quot;&gt;静态资源标准检查工具的实现&lt;/h3&gt;
+
+&lt;p&gt;上面提到UI打开速度和面板所依赖的资源规格以及资源数量有较大关系，所以需要对每个UI面板制作时用到的资源进行把控和监测。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;值得一提的是，在上线微信小游戏做适配工作时我们也发现，部分UI贴图规格竟然超过了 &lt;em&gt;2048x2048&lt;/em&gt; 导致纹理报错，而立项时我们和美术协商的贴图规格是最大 &lt;em&gt;1024x1024&lt;/em&gt; 。&lt;/p&gt;
+
+  &lt;p&gt;所以说尽管在立项时就决定了美术产出的规格和精度，但是因为策划或美术的部分需求和创造力表现，或者是人员流动等其他原因，实际执行起来往往会出现执行出格或不到位的问题。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;在推进游戏开发进度的过程中，就像需要&lt;code class=&quot;highlighter-rouge&quot;&gt;code lint&lt;/code&gt;来保证代码的规范性一样，必须存在针对其他方面的静态检测工具或脚本来保证一些标准的落地执行。&lt;/p&gt;
+
+&lt;p&gt;因此我写了一些简单的python脚本，用来扫描游戏内的UI配置、图集以及实际资源规格，来判断是否制作出了超规格的UI面板。项目组根据这些报告，自行定夺是否优化。而优化完成后，再次执行工具，扫描对比后便能看到问题是否依然存在。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/UI报告.png&quot; alt=&quot;UI报告&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*UI静态检测报告*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;同理也需要对特效、模型等进行扫描。其实没有任何技术难度可言，只是通过这样的简易自动化工具，便能快速发现一些问题，而不需要等待问题暴露时再去通过排查来定位。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/特效报告.png&quot; alt=&quot;特效报告&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*特效静态检测报告*&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;内存规模分析与内存泄漏排查&quot;&gt;内存规模分析与内存泄漏排查&lt;/h3&gt;
+
+&lt;p&gt;内存的稳定性直接影响了游戏的稳定性，可以从下面三个角度来看：&lt;/p&gt;
+
+&lt;h4 id=&quot;1内存泄漏&quot;&gt;1.内存泄漏&lt;/h4&gt;
+
+&lt;p&gt;当游戏使用的内存&lt;code class=&quot;highlighter-rouge&quot;&gt;Proportional Set Size&lt;/code&gt;即实际使用的物理内存值（包括按比例计算系统共享库使用的内存）达到系统设定的最大值时，操作系统会强制杀死该进程，并报出&lt;code class=&quot;highlighter-rouge&quot;&gt;Out Of Memory&lt;/code&gt;的错误，这个报错在一些线上项目的&lt;code class=&quot;highlighter-rouge&quot;&gt;Bugly&lt;/code&gt;上经常能看到。如果游戏出现比较频繁的内存泄漏，哪怕每次泄漏分配了很小块的内存但是又没有被释放，也很可能运行三十分钟后内存就爬升到系统设定的阈值因而崩溃。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;不同内存的机器和不同系统其应用可使用的内存上限不一样，比如2GB内存的iOS机器允许应用使用的最大内存是1395MB，而4GB的iOS设备则允许到2GB左右，8GB的安卓机器则远大于此。iOS允许应用可使用最大内存值可以参考&lt;a href=&quot;https://stackoverflow.com/questions/5887248/ios-app-maximum-memory-budget/15200855#15200855&quot;&gt;这里&lt;/a&gt;。在iOS13 SDK中，Apple还提供了相关的API来查询设备允许的最大内存值，安卓也有对应的查询方法：&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-objectivec highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 要求iOS 13.0&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;#import &amp;lt;os/proc.h&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;extern&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;os_proc_available_memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CGFloat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;availableSizeOfMemory&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@available&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;iOS&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os_proc_available_memory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 要求Android API 1+&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getMemoryThreshold&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;ActivityManager&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;activityManager&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;ActivityManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getSystemService&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ACTIVITY_SERVICE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;ActivityManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MemoryInfo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memoryInfo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ActivityManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MemoryInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;activityManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getMemoryInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;memoryInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memoryInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;threshold&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;一般来说，游戏内内存泄漏的发生场景可能是以下几种，这里只讨论具有现代化的垃圾回收器的语言。需要自己管理内存的C/C++暂时不讨论：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;加载的资源用完后没有及时清理，长期占用内存。比如&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎中是需要调用&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya.loader.clearRes&lt;/code&gt;来清理资源释放内存，否则&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya.Loader.loadedMap&lt;/code&gt;中会一直存在对该资源的引用，其占用的内存也不会被垃圾回收器回收。而在我们排查过程中发现许多业务代码中就存在这些问题，一些副本或面板退出后的特效/icon等资源没有被及时清理。&lt;/li&gt;
+  &lt;li&gt;存在全局或静态变量引用而导致无法被垃圾回收的情况。同上，因为对象至始至终都有引用，所以无法被垃圾回收器回收，从而导致泄漏。这需要对模块业务代码进行筛查，在有使用全局或静态变量来记录一些临时对象的地方要谨慎对待。&lt;/li&gt;
+  &lt;li&gt;错误使用引擎代码而引起的内存无法回收。开发过程中几乎不可能避免封装，游戏引擎也是高度封装的一种。错误的使用别人封装的模块往往也会导致内存泄漏。像&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;这样有源码的则需要彻读源码了解具体的实现，没有源码的封装则需要详尽阅读模块说明，做到尽可能的符合规范。&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目就出现因为错误使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Socket&lt;/code&gt;模块而导致Socket连接断开时字节buffer没有被清理。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;那么具体如何排查内存泄漏？这就需要一些辅助的工具来发现问题。&lt;/p&gt;
+
+&lt;h5 id=&quot;引擎工具&quot;&gt;引擎工具&lt;/h5&gt;
+
+&lt;p&gt;首先是借助引擎内部的一些debug工具或profile工具来检查无用资源或引擎对象的清理是否正常。如果自己封装了一个管理类，则还要测试管理类的加载和清理策略是否正确，清理策略是否合理。比如&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目中，我写了一个实时展示&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎可视对象的数量的统计组件，用来检查游戏内各个功能或场景是否存在引擎对象泄漏的问题。因为项目中的所有可视对象都继承于&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;的&lt;code class=&quot;highlighter-rouge&quot;&gt;Node&lt;/code&gt;类，所以可以拿到子类的name，再通过hook其构造和销毁函数统计子对象的数量变化。&lt;/p&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 引擎自定义对像统计CustomStat.ts&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getClassName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;typeof&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;tar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;tar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Hook Part&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CreatedFunc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;class_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CustomStat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getClassName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;CustomStat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ReportNew&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;class_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DestroyFunc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;class_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CustomStat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getClassName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;CustomStat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ReportDestroy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;class_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Hook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;laya&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CreatedFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Hook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;laya&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Node&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;destroy&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DestroyFunc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/对像统计.png&quot; alt=&quot;引擎对象统计&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*引擎对象统计*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;我们通过反复打开关闭某一功能或进出某场景，再对比统计数量就能看到一些组件的泄漏。这是统计监测引擎对象数量变化的组件，同样我们需要实时能够看到一些贴图资源是否真的从&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya.Loader.loadedMap&lt;/code&gt;中移除并真正的释放内存。如果是通过控制台&lt;code class=&quot;highlighter-rouge&quot;&gt;console.log(Laya.Loader.loadedMap)&lt;/code&gt;观察也可以，但是太过麻烦，并且有时候加载的资源数量达到几百上千条，则会卡控制台。为了解决这个问题，我们拓展了&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;的&lt;code class=&quot;highlighter-rouge&quot;&gt;DebugPanel&lt;/code&gt;进行展示，并且通过资源路径来区分不同的资源种类，并提供一些预估值来计算其占用的内存大小。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎本身在&lt;code class=&quot;highlighter-rouge&quot;&gt;laya.debugtool.js&lt;/code&gt;中写了一些用于debug和profile的功能组件，但是不知道为什么官网并没有给出使用说明，可能废弃了大部分功能，只保留了一个&lt;code class=&quot;highlighter-rouge&quot;&gt;DebugPanel&lt;/code&gt;。并且还对DebugPanel的一些代码进行了base64加密，给最初拓展该组件带来了一定的麻烦。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/DebugPanel拓展.png&quot; alt=&quot;DebugPanel拓展&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*DebugPanel拓展*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目中我使用这两个工具在最后性能收尾阶段跑完了游戏内所有40个功能以及20个副本，发现了数十个泄漏以及代码上的问题并修复。从这个结果上看，引擎层面的工具对游戏的稳定性而言是十分重要的。&lt;/p&gt;
+
+&lt;h5 id=&quot;设备内存&quot;&gt;设备内存&lt;/h5&gt;
+
+&lt;p&gt;以上是游戏引擎层面的工具，在设备/系统方面我们也需要一些工具来确定内存的整体规模和判断是否有内存泄漏的问题。比如在iOS设备上使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Xcode&lt;/code&gt;调试查看应用使用的内存，CPU，网络，甚至耗电情况和原因，当然&lt;code class=&quot;highlighter-rouge&quot;&gt;Android Studio&lt;/code&gt;也基本有同样的功能。这些IDE除了提供查看实时的内存规模变化的功能外，还提供了一些专门检测&lt;code class=&quot;highlighter-rouge&quot;&gt;Leaks&lt;/code&gt;即内存泄漏的功能。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/使用AS或Xcode查看真实的内存.png&quot; alt=&quot;使用AS查看应用使用的内存&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*使用Android Studio查看应用使用的内存*&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;和引擎层面排查泄漏同理，通过观察反复进出同一场景/打开同一功能引起的内存规模的波动是否正常，一般就能判断游戏内是否存在内存泄漏问题。&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目也因此解决了若干个因为错误使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎的动态合批功能而引起的内存暴涨导致的&lt;code class=&quot;highlighter-rouge&quot;&gt;OOM&lt;/code&gt;问题，将项目内存规模稳定到了Android设备测试环境下400-600MB区间。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;因为项目是多平台发行的，除了传统的iOS/Android设备环境外，还有Chrome以及小游戏环境，同样需要对应的Profile工具来查看内存情况。微信小游戏环境下可以使用安卓设备，运行时打开Profile模式，便可以在右上角看到内存信息，机制与安卓同理。Chrome则可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;Shift + Del&lt;/code&gt;打开浏览器的任务管理器，查看页面内存使用情况。如果觉得表格数字不够直观，你也可以使用 &lt;em&gt;GraphProcess&lt;/em&gt; 这款Chrome插件来查看内存变化情况。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/GraphProcess查看Chrome内存波动.png&quot; alt=&quot;使用GraphProcess查看Chrome内存波动&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*使用GraphProcess查看Chrome内存波动*&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;2内存规模&quot;&gt;2.内存规模&lt;/h4&gt;
+
+&lt;p&gt;而除了内存泄漏方面的问题，游戏内整体的内存规模也应该控制在合理水平，才能让更多相对低配的机器能够畅玩。一个游戏对相对低配的设备越友好，潜在的玩家数量也会越大，PUBG除外。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;PUBG刚出来的那会，内存管理就做的十分差劲。许多网吧8GB的机器玩起来十分吃力，并且游戏应该存在较为明显的内存泄漏问题，每跳三次伞基本就会发生一次闪退。虽然这样的内存管理拉动了内存条价格飞涨和玩家机器配置的飞升，但是这样的游戏体验也颇为大家诟病。&lt;br /&gt;
+在&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目中，我们就在优化阶段将小游戏环境下的内存规模优化了&lt;strong&gt;400MB&lt;/strong&gt;左右，使得iPhone7这样的2GB的设备能够正常运行，达到了我们的目标，而在优化前2GB的iOS设备基本只能跑十分钟主线就会被微信杀掉。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;在优化游戏整体的内存规模时，需要对优化目标有一个选择。虽然大家都很想要竭尽全力的做好每一处细节使得性能最优，但是出于工作量考量，质量与性能取舍等原因，一个项目不能无限优化。一个针对具体项目的性能期望则是优化收束的终点。比如&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目中，我们希望内存优化可以使得&lt;em&gt;iOS 2GB&lt;/em&gt;设备与&lt;em&gt;Android 4GB&lt;/em&gt;设备可以在微信小游戏环境下稳定运行超过&lt;strong&gt;2小时&lt;/strong&gt;。而&lt;em&gt;iOS 1GB&lt;/em&gt;的设备（如iPhone6）从优化开始的阶段就已经被放弃，因为1GB的iOS设备应用可使用的内存阈值也只有645MB左右，并且还需要跑在微信的环境下，可使用的内存更少了，对可接受的游戏品质而言是基本无法做到稳定运行的。&lt;/p&gt;
+
+&lt;h4 id=&quot;3垃圾回收&quot;&gt;3.垃圾回收&lt;/h4&gt;
+
+&lt;p&gt;内存方面还容易出现的一个问题是垃圾回收即&lt;code class=&quot;highlighter-rouge&quot;&gt;Garbage Collection&lt;/code&gt;频率过高，因为现在大部分解释型语言的VM垃圾回收器都是运行在主线程，且或多或少都会引发用户线程暂停执行即&lt;code class=&quot;highlighter-rouge&quot;&gt;Stop The World&lt;/code&gt;，哪怕是&lt;code class=&quot;highlighter-rouge&quot;&gt;Lua 5.3&lt;/code&gt;的步进式GC，每一次Step都需要暂停主线程执行。而即使是&lt;code class=&quot;highlighter-rouge&quot;&gt;JavaScript V8引擎&lt;/code&gt;做了大量多线程优化后，一次Major GC也要10ms左右。所以过于频繁的GC会导致部分帧渲染耗时飙升，从而造成掉帧卡顿。&lt;/p&gt;
+
+&lt;p&gt;因此在Profile CPU耗时时也需要关注GC的次数是否过于频繁而影响到了性能。如果GC次数过多，则需要进一步判断是否需要使用池技术来减少真实的内存分配和回收的过程。&lt;/p&gt;
+
+&lt;p&gt;那具体怎么做来优化内存规模呢？这个之后在&lt;a href=&quot;/2020/06/01/How-To-Analyze-And-Optimize-Performance-1.html&quot; target=&quot;_blank&quot;&gt;这里&lt;/a&gt;讲。&lt;/p&gt;
+
+&lt;h3 id=&quot;微信小游戏卡顿问题的定位&quot;&gt;微信小游戏卡顿问题的定位&lt;/h3&gt;
+
+&lt;p&gt;因为这是公司第一款上线微信小游戏的产品，在这方面还没有技术积累。所以小游戏这方面的所有开发Leader全权交给了我去研究和实现。在调通了&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;发布到微信小游戏环境后，我需要做一些适配工作，这个写在了&lt;a href=&quot;/2020/01/18/Laya-Wechat-MiniGame.html&quot;&gt;这篇文章&lt;/a&gt;中。除此之外还写了一个登陆支付的SDK客户端，以及开发一些其他的平台性质的需求比如首屏Loading图加载和播放视频。当然我们也遇到了一些其他的性能问题：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;5s内收到2次&lt;code class=&quot;highlighter-rouge&quot;&gt;Memory Warning&lt;/code&gt;导致的&lt;code class=&quot;highlighter-rouge&quot;&gt;OOM&lt;/code&gt;被杀问题。这个我通过优化内存规模，排查内存泄漏，调整更为保守的内存Cache策略解决了。&lt;/li&gt;
+  &lt;li&gt;一些贴图超&lt;em&gt;2048&lt;/em&gt;导致无法显示，以及一些贴图过高精度导致加载慢，这些通过写的静态扫描工具去排查逐一解决。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎提供的适配层&lt;code class=&quot;highlighter-rouge&quot;&gt;laya.wxmini.js&lt;/code&gt;中存在的一些bug，比如短时间多次请求同一音效资源Cache未拦截后续请求，导致短时间大量播放音效而卡顿的问题，这个通过修复引擎层解决了。&lt;/li&gt;
+  &lt;li&gt;小游戏环境下因为性能表现受限，需要限制一些游戏表现和行为。如除主角外其他模型均使用圆影阴影而非实时阴影，限制角色升级这类统计事件上报的频率等。这些通过判断环境做适配区分解决。&lt;/li&gt;
+  &lt;li&gt;音效资源比特率未统一，部分音效比特率过高，解码时引起内存大幅度扰动。这个通过统一压缩音效资源比特率解决。&lt;/li&gt;
+  &lt;li&gt;如果使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;的缓存策略的同时又使用微信API&lt;code class=&quot;highlighter-rouge&quot;&gt;LogManager&lt;/code&gt;来记录本地日志文件，则会因为二者共享50MB的用户空间而导致&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;自己计算的可使用缓存空间大小错误，因而在用尽本地用户空间时，无法正确的缓存新下载的文件，这个通过改写&lt;code class=&quot;highlighter-rouge&quot;&gt;laya.wxmini.js&lt;/code&gt;中的最大缓存空间为45MB即可，因为&lt;code class=&quot;highlighter-rouge&quot;&gt;LogManager&lt;/code&gt;记录的本地日志文件最大为5MB。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;值得一提的是排查主流程某个性能问题的经历。表现是游戏内主流程跑到某个阶段，必现的加载缓慢，游戏卡顿的问题。我首先确定了使用的资源已经经过压缩，然后通过在引擎层对加载各阶段的耗时统计，以及近N次加载耗时的平均发现了卡顿时的异样表现，最终定位到了原因是在Loader队列中等待的时间过长。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/微信小游戏加载缓慢问题定位.png&quot; alt=&quot;资源加载各阶段的耗时统计&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;
+&lt;em&gt;*资源加载各阶段的耗时统计与问题定位*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;通过打印等待队列长度及其内容时发现，卡顿时等待队列最长去到26个待加载资源。而这是因为打开了某个制作未被优化而依赖了十余个icon的UI，或者游戏内主流程在某个阶段进行频繁的场景切换，而大量场景地块、怪物、NPC乃至角色的部分动画都因为Cache策略的调整而未被缓存到内存中，需要重新下载，导致待加载队列过长，从而导致大幅度的下载延时。这一点在其他端没有测出来，但是在小游戏环境下表现颇为明显。&lt;/p&gt;
+
+&lt;p&gt;发现问题后，我们通过将角色全部动画缓存在小游戏的50MB用户空间，使得切换场景时不用下载，以及调整了地块等其他资源的Cache时间，使得其短期内加载更频繁命中缓存，并且优化了有问题的UI面板，使其依赖资源数量大幅度减少，解决了爆表的等待队列问题。&lt;/p&gt;
+
+&lt;h3 id=&quot;微信小游戏缓存50mb策略优化&quot;&gt;微信小游戏缓存50MB策略优化&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;令人欣慰的是，在作者写本文时，微信小游戏本地文件系统最大支持容量已经增加到了200MB，不再拮据，大部分H5游戏兴许也不再需要特意针对优化其缓存策略了。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;微信小游戏的文件系统中，本地缓存文件与本地用户文件共享50MB的最大容量，可以参考官方的小游戏基础能力&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/base-ability/file-system.html&quot;&gt;说明&lt;/a&gt;。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;首先所有的云端游戏资源通过&lt;code class=&quot;highlighter-rouge&quot;&gt;wx.downloadFile&lt;/code&gt;下载到本地临时空间，并会返回一个临时文件路径，你可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;readFile&lt;/code&gt;直接读取加载。该空间不限大小，但是下次冷启动时大概率会被清理，所以没办法用来做持续缓存策略。&lt;/li&gt;
+  &lt;li&gt;如果需要缓存该资源，则可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;FileSystemManager.saveFile&lt;/code&gt;接口移动文件到本地缓存空间，本地缓存文件只有在代码包被清理的时会被清理，也就是用户常按删除小程序的时候。该空间与本地用户空间共享50MB大小限制。&lt;/li&gt;
+  &lt;li&gt;本地用户空间则是对应&lt;code class=&quot;highlighter-rouge&quot;&gt;wx.env.USER_DATA_PATH&lt;/code&gt;目录，开发者对该空间拥有完全的读写权限，可以通过其他文件接口如&lt;code class=&quot;highlighter-rouge&quot;&gt;FileSystemManager.writeFile&lt;/code&gt;创建文件并写入内容等。该空间与本地缓存空间也共享50MB大小，并且也只有在代码包被清理的时会被清理。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;上文提到的微信的日志API&lt;code class=&quot;highlighter-rouge&quot;&gt;LogManager&lt;/code&gt;记录的日志文件则是存放在本地用户空间下，最大占用5MB，挤占了本地缓存空间的大小，才导致了&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;默认的缓存策略计算可用大小判断是否缓存时的错误。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎提供的&lt;code class=&quot;highlighter-rouge&quot;&gt;laya.wxmini.js&lt;/code&gt;适配层的资源缓存策略是完全在&lt;em&gt;本地用户空间&lt;/em&gt;下做的：下载网络资源后，如果属于图片资源或json资源，则拷贝到本地用户空间下作为缓存文件，然后在本地用户空间下读取该文件，同时更新维护一个本地文件&lt;code class=&quot;highlighter-rouge&quot;&gt;layaairfiles.txt&lt;/code&gt;来管理缓存的URL与对应文件的路径映射用于下次加载时命中缓存，以及记录可用空间大小用于控制整体缓存大小。每次启动游戏时便会根据该文件来反序列化一个内存对象，而新增缓存文件时则又通过序列化更新该文件。&lt;/p&gt;
+
+&lt;p&gt;以上策略都没有问题，问题是当准备缓存的临时文件大小超过了&lt;code class=&quot;highlighter-rouge&quot;&gt;layaairfiles.txt&lt;/code&gt;文件中计算出的可用大小后，&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;的默认缓存策略会删除最早进入缓存的一批文件(默认是清理出5MB大小的空间，会根据即将缓存的文件大小调整)来为即将缓存的文件腾出空间。但是因为游戏最早的加载阶段，缓存的全是各功能模块依赖最多的公共图集资源。这一部分资源理应常驻缓存，即使删除了则又会马上下载，并且再走一遍移动到缓存空间的过程，且不说这样的操作直接影响资源加载响应的速度，频繁的文件IO也会带来更高的性能开销。而事实上，每当缓存空间满50MB后默认清理5MB空间，根据我们项目的资源加载频率，我们测试平均 &lt;em&gt;10s&lt;/em&gt; 不到便又会出现满50MB的情况。游戏内观察也出现了明显的加载响应慢的问题。&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;//缓存过滤，只缓存公共图集、UI icon与音效&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;MiniFileMgr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cacheFilter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;RegExp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;(/atlas/|/icon/|/sound/)&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;//符合要求的才进入缓存，缓存满后不再进行缓存&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;MiniAdpter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;autoCacheFile&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;isSaveFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;readyUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;indexOf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.php&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; 
+    &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;MiniFileMgr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cacheFilter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readyUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;MiniAdpter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reachMemLimit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;MiniFileMgr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;copyFile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tempFilePath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readyUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;callBack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isAutoClear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;为此我设计了一个针对性的缓存策略，根据请求的URL通过正则匹配，只针对公共图集，UI icon，音效这类频繁使用的资源进行缓存。即我们对进入缓存的资源进行手动选择，尽量充分利用空间大小，并且屏蔽了清理逻辑，当缓存空间满后，不再将临时文件移入缓存。通过统计&lt;code class=&quot;highlighter-rouge&quot;&gt;Network&lt;/code&gt;所有请求中缓存文件&lt;code class=&quot;highlighter-rouge&quot;&gt;http://usr&lt;/code&gt;请求的比例，就能计算出缓存命中率。我们发现同样跑完新手流程，调整缓存策略后缓存命中率比之前还提高了20%。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;有趣的是，如果只考虑缓存命中率，降低长时间游戏中的网络开销，可以考虑使用本地临时空间来进行缓存。依据微信官方的说明，本地临时文件只保证在小程序当前生命周期内有效，一旦小程序被关闭就可能被清理，即下次冷启动不保证可用。所以在长时间游戏过程中，可以自己设计一套映射办法，使用本地临时空间中的文件作为缓存文件读取，因为没有大小限制，可以极大提高缓存命中率。但是因为加载阶段下载公共图集等资源需要4-6s，项目更在乎第二次进入游戏的速度，所以我们没有做这方面的考虑。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;关于性能优化我的一些思考&quot;&gt;关于性能优化我的一些思考&lt;/h2&gt;
+
+&lt;p&gt;以上是基于H2项目优化时的一些经验，接下来这部分主要想分享一下我关于性能优化这方面的一些思考和感悟。作为一个零项目经验的人（因为头一年都在做SDK接入与开发，打包分发等移动应用相关的工作），从头到尾经历完整个项目的生命周期后，回过头来思考怎样才能做出一个性能表现不错的项目是一件很有意思的事情。&lt;/p&gt;
+
+&lt;h3 id=&quot;量化&quot;&gt;量化&lt;/h3&gt;
+
+&lt;p&gt;如同市面上的CPU更新时都会和上一代进行算力对比一样，在我们对游戏进行性能优化的过程中，也一定要对前后的具体性能表现进行性能量化，差异对比。否则做了任何一个改动都只能从主观上去臆测，无法知道优化的有效性，也无法直观查看优化的结果。没有量化数据指导的优化工作以及迭代更新不但结果抽象，而且往往会陷入没有目标，没有反馈，优化效率低下，徒劳，甚至负优化的情形中去。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/V8优化的量化指标对比.png&quot; alt=&quot;如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;性能优化离不开量化，而量化则离不开好的工具和模块设计。不过测量性能指标的工具有好有坏，最理想的往往是在设计功能模块时，就已经思考了如何量化这个模块的性能指标，并且随着模块的实现，相应的量化工具也写出来了。比如设计一个协议的收发模块，就要考虑如何方便量化协议的耗时。协议基类可以将收发协议拆分成若干个独立步骤，比如组装，发送，解析，执行，这样在后期量化性能指标的时候，便能非常方便的打点统计，数据清晰，哪里不符合标准也一目了然。在H2项目后期我排查场景、特效模块引起的内存泄漏时，颇有这种遗憾。当业务功能已经铺开或实现完全时，再重新设计模块和规则要求大家一起使用或遵守是不现实的。量化的工具不应该是单独于项目之外的东西，而是随着功能实现同时设计产出的东西。&lt;/p&gt;
+
+&lt;p&gt;那么具体怎么量化呢？这个取决于在做什么样的优化工作。和衡量算法一样，无非是时间和空间两个维度。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;时间维度衡量：
+    &lt;ul&gt;
+      &lt;li&gt;各种模块执行耗时：如一帧Update中各模块的耗时，某个关键步骤或函数的执行时间，打开一个功能或页面需要的时间等。&lt;/li&gt;
+      &lt;li&gt;一定时间内事件发生的次数：如同一个场景下一段时间内GC发生的次数，一段时间内某个函数循环的次数等。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;空间维度衡量：
+    &lt;ul&gt;
+      &lt;li&gt;规模大小：如游戏使用的内存大小，显存大小，游戏内各种资源的大小，总包体大小等。&lt;/li&gt;
+      &lt;li&gt;空间使用率：如内存中有大量相同的数据如纹理，mesh，动画，音频等，或者缓存了无效资源等。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;量化结果需要前后对比才能凸显优化工作的价值，但是一定要注意控制条件变量。当掺杂多个变量时，性能优化前后的对比结果则毫无指导意义。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;自动化监测&quot;&gt;自动化监测&lt;/h3&gt;
+
+&lt;p&gt;自动化是解放生产力的重要因素，而自动化监测性能数据则是在推进游戏开发进度的过程中预防性能表现失控的关键因素。没有自动化监测的工具，则意味着项目组需要投入人力，频繁检查性能表现，排查隐患。何况对人而言，在开发内容快速推进的时候，“排查”是一项费时费力，并且容易有遗漏的工作。在人力有限的情况下，这样做可能会导致开发进度被拖累。&lt;/p&gt;
+
+&lt;p&gt;在H2项目中，随着项目推进总共进行了2次相对集中的性能优化工作。从公司的视角而言，因为我们没有足够的人力持续性的监视着性能数据或者投入到性能优化的工作上去，所以每次只能集中一段时间投入2-3个人对项目的性能表现进行把控和优化。这非常可以理解，哪怕数百人的项目组也经常存在人力紧张的情况。但是问题是这些优化的时间节点往往是性能肉眼可见地出问题了（失控），项目要内测了，项目要上线了这些因素影响的。如果项目本身相对简单，或者初期就有了一定的开发规范，也没有大量的需求改动，那么游戏性能也不会有什么大问题。但是当项目复杂度提升到一定水平时，这样的工作安排往往捉襟见肘。而这就是自动化监测工具需要完成的工作：先于“人眼”报告出游戏的性能问题。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/自动化监测.png&quot; alt=&quot;自动化监测&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*市面上对产品进行性能、质量、兼容性测试的商业化测试软件PerfDog*&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;理想的情况下，从项目一开始便应该投入人力开发一些自动化工具监测性能表现。有别于市面上对完整游戏产品进行质量测试的商业测试软件如&lt;code class=&quot;highlighter-rouge&quot;&gt;PerfDog&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;UPR&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Airtest&lt;/code&gt;等等，这些工具理应随着功能模块的开发或规则的制定一起实现，关注一些具有项目个性化关键的性能指标，独立或嵌入模块之内。一般分以下两种形式：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;独立于游戏外的静态检测工具，定期执行，扫描出不符合要求的性能相关问题，包括自动运行游戏的脚本。&lt;/li&gt;
+  &lt;li&gt;嵌入游戏的动态监测工具，在以测试模式运行时发现问题会弹出警告，收集相关数据并上传到性能后台。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这些工具伴随着项目进度的推进，全程监测着性能数据是否符合要求。不必等到问题肉眼可见，一旦出现性能异常，项目组立刻就能响应派遣人力解决，并且制定出新的规范来指导后续的开发工作，避免同类型问题再次出现。显而易见，如果游戏开发到内测全程性能表现处于可控状态，那么最终游戏上线时性能表现也必然不会失控。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;值得注意的是，这样的工具可能很容易实现，但是根据不同项目对不同性能数据设立不同的标准，则对游戏开发经验有很高的要求。即游戏性能与质量二者大多难以兼得，如何设置合理的性能预期也是十分重要的。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;可视化&quot;&gt;可视化&lt;/h3&gt;
+
+&lt;p&gt;当你拥有一系列性能指标数据需要对比展示时，使用表格列出各项数据是最简单的，但是这样的形式往往不够直观。尤其是在数据项庞杂的时候，对比每一项数据显得尤其费力，没有重点，并且结论也不够显而易见。比如在寻找帧数剧烈变化的掉帧场景时，如果仅有包含近万条帧率数据的表格而没有折线图，那你很难找到帧率的抖动情况。并且，相比硬生生的丢出一堆数据而不做处理，绘制成可视化图表才是更具艺术、简洁、优雅的报告形式。在现代化工具的帮助下，这也不会耗费多少时间。一般情况下，对数据进行可视化也就这么几步：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;通过性能测量工具收录数据&lt;/li&gt;
+  &lt;li&gt;可能需要通过分析处理工具进行过滤和筛选，将值得关注的信息拣选出来&lt;/li&gt;
+  &lt;li&gt;选择合适的图表形式绘制可视化报告&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/2020-06-01/echarts示例.png&quot; alt=&quot;echarts示例&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;br /&gt;
+&lt;em&gt;*基于JavaScript的开源可视化图表库ECharts示例*&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;图表形式的选择直接影响了报告的直观程度，最常见的帧率变化一般选择折线图，内存变化选择堆叠面积图（如Android Studio的Memory Profile），简单的耗时对比就用柱状图。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;其他&quot;&gt;其他&lt;/h3&gt;
+
+&lt;h4 id=&quot;设计封装&quot;&gt;设计封装&lt;/h4&gt;
+
+&lt;p&gt;优秀的性能表现离不开优秀的设计和封装。一个模块最核心的部分封装好了，开发人员只需要往模块内部填充业务，哪怕代码水平参差不齐，写的再天马行空，项目也大概率不会出现严重的性能问题。举个例子，一个面板加载的资源和对象组件是否存在泄漏，这个就需要在设计UI模块之时加以考虑。例如我们可以在面板初始化时统一使用某个接口注册加载其依赖的资源和组件，面板销毁时同样由统一接口管理对应资源的清理。这样能有效避免组件或资源泄漏问题，并且即使出现个别代码加载未注册的资源时，也能及时发现并解决。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;每个公司都有自己的代码标准或者开发规约，但是开发者执行的好与坏就是体现代码水平的差异了。但是，好的设计与封装就如同硬性的规定，极大的提高了代码水平的下限。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;重构&quot;&gt;重构&lt;/h4&gt;
+
+&lt;p&gt;对模块的重构一定要时刻进行，尤其是在业务代码飞速增长的阶段。如同对待性能优化的态度不能是游戏做完再进行性能优化一样，对待重构的态度不可以是全部功能实现完再进行重构。比如在H2项目中，开发各个不同平台的同一功能时，都要判断平台类型，再去调用不同的实现。而在添加第二个各平台都需要的功能时，就要思考之前的设计是否合理，调用日志如何统一，如何兼容没有该功能的平台，考虑怎样设计能够方便之后的拓展和维护。根据经验，哪怕一个很小的模块，经过若干次代码的增长和不同人手的开发后，其结构或多或少的都会变得臃肿不堪，无法直视，大概率出现冗余，或者出现性能问题。严格来讲，&lt;code class=&quot;highlighter-rouge&quot;&gt;Code Review&lt;/code&gt;与重构的时机，就应该像是内存分配器在每次分配内存前会检查是否要进行垃圾回收一样，添加代码前也要先整理一遍代码，思考是否合理，是否需要重构。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;组内Code Review是一项很难在内部推广的事情，除了代码水平参差不齐的问题外，还有一些感性的因素形成阻碍，至少在公司尝试了两次推行组内Code Review失败后我是这么认为的。但是自己对自己写的代码进行Code Review，及时重构是非常有必要的。虽然在版本管理工具的帮助下，大家可以通过blame看到每行代码的作者，但是我认为每个程序员都应该出于本能的在自己写的代码片段“签名”，&lt;code class=&quot;highlighter-rouge&quot;&gt;Review&amp;amp;Refactoring&lt;/code&gt;是对自己工作的一种负责。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;做的一些其他工作&quot;&gt;做的一些其他工作&lt;/h2&gt;
+
+&lt;p&gt;除性能相关的优化工作外，作为引擎我还在H2项目中做了一些其他工作，这里简单列举一些：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;基于Unity Editor拓展开发2D场景编辑器&lt;/li&gt;
+  &lt;li&gt;开发Laya IDE拓展（VSCode插件）给美术使用&lt;/li&gt;
+  &lt;li&gt;开发了三端（浏览器包括Native WebView，iOS，Android）的本地日志记录与上报模块&lt;/li&gt;
+  &lt;li&gt;三端的视频播放功能组件&lt;/li&gt;
+  &lt;li&gt;三端的闪屏实现&lt;/li&gt;
+  &lt;li&gt;资源更新版本管理机制的研究与资源缓存nginx的配置&lt;/li&gt;
+  &lt;li&gt;JavaScript报错堆栈收集与解析服务&lt;/li&gt;
+  &lt;li&gt;三端的基础模块如获取设备信息，内存信息，权限申请的开发&lt;/li&gt;
+  &lt;li&gt;优化Laya的gulp编译流程，增量编译&lt;/li&gt;
+  &lt;li&gt;解决了微信小游戏上线的各种问题包括分包、WSS、闪屏、视频播放等&lt;/li&gt;
+  &lt;li&gt;修复了Laya引擎底层的若干漏洞&lt;/li&gt;
+  &lt;li&gt;开发与接入微信/QQ小游戏客户端聚合js SDK&lt;/li&gt;
+  &lt;li&gt;实现2D的实时阴影&lt;/li&gt;
+  &lt;li&gt;安卓WebView端接入X5内核&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;最后&quot;&gt;最后&lt;/h2&gt;
+
+&lt;p&gt;分享了这么多，那么如果给一个既定的项目给我，我该如何下手去优化呢？或者说，关于性能优化，有没有一些普适性的思路和常见的解决办法呢？这部分就留到&lt;a href=&quot;/2020/06/01/How-To-Analyze-And-Optimize-Performance-1.html&quot; target=&quot;_blank&quot;&gt;下一篇&lt;/a&gt;文章去讨论了。&lt;/p&gt;
+
+&lt;h2 id=&quot;参考&quot;&gt;参考&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developers.weixin.qq.com/minigame/dev/guide/&quot;&gt;微信官方文档 - 小游戏&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://v8.dev/blog/trash-talk&quot;&gt;Trash talk: the Orinoco garbage collector - Google V8&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Mon, 01 Jun 2020 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html</guid>
+        
+        <category>H5</category>
+        
+        <category>Laya</category>
+        
+        <category>性能优化</category>
+        
+        
+        <category>H5</category>
+        
+      </item>
     
       <item>
         <title>Laya项目轻松上线微信小游戏</title>
@@ -148,7 +706,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;ts-loader clean-webpack-p
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;在根目录下运行&lt;code class=&quot;highlighter-rouge&quot;&gt;webpack&lt;/code&gt;，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个&lt;a href=&quot;/2019/09/11/JavaScript混淆堆栈解析映射工具.html&quot; target=&quot;_blank&quot;&gt;sourcemapping工具&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;在根目录下运行&lt;code class=&quot;highlighter-rouge&quot;&gt;webpack&lt;/code&gt;，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个&lt;a href=&quot;/2019/09/11/JavaScript-Source-Mapping.html&quot; target=&quot;_blank&quot;&gt;sourcemapping工具&lt;/a&gt;。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/28/nwtgkrBPoLDG5sy.png&quot; alt=&quot;dist分包结果.png&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 60%;&quot; /&gt;&lt;br /&gt;
 *&lt;em&gt;webpack-splitChunks打包结果&lt;/em&gt;*&lt;/p&gt;
@@ -449,7 +1007,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;gulp-sourcemaps
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;外网收集的报错堆栈如何解析请参考我的另一篇文章&lt;a href=&quot;/2019/09/11/JavaScript混淆堆栈解析映射工具.html&quot;&gt;sourcemapping-JavaScript混淆堆栈解析映射工具&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;外网收集的报错堆栈如何解析请参考我的另一篇文章&lt;a href=&quot;/2019/09/11/JavaScript-Source-Mapping.html&quot;&gt;sourcemapping-JavaScript混淆堆栈解析映射工具&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h2 id=&quot;关于linux下命令行工具的讨论&quot;&gt;关于Linux下命令行工具的讨论&lt;/h2&gt;
@@ -484,7 +1042,7 @@ npm &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;gulp-sourcemaps
       </item>
     
       <item>
-        <title>js混淆堆栈本地解析映射工具</title>
+        <title>JavaScript混淆堆栈本地解析映射工具</title>
         <description>&lt;h2 id=&quot;为什么要写这个工具&quot;&gt;为什么要写这个工具&lt;/h2&gt;
 
 &lt;p&gt;发布环境的产品都经过压缩混淆，并且没有attach sourcemap。因此前端收集到的错误堆栈都是被混淆过的，文件与行号列号变量名都可能发生了变化。因此需要通过sourcemap文件映射到源码上去。如果使用typescript编译+压缩混淆生成的sourcemap文件，可以直接映射到typescript源码。因此针对前端&lt;code class=&quot;highlighter-rouge&quot;&gt;window.onerror&lt;/code&gt;捕获到的错误堆栈写了这样一个工具用于解析与映射，已经在&lt;a href=&quot;https://www.npmjs.com/package/sourcemapping&quot;&gt;npm&lt;/a&gt;发布。&lt;br /&gt;
@@ -1276,315 +1834,6 @@ if __name__ == '__main__':
         <category>Android</category>
         
         <category>Python</category>
-        
-        <category>工具</category>
-        
-        
-        <category>技术</category>
-        
-      </item>
-    
-      <item>
-        <title>Log for Shell</title>
-        <description>&lt;h2&gt;目标&lt;/h2&gt;
-&lt;p&gt;Shell脚本面向内部技术人员，编写目标如下：   
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;脚本编写简单小巧，结构清晰，便于维护&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;脚本内容需要分为若干步骤，同时打印步骤序号和步骤名称&lt;/li&gt;
-&lt;li&gt;一个脚本做的事情不超过5步，脚本内容过多则进行相应拆分,避免某一个脚本过于复杂&lt;/li&gt;
-&lt;li&gt;脚本的每个步骤以及函数实现遵循单一功能原则，代码长度控制在50行以内（50行大概是整个桌面窗口最大化后能全部展示的行数）&lt;/li&gt;
-&lt;li&gt;文件部署尽量清晰，及时清理废弃脚本和废弃文件夹，被注释掉的无用代码及时删除&lt;/li&gt;
-&lt;li&gt;入口脚本应该提供&lt;strong&gt;-help&lt;/strong&gt;，&lt;strong&gt;-version&lt;/strong&gt;功能
-&lt;br /&gt;&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;日志输出可以快速定位问题，打印格式规范统一&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;日志止于出错位置，并且能够明确指出错误位置&lt;/li&gt;
-&lt;li&gt;能够看到执行脚本的脚本名与执行时的具体参数&lt;/li&gt;
-&lt;li&gt;关键日志和非关键日志进行区分&lt;/li&gt;
-&lt;li&gt;不打印看起来没有意义或没有人会看的日志&lt;/li&gt;
-&lt;li&gt;调试脚本时打印的辅助日志，调试完成后&lt;strong&gt;务必&lt;/strong&gt;删掉&lt;/li&gt;
-&lt;li&gt;生产环境中执行脚本&lt;strong&gt;不要带-x选项&lt;/strong&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2&gt;脚本部署结构&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;&amp;gt;scripts
-    &amp;gt;bin  业务脚本
-    &amp;gt;lib  引用库
-        &amp;gt;tools  内部工具
-        ...
-    &amp;gt;etc  配置文件，包括通用配置与本地配置
-        &amp;gt;local_etc  本地配置
-            &amp;gt;default  默认配置
-            &amp;gt;using_etc*  本地使用的环境配置
-        ...
-    &amp;gt;tmp*  临时文件
-        &amp;gt;log*  日志
-        ...
-    &amp;gt;server  服务脚本
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;local_etc目录下存放着default与using_etc两个配置目录，default纳入版本控制系统，下存放着默认的环境配置。using_etc为default的拷贝，为机器最终使用的环境配置，方便做动态增加机器，环境变量的特殊修改和还原操作。&lt;/li&gt;
-&lt;li&gt;带星号*的目录不会纳入版本控制系统&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2&gt;规约&lt;/h2&gt;
-&lt;h3&gt;命名风格统一&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;文件名、内部变量名使用&amp;nbsp;&lt;strong&gt;&lt;em&gt;lowerCamelCase&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;小写驼峰形式，如:&amp;nbsp; buildServerConsole.sh，resultNum&lt;/li&gt;
-&lt;li&gt;函数名使用&amp;nbsp;&lt;strong&gt;&lt;em&gt;UpperCamelCase&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;大写驼峰形式，如:&amp;nbsp; ReportFailure，AfterShell&lt;/li&gt;
-&lt;li&gt;常量名、路径名使用以下划线连接的全大写单词形式，如:&amp;nbsp;QUIET_RUN，SCRIPTS_AUTOBUILD_DIR&lt;/li&gt;
-&lt;li&gt;命名时，除非某个单词有业内通用的缩写简写，否则不要使用单词缩写简写命名，&lt;strong&gt;特别不要把自己平时的缩写简写写入公共脚本&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;日志输出规范&lt;/h3&gt;
-&lt;p&gt;编写了一套Shell的日志工具脚本:&lt;a href=&quot;https://github.com/7ippo/logForShell&quot;&gt;☆logForShell代码☆&lt;/a&gt;。目前能够实现：统一格式打印，带TAG输出，分步执行，时间戳，出错后停止输出日志，出错后打印Shell堆栈，区分关键日志与非关键日志。编写Shell脚本时请按照以下规范调用日志方法。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Usage 使用方法：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;source ./logForShell.sh &quot;default&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;入口脚本&lt;/strong&gt;中，在调用任何日志方法之前，请先调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;CleanFlagBeforeStart&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会清除上一次可能因脚本执行失败而留下的标志文件，该标志会阻止日志继续输出。&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;所有日志通过调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;Show&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数输出：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;Show &quot;Log For Shell&quot;
-
-2018-09-05 [17:50:24] Log For Shell
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;如果需要打印带TAG的Shell日志，可以在source logForShell.sh时传入TAG参数(默认为空)，则日志打印时均会带上该TAG输出：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;source ./logForShell.sh [Shell]
-Show &quot;Using TAG to LOG&quot;
-
-2018-09-11 [10:08:26] [Shell] Using TAG to LOG
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;脚本开始时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;BeforeShell&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数，传入所有执行参数$@。该函数会打印执行脚本名称与所有参数：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;BeforeShell $@
-
-2018-09-05 [17:52:21]
-2018-09-05 [17:52:21]    +   test.sh  BEGIN   +
-2018-09-05 [17:52:21]    +   test.sh -n -r -android 90   +
-2018-09-05 [17:52:21]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;脚本执行步骤时，打印步骤序号和步骤名称。调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;Step&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数，传入两个参数，第一个为步骤序号，第二个为步骤名称。该函数会打印步骤标志：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;Step 1 &quot;Copy Unity Resource&quot;
-
-2018-09-05 [17:52:21]
-2018-09-05 [17:52:21] ==================== test.sh  STEP 1 : Copy Unity Resource ====================
-2018-09-05 [17:52:21]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;脚本结束时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;AfterShell&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会打印脚本结束标志：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;AfterShell
-
-2018-09-05 [17:52:21]
-2018-09-05 [17:52:21]    +   test.sh  FINISH   +
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;需要打印关键步骤成功的标志时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;ReportSuccess&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数(默认为空)，可以传入关键步骤名称参数。该函数会打印成功结果标志：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;ReportSuccess &quot;Build Dynamic Framework Project&quot;	
-
-****     Build Dynamic Framework Project SUCCESS      ****
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;需要打印错误标志时，调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;ReportFailure&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;函数。该函数会打印调用者的行号、脚本名，并阻止之后的日志输出，并通过内建命令caller输出一个Shell的调用堆栈：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;ReportFailure		
-
-****     line 10 test.sh REPORTED FAILURE     ****
-
-
-    CALLER LIST
- - line 10 a test.sh
- - line 14 b test.sh
- - line 17 main test.sh
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;非关键命令，如svn操作，拷贝命令执行前请调用&amp;nbsp;&lt;strong&gt;&lt;em&gt;BlankLine&lt;/em&gt;&lt;/strong&gt;&amp;nbsp;打印一个空行&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;其他规范&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;脚本设计编写时应考虑按功能模块拆分成独立脚本，执行时均使用sh或source执行，去掉分配脚本执行权限的过程&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;变量使用时要加花括号&lt;/p&gt;
-&lt;/li&gt;
-&lt;blockquote&gt;&lt;pre&gt;$Ditch =&amp;gt; ${Ditch}&lt;/pre&gt;&lt;/blockquote&gt;
-&lt;li&gt;
-规范脚本的错误码，调用脚本后需要对脚本返回值$?进行相应处理，推荐每个调用其他脚本的脚本内部写一个处理返回值的函数。该函数最少应具备处理错误返回值的情况，如面对错误返回值不继续执行后续操作，需要清除相应标志位：&lt;/li&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;function HandleError(){
-returnVal=$?
-if [ $retVal -ne 0 ]; then
-    Show &quot; error exit status &quot;$returnVal&quot; last command&quot;
-    rm -f ${MARK_FILE}
-    exit 0
-fi
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;li&gt;
-&lt;code&gt;引用命令输出时，使用$()而不用反引号``&lt;/code&gt;
-&lt;/li&gt;
-&lt;blockquote&gt;&lt;pre&gt;`pwd` =&amp;gt; $(pwd)&lt;/pre&gt;&lt;/blockquote&gt;
-&lt;li&gt;
-&lt;p&gt;打印变量时，把变量名和变量值一起打印&lt;/p&gt;
-&lt;/li&gt;
-&lt;blockquote&gt;&lt;pre&gt;如Show &quot;$PLATFORM&quot;,至少应该写成Show &quot;PLATFORM:$PLATFORM&quot;&lt;/pre&gt;&lt;/blockquote&gt;
-&lt;li&gt;
-定义函数时在函数名前加上&lt;em&gt;function&lt;/em&gt;:&lt;/li&gt;
-&lt;blockquote&gt;&lt;pre&gt;function UpperCamelCase(){
-	...
-}
-&lt;/pre&gt;&lt;/blockquote&gt;
-&lt;li&gt;
-if-else流程控制，then和条件判断请写在同一行:&lt;/li&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;if [ ... ];then
-  ...
-elif [ ... ]; then
-  ...
-else
-  ...
-fi
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;li&gt;区分$0与$BASH_SOURCE的区别，需要打印当前执行脚本名时使用$BASH_SOURCE
-&lt;br /&gt;
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;logforshell代码&quot;&gt;&lt;a href=&quot;https://github.com/7ippo/logForShell&quot;&gt;☆logForShell代码☆&lt;/a&gt;&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;#!/bin/bash
-
-# 全局执行结果标志位，有一步出错后日志不会继续输出
-# 考虑到子Shell与父Shell进程间通信，使用与该文件同目录下的tag文件作为标志位进行信息传递和判断
-export GLOBAL_FAIL_FLAG=&quot;$(cd $(dirname ${BASH_SOURCE[0]}); pwd )/globalFailFlag.tag&quot;
-
-# 是否加入标签TAG标志位，默认为default
-# 如： . ./logForShell.sh default
-# 需要加入TAG时，调用该脚本时传入TAG参数
-# 如： . ./logForShell.sh [Shell]
-if [ &quot;${1}&quot; != &quot;default&quot; ];then
-	TAG_FOR_SHELL=${1}
-else
-	TAG_FOR_SHELL=&quot;&quot;
-fi
-
-# 核心打印函数：用于区分关键与非关键日志
-# 正常log前加时间戳，这样如svn cp等命令打印的内容没有时间戳
-# 打印日志前加入自定义标签，方便过滤检索
-
-function Show(){
-	dateStr=`echo $(date +%Y-%m-%d) $(date +[%H:%M:%S])`
-	if [ ! -f ${GLOBAL_FAIL_FLAG} ]; then
-		echo &quot;${dateStr} ${TAG_FOR_SHELL} $@&quot;
-	fi
-}
-
-# 空行打印函数：请在非关键日志如svn,cp,wget等命令前打印一个空行
-
-function BlankLine(){
-	echo &quot;&quot;
-}
-
-# 纯净打印函数：无时间戳无标签无格式
-
-function NoFormatShow(){
-	echo &quot;$@&quot;
-}
-
-# 步骤打印函数：需要传入$1：步骤序号，$2：步骤描述
-# 如： Step 1 &quot;Copy Unity Resource&quot;
-
-function Step(){
-	sourceFileName=`caller`
-	Show &quot;&quot;
-	Show &quot;==================== ${sourceFileName##*/}  STEP $1 : $2 ====================&quot;
-	Show &quot;&quot;
-}
-
-# 进入脚本函数：在关键脚本开始时执行，调用时需要传入执行脚本的所有参数
-# 如： BeforeShell $@
-
-function BeforeShell(){
-	sourceFileName=`caller`
-	Show &quot;&quot;
-	Show &quot;   +   ${sourceFileName##*/}  BEGIN   +&quot;
-	Show &quot;   +   ${sourceFileName##*/} $@   +&quot;
-	Show &quot;&quot;
-}
-
-# 退出脚本函数：在脚本结束时执行
-# 如： AfterShell
-
-function AfterShell(){
-	sourceFileName=`caller`
-	Show &quot;&quot;
-	Show &quot;   +   ${sourceFileName##*/}  FINISH   +&quot;
-}
-
-# 错误报告函数：在某一步结束后判断执行结果，若出错则调用该函数
-# 如： ReportFailure
-# 该函数会改变执行结果标志位，阻止出错后日志继续输出
-
-function ReportFailure(){
-	touch ${GLOBAL_FAIL_FLAG}
-	echo &quot;&quot;
-	echo &quot;&quot;
-	echo &quot;****     line `caller` REPORTED FAILURE     ****&quot;
-	echo &quot;&quot;
-	echo &quot;&quot;
-	# 通过循环判断caller返回，如果不为空则持续打印，最多打印5行
-	echo &quot;    CALLER LIST    &quot;
-	echo &quot; - line `caller 0`&quot;
-	for loop in 1 2 3 4
-	do
-		if [ &quot;`caller ${loop}`&quot; != &quot;&quot; ];then
-			echo &quot; - line `caller ${loop}`&quot;
-		else
-			echo &quot;&quot;
-			break
-		fi
-	done
-}
-
-# 成功报告函数：在关键步骤结束后判断执行结果，成功则调用该函数
-# 一般步骤不用调用该函数输出
-# 如： ReportSuccess &quot;Init and check related params&quot;
-
-function ReportSuccess(){
-	echo &quot;&quot;
-	echo &quot;****     $1 SUCCESS      ****&quot;
-	echo &quot;&quot;
-}
-
-# 清理标志位函数：在加载logForShell函数后，务必在主入口脚本所有语句执行前调用
-
-function CleanFlagBeforeStart(){
-	if [ -f ${GLOBAL_FAIL_FLAG} ]; then
-		rm -f ${GLOBAL_FAIL_FLAG}
-	fi
-}
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-        <pubDate>Fri, 28 Sep 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/09/28/Log-for-Shell.html</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/09/28/Log-for-Shell.html</guid>
-        
-        <category>Shell</category>
         
         <category>工具</category>
         

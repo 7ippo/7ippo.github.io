@@ -111,7 +111,7 @@ Author: Ray-Eldath
   <!--[if lt IE 10]>
 <div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
 <![endif]-->
-  <input id="nm-switch" type="hidden" value="true"> <header class="g-header">
+  <input id="nm-switch" type="hidden" value="false"> <header class="g-header">
     <div class="g-logo">
       <a href="/"></a>
     </div>
@@ -300,7 +300,7 @@ npm <span class="nb">link </span>ts-loader clean-webpack-plugin
 <span class="p">};</span>
 </code></pre></div></div>
 
-<p>在根目录下运行<code class="highlighter-rouge">webpack</code>，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个<a href="/2019/09/11/JavaScript混淆堆栈解析映射工具.html" target="_blank">sourcemapping工具</a>。</p>
+<p>在根目录下运行<code class="highlighter-rouge">webpack</code>，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个<a href="/2019/09/11/JavaScript-Source-Mapping.html" target="_blank">sourcemapping工具</a>。</p>
 
 <p><img src="https://i.loli.net/2020/03/28/nwtgkrBPoLDG5sy.png" alt="dist分包结果.png" data-action="zoom" style="max-width: 60%;" /><br />
 *<em>webpack-splitChunks打包结果</em>*</p>
@@ -363,6 +363,18 @@ npm <span class="nb">link </span>ts-loader clean-webpack-plugin
     </section>
     <section class="post-footer-item read-next">
       
+      <div class="read-next-item">
+        <a href="/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html" class="read-next-link"></a>
+        <section>
+          <span>基于第一个完整项目经验的性能分析与优化讨论(一)</span>
+          <p>项目经历</p>
+        </section>
+        
+        <div class="filter"></div>
+        <img src="https://i.loli.net/2021/03/15/K3I8HyLlhGsfNFp.jpg" alt="">
+        
+     </div>
+      
 
       
       <div class="read-next-item">
@@ -392,7 +404,7 @@ npm <span class="nb">link </span>ts-loader clean-webpack-plugin
     2017
     -
   
-  2020
+  2021
   </section>
   <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
 </footer>

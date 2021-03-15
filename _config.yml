@@ -29,7 +29,7 @@ avatar: 'https://i.loli.net/2020/03/30/rT8oDqO7iU5J6yu.jpg'
 search: true
 
 # Night mode
-nightMode: true
+nightMode: false
 
 # Comments 评论功能
 comments:

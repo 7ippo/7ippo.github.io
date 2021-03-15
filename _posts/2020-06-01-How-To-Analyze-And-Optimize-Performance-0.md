@@ -19,7 +19,7 @@ tags: H5 Laya 性能优化
 
 ## 我参与了哪些性能相关的内容
 
-> 这部分主要是介绍我在H2项目中做的与性能优化相关的工作。关于性能优化相关的[思考](#关于性能优化我的一些思考){:target="_blank"}和普适性的优化[思路](/2020/06/01/How-To-Analyze-And-Optimize-Performance-1.html){:target="_blank"}可以直接跳到对应部分。
+> 这部分主要是介绍我在H2项目中做的与性能优化相关的工作。关于性能优化相关的[思考](#关于性能优化我的一些思考)和普适性的优化[思路](/2020/06/01/How-To-Analyze-And-Optimize-Performance-1.html){:target="_blank"}可以直接跳到对应部分。
 
 ### 资源规格的设立和约定
 
@@ -27,7 +27,7 @@ tags: H5 Laya 性能优化
 
 在项目立项早期，我作为引擎共同参与了包括美术、项目组、策划等决策人员出席的研讨会，会上确立了游戏的基本表现形式，比如是2.5D还是3D，美术资源的规格与游戏精度，比如贴图的分辨率，主角有多少个朝向，动画的类型是序列帧还是骨骼动画，如果是序列帧动画那是要具体多少帧，场景内最多容纳多少怪物等等。
 
-![当时确定了主角动画用序列帧来实现](/assets/img/2020-06-01/序列帧动画.gif){:data-action="zoom"}{:style="max-width: 60%;"}  
+![当时确定了主角动画用序列帧来实现](/assets/img/2020-06-01/序列帧动画.gif){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*最终主角动画使用序列帧来实现，UI中人物用骨骼动画来展示\**
 
 > 因为考虑到整体游戏的风格和性能要求，骨骼动画并没有用作主角的展示，只是作为点缀加入到了部分UI之中。
@@ -56,10 +56,10 @@ DrawPrimitive(ChairVertexBuffer);
 
 Laya IDE内置了图集打包工具，打包会生成若干张png与一个json格式记录图集信息的atlas文件。一般情况下我们会将一个功能或UI面板中用到的图片打成一个图集来达到减少drawcall的目的，同时我们也会将各个功能通用的一些小图或组件打包成公共图集，持久的加载在内存中，避免对待普通图集时的清理，来减少drawcall数量和提升加载速度。
 
-![图集](/assets/img/2020-06-01/图集.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![图集](/assets/img/2020-06-01/图集.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*图集\**
 
-![公共图集](/assets/img/2020-06-01/公共图集.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![公共图集](/assets/img/2020-06-01/公共图集.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*公共图集\**
 
 > 公共图集的优化效果则取决于各个功能模块的开发者，他们需要将多个功能/模块中通用的图片摘出，加入公共图集进行打包，而非独立打包。同时也需要考虑公共图集的大小和数量，因为长期驻存在内存中意味着内存规模的上升，这需要衡量和取舍。
@@ -140,7 +140,7 @@ performance.measure("A_Result", "A", "A_End")
 
 对此我们可以有很多应用，比如对所有协议的收发阶段进行标记和测量，并在性能报告中对协议的耗时进行检索和排序，就能够一眼看出哪些协议耗时过高或次数过多需要优化了。
 
-![Chrome Timeline瀑布图](/assets/img/2020-06-01/Chrome瀑布流.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![Chrome Timeline瀑布图](/assets/img/2020-06-01/Chrome瀑布流.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*Chrome Timeline瀑布图\**
 
 但是在使用Chrome的DevTool的过程中，我发现Chrome的瀑布流图表对异步过程的标记和测量存在bug。比如在需要测量的两个标记中如果存在其他未闭合的标记，虽然瀑布流的Timings栏会有记录，但是在Event栏却检索不到该记录，也无法根据耗时排序了。这个[bug](https://bugs.chromium.org/p/chromium/issues/detail?id=1000097&q=&can=4){:target="_blank"}已经提交给了`crbug.com`。但是至今还没修复，可能是和数据记录识别的方式有关系。
@@ -154,25 +154,25 @@ performance.measure("A_Result", "A", "A_End")
 performance.measure("B_Result", "B", "B_End")
 ```
 
-![Chrome Timeline瀑布流的bug](/assets/img/2020-06-01/Chrome瀑布流的bug.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![Chrome Timeline瀑布流的bug](/assets/img/2020-06-01/Chrome瀑布流的bug.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*Chrome Timeline瀑布图无法识别记录\**
 
 > 当然`performance` API现阶段并没有被完全支持，在一些环境中(比如微信小游戏，Laya Native及Safari)，你可以考虑改用`console.time`与`console.timeEnd`来包裹一段执行过程，除了在console控制台输出计时外，记录也会显示在`DevTool` - `Performance瀑布流` - `Console栏`中。或者你也可以封装一个profile工具，判断不同环境用不同的实现，或者空调用。
 
 值得注意的是，尽管Chrome自带的`Performance`的瀑布流图表已经十分详尽，但是因为记录的内容太多，导致记录本身耗时（虽然可以关闭一些无关的记录选项，比如不关注执行栈时可以`disable JavaScript sample`），且加载性能数据也非常耗时。实际上做游戏Profile时我们关心的其实只是很小的一部分，比如每个模块的耗时分布，每个协议的耗时，所以一般情况下还是需要自己做一些额外的工作，比如数据的筛选与可视化报告。
 
-![Chrome 性能数据记录的格式](/assets/img/2020-06-01/json数据.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![Chrome 性能数据记录的格式](/assets/img/2020-06-01/json数据.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*Chrome 性能数据记录的格式\**
 
 在JavaScript中使用`performance`或`console`进行标记，并通过`DevTool` - `Performance` - `Record` 产生性能数据后，通过观察输出的JSON数据格式，我们可以找到标记的一些数据特征，通过脚本筛选出来进行计算处理，输出成每个事件的耗时记录。再通过`ECharts`工具绘制成图表，根据不同的需要输出不同的可视化报告。形成自动化流程后，每个开发阶段都能对游戏的性能有一个合理的把控了。
 
-![数据处理与可视化工具](/assets/img/2020-06-01/json数据处理与报告.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![数据处理与可视化工具](/assets/img/2020-06-01/json数据处理与报告.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*数据处理与可视化工具脚本\**
 
-![每帧Update耗时分析报告](/assets/img/2020-06-01/每帧耗时分布.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![每帧Update耗时分析报告](/assets/img/2020-06-01/每帧耗时分布.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*每帧Update耗时分析报告\**
 
-![协议耗时报告](/assets/img/2020-06-01/协议耗时.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![协议耗时报告](/assets/img/2020-06-01/协议耗时.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*协议耗时报告\**
 
 ### UI打开速度的运行时监测
@@ -196,7 +196,7 @@ UI打开速度是衡量UI性能的一个重要指标，为此我们做了一些�
 - 如果是下载时间长则考虑图片是否可以压缩，有损还是无损，有损的话可以接受怎样的精度？
 - 如果是具体逻辑执行阶段的明显耗时则根据具体代码来进行优化，比如对逻辑重的部分进行摊帧执行。
 
-![UI打开速度监测](/assets/img/2020-06-01/UI打开速度监测.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![UI打开速度监测](/assets/img/2020-06-01/UI打开速度监测.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*UI打开速度监测和收集的部分代码\**
 
 ### 静态资源标准检查工具的实现
@@ -211,19 +211,19 @@ UI打开速度是衡量UI性能的一个重要指标，为此我们做了一些�
 
 因此我写了一些简单的python脚本，用来扫描游戏内的UI配置、图集以及实际资源规格，来判断是否制作出了超规格的UI面板。项目组根据这些报告，自行定夺是否优化。而优化完成后，再次执行工具，扫描对比后便能看到问题是否依然存在。
 
-![UI报告](/assets/img/2020-06-01/UI报告.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![UI报告](/assets/img/2020-06-01/UI报告.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*UI静态检测报告\**
 
 同理也需要对特效、模型等进行扫描。其实没有任何技术难度可言，只是通过这样的简易自动化工具，便能快速发现一些问题，而不需要等待问题暴露时再去通过排查来定位。
 
-![特效报告](/assets/img/2020-06-01/特效报告.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![特效报告](/assets/img/2020-06-01/特效报告.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*特效静态检测报告\**
 
 ### 内存规模分析与内存泄漏排查
 
 内存的稳定性直接影响了游戏的稳定性，可以从下面三个角度来看：
 
-#### 内存泄漏
+#### 1.内存泄漏
 
 当游戏使用的内存`Proportional Set Size`即实际使用的物理内存值（包括按比例计算系统共享库使用的内存）达到系统设定的最大值时，操作系统会强制杀死该进程，并报出`Out Of Memory`的错误，这个报错在一些线上项目的`Bugly`上经常能看到。如果游戏出现比较频繁的内存泄漏，哪怕每次泄漏分配了很小块的内存但是又没有被释放，也很可能运行三十分钟后内存就爬升到系统设定的阈值因而崩溃。
   
@@ -291,14 +291,14 @@ this.Hook(laya.display.Node, "call", CreatedFunc);
 this.Hook(laya.display.Node, "destroy", DestroyFunc);
 ```
 
-![引擎对象统计](/assets/img/2020-06-01/对像统计.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![引擎对象统计](/assets/img/2020-06-01/对像统计.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*引擎对象统计\**
 
 我们通过反复打开关闭某一功能或进出某场景，再对比统计数量就能看到一些组件的泄漏。这是统计监测引擎对象数量变化的组件，同样我们需要实时能够看到一些贴图资源是否真的从`Laya.Loader.loadedMap`中移除并真正的释放内存。如果是通过控制台`console.log(Laya.Loader.loadedMap)`观察也可以，但是太过麻烦，并且有时候加载的资源数量达到几百上千条，则会卡控制台。为了解决这个问题，我们拓展了`Laya`的`DebugPanel`进行展示，并且通过资源路径来区分不同的资源种类，并提供一些预估值来计算其占用的内存大小。
 
 > `Laya`引擎本身在`laya.debugtool.js`中写了一些用于debug和profile的功能组件，但是不知道为什么官网并没有给出使用说明，可能废弃了大部分功能，只保留了一个`DebugPanel`。并且还对DebugPanel的一些代码进行了base64加密，给最初拓展该组件带来了一定的麻烦。
 
-![DebugPanel拓展](/assets/img/2020-06-01/DebugPanel拓展.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![DebugPanel拓展](/assets/img/2020-06-01/DebugPanel拓展.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*DebugPanel拓展\**
 
 `H2`项目中我使用这两个工具在最后性能收尾阶段跑完了游戏内所有40个功能以及20个副本，发现了数十个泄漏以及代码上的问题并修复。从这个结果上看，引擎层面的工具对游戏的稳定性而言是十分重要的。
@@ -307,17 +307,17 @@ this.Hook(laya.display.Node, "destroy", DestroyFunc);
 
 以上是游戏引擎层面的工具，在设备/系统方面我们也需要一些工具来确定内存的整体规模和判断是否有内存泄漏的问题。比如在iOS设备上使用`Xcode`调试查看应用使用的内存，CPU，网络，甚至耗电情况和原因，当然`Android Studio`也基本有同样的功能。这些IDE除了提供查看实时的内存规模变化的功能外，还提供了一些专门检测`Leaks`即内存泄漏的功能。
 
-![使用AS查看应用使用的内存](/assets/img/2020-06-01/使用AS或Xcode查看真实的内存.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![使用AS查看应用使用的内存](/assets/img/2020-06-01/使用AS或Xcode查看真实的内存.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*使用Android Studio查看应用使用的内存\**
 
 > 和引擎层面排查泄漏同理，通过观察反复进出同一场景/打开同一功能引起的内存规模的波动是否正常，一般就能判断游戏内是否存在内存泄漏问题。`H2`项目也因此解决了若干个因为错误使用了`Laya`引擎的动态合批功能而引起的内存暴涨导致的`OOM`问题，将项目内存规模稳定到了Android设备测试环境下400-600MB区间。
 
 因为项目是多平台发行的，除了传统的iOS/Android设备环境外，还有Chrome以及小游戏环境，同样需要对应的Profile工具来查看内存情况。微信小游戏环境下可以使用安卓设备，运行时打开Profile模式，便可以在右上角看到内存信息，机制与安卓同理。Chrome则可以通过`Shift + Del`打开浏览器的任务管理器，查看页面内存使用情况。如果觉得表格数字不够直观，你也可以使用 *GraphProcess* 这款Chrome插件来查看内存变化情况。
 
-![使用GraphProcess查看Chrome内存波动](/assets/img/2020-06-01/GraphProcess查看Chrome内存波动.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![使用GraphProcess查看Chrome内存波动](/assets/img/2020-06-01/GraphProcess查看Chrome内存波动.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*使用GraphProcess查看Chrome内存波动\**
 
-#### 内存规模
+#### 2.内存规模
 
 而除了内存泄漏方面的问题，游戏内整体的内存规模也应该控制在合理水平，才能让更多相对低配的机器能够畅玩。一个游戏对相对低配的设备越友好，潜在的玩家数量也会越大，PUBG除外。
 
@@ -326,7 +326,7 @@ this.Hook(laya.display.Node, "destroy", DestroyFunc);
 
 在优化游戏整体的内存规模时，需要对优化目标有一个选择。虽然大家都很想要竭尽全力的做好每一处细节使得性能最优，但是出于工作量考量，质量与性能取舍等原因，一个项目不能无限优化。一个针对具体项目的性能期望则是优化收束的终点。比如`H2`项目中，我们希望内存优化可以使得*iOS 2GB*设备与*Android 4GB*设备可以在微信小游戏环境下稳定运行超过**2小时**。而*iOS 1GB*的设备（如iPhone6）从优化开始的阶段就已经被放弃，因为1GB的iOS设备应用可使用的内存阈值也只有645MB左右，并且还需要跑在微信的环境下，可使用的内存更少了，对可接受的游戏品质而言是基本无法做到稳定运行的。
 
-#### GC方面
+#### 3.垃圾回收
 
 内存方面还容易出现的一个问题是垃圾回收即`Garbage Collection`频率过高，因为现在大部分解释型语言的VM垃圾回收器都是运行在主线程，且或多或少都会引发用户线程暂停执行即`Stop The World`，哪怕是`Lua 5.3`的步进式GC，每一次Step都需要暂停主线程执行。而即使是`JavaScript V8引擎`做了大量多线程优化后，一次Major GC也要10ms左右。所以过于频繁的GC会导致部分帧渲染耗时飙升，从而造成掉帧卡顿。
 
@@ -347,7 +347,7 @@ this.Hook(laya.display.Node, "destroy", DestroyFunc);
 
 值得一提的是排查主流程某个性能问题的经历。表现是游戏内主流程跑到某个阶段，必现的加载缓慢，游戏卡顿的问题。我首先确定了使用的资源已经经过压缩，然后通过在引擎层对加载各阶段的耗时统计，以及近N次加载耗时的平均发现了卡顿时的异样表现，最终定位到了原因是在Loader队列中等待的时间过长。
 
-![资源加载各阶段的耗时统计](/assets/img/2020-06-01/微信小游戏加载缓慢问题定位.png){:data-action="zoom"}{:style="max-width: 60%;"}
+![资源加载各阶段的耗时统计](/assets/img/2020-06-01/微信小游戏加载缓慢问题定位.png){:data-action="zoom"}{:style="max-width: 85%;"}
 *\*资源加载各阶段的耗时统计与问题定位\**
 
 通过打印等待队列长度及其内容时发现，卡顿时等待队列最长去到26个待加载资源。而这是因为打开了某个制作未被优化而依赖了十余个icon的UI，或者游戏内主流程在某个阶段进行频繁的场景切换，而大量场景地块、怪物、NPC乃至角色的部分动画都因为Cache策略的调整而未被缓存到内存中，需要重新下载，导致待加载队列过长，从而导致大幅度的下载延时。这一点在其他端没有测出来，但是在小游戏环境下表现颇为明显。
@@ -396,7 +396,7 @@ if((MiniAdpter.autoCacheFile || isSaveFile)&& readyUrl.indexOf(".php")==-1
 
 如同市面上的CPU更新时都会和上一代进行算力对比一样，在我们对游戏进行性能优化的过程中，也一定要对前后的具体性能表现进行性能量化，差异对比。否则做了任何一个改动都只能从主观上去臆测，无法知道优化的有效性，也无法直观查看优化的结果。没有量化数据指导的优化工作以及迭代更新不但结果抽象，而且往往会陷入没有目标，没有反馈，优化效率低下，徒劳，甚至负优化的情形中去。
 
-![如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果](/assets/img/2020-06-01/V8优化的量化指标对比.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果](/assets/img/2020-06-01/V8优化的量化指标对比.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果\**
 
 性能优化离不开量化，而量化则离不开好的工具和模块设计。不过测量性能指标的工具有好有坏，最理想的往往是在设计功能模块时，就已经思考了如何量化这个模块的性能指标，并且随着模块的实现，相应的量化工具也写出来了。比如设计一个协议的收发模块，就要考虑如何方便量化协议的耗时。协议基类可以将收发协议拆分成若干个独立步骤，比如组装，发送，解析，执行，这样在后期量化性能指标的时候，便能非常方便的打点统计，数据清晰，哪里不符合标准也一目了然。在H2项目后期我排查场景、特效模块引起的内存泄漏时，颇有这种遗憾。当业务功能已经铺开或实现完全时，再重新设计模块和规则要求大家一起使用或遵守是不现实的。量化的工具不应该是单独于项目之外的东西，而是随着功能实现同时设计产出的东西。
@@ -418,7 +418,7 @@ if((MiniAdpter.autoCacheFile || isSaveFile)&& readyUrl.indexOf(".php")==-1
 
 在H2项目中，随着项目推进总共进行了2次相对集中的性能优化工作。从公司的视角而言，因为我们没有足够的人力持续性的监视着性能数据或者投入到性能优化的工作上去，所以每次只能集中一段时间投入2-3个人对项目的性能表现进行把控和优化。这非常可以理解，哪怕数百人的项目组也经常存在人力紧张的情况。但是问题是这些优化的时间节点往往是性能肉眼可见地出问题了（失控），项目要内测了，项目要上线了这些因素影响的。如果项目本身相对简单，或者初期就有了一定的开发规范，也没有大量的需求改动，那么游戏性能也不会有什么大问题。但是当项目复杂度提升到一定水平时，这样的工作安排往往捉襟见肘。而这就是自动化监测工具需要完成的工作：先于“人眼”报告出游戏的性能问题。
 
-![自动化监测](/assets/img/2020-06-01/自动化监测.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![自动化监测](/assets/img/2020-06-01/自动化监测.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*市面上对产品进行性能、质量、兼容性测试的商业化测试软件PerfDog\**
 
 理想的情况下，从项目一开始便应该投入人力开发一些自动化工具监测性能表现。有别于市面上对完整游戏产品进行质量测试的商业测试软件如`PerfDog` `UPR` `Airtest`等等，这些工具理应随着功能模块的开发或规则的制定一起实现，关注一些具有项目个性化关键的性能指标，独立或嵌入模块之内。一般分以下两种形式：
@@ -438,7 +438,7 @@ if((MiniAdpter.autoCacheFile || isSaveFile)&& readyUrl.indexOf(".php")==-1
 - 可能需要通过分析处理工具进行过滤和筛选，将值得关注的信息拣选出来
 - 选择合适的图表形式绘制可视化报告
 
-![echarts示例](/assets/img/2020-06-01/echarts示例.png){:data-action="zoom"}{:style="max-width: 60%;"}  
+![echarts示例](/assets/img/2020-06-01/echarts示例.png){:data-action="zoom"}{:style="max-width: 85%;"}  
 *\*基于JavaScript的开源可视化图表库ECharts示例\**
 
 > 图表形式的选择直接影响了报告的直观程度，最常见的帧率变化一般选择折线图，内存变化选择堆叠面积图（如Android Studio的Memory Profile），简单的耗时对比就用柱状图。
