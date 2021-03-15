@@ -149,7 +149,7 @@ module.exports = {
 };
 ~~~
 
-在根目录下运行`webpack`，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个[sourcemapping工具](/2019/09/11/JavaScript混淆堆栈解析映射工具.html){:target="_blank"}。
+在根目录下运行`webpack`，会在dist目录下生成打包后的文件以及对应的sourcemap文件。sourcemap文件要保留好，日后出现报错堆栈可以通过该符号文件解析到源码。关于堆栈解析映射可以使用我写的这个[sourcemapping工具](/2019/09/11/JavaScript-Source-Mapping.html){:target="_blank"}。
 
 ![dist分包结果.png](https://i.loli.net/2020/03/28/nwtgkrBPoLDG5sy.png){:data-action="zoom"}{:style="max-width: 60%;"}  
 \**webpack-splitChunks打包结果*\*
