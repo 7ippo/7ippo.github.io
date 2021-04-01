@@ -183,7 +183,7 @@ Author: Ray-Eldath
 
 <p>在项目立项早期，我作为引擎共同参与了包括美术、项目组、策划等决策人员出席的研讨会，会上确立了游戏的基本表现形式，比如是2.5D还是3D，美术资源的规格与游戏精度，比如贴图的分辨率，主角有多少个朝向，动画的类型是序列帧还是骨骼动画，如果是序列帧动画那是要具体多少帧，场景内最多容纳多少怪物等等。</p>
 
-<p><img src="/assets/img/2020-06-01/序列帧动画.gif" alt="当时确定了主角动画用序列帧来实现" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/k1qJMFTHwSVIyQO.gif" alt="当时确定了主角动画用序列帧来实现" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*最终主角动画使用序列帧来实现，UI中人物用骨骼动画来展示*</em></p>
 
 <blockquote>
@@ -215,10 +215,10 @@ Author: Ray-Eldath
 
 <p>Laya IDE内置了图集打包工具，打包会生成若干张png与一个json格式记录图集信息的atlas文件。一般情况下我们会将一个功能或UI面板中用到的图片打成一个图集来达到减少drawcall的目的，同时我们也会将各个功能通用的一些小图或组件打包成公共图集，持久的加载在内存中，避免对待普通图集时的清理，来减少drawcall数量和提升加载速度。</p>
 
-<p><img src="/assets/img/2020-06-01/图集.png" alt="图集" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/DM94azPHZGdOXNg.png" alt="图集" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*图集*</em></p>
 
-<p><img src="/assets/img/2020-06-01/公共图集.png" alt="公共图集" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/1iIuwqGKTEp3a7F.png" alt="公共图集" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*公共图集*</em></p>
 
 <blockquote>
@@ -306,7 +306,7 @@ Author: Ray-Eldath
 
 <p>对此我们可以有很多应用，比如对所有协议的收发阶段进行标记和测量，并在性能报告中对协议的耗时进行检索和排序，就能够一眼看出哪些协议耗时过高或次数过多需要优化了。</p>
 
-<p><img src="/assets/img/2020-06-01/Chrome瀑布流.png" alt="Chrome Timeline瀑布图" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/vZTgCFY4UDnXaQp.png" alt="Chrome Timeline瀑布图" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*Chrome Timeline瀑布图*</em></p>
 
 <p>但是在使用Chrome的DevTool的过程中，我发现Chrome的瀑布流图表对异步过程的标记和测量存在bug。比如在需要测量的两个标记中如果存在其他未闭合的标记，虽然瀑布流的Timings栏会有记录，但是在Event栏却检索不到该记录，也无法根据耗时排序了。这个<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1000097&amp;q=&amp;can=4" target="_blank">bug</a>已经提交给了<code class="highlighter-rouge">crbug.com</code>。但是至今还没修复，可能是和数据记录识别的方式有关系。</p>
@@ -319,7 +319,7 @@ Author: Ray-Eldath
 <span class="nx">performance</span><span class="p">.</span><span class="nx">measure</span><span class="p">(</span><span class="dl">"</span><span class="s2">B_Result</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">B</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">B_End</span><span class="dl">"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/assets/img/2020-06-01/Chrome瀑布流的bug.png" alt="Chrome Timeline瀑布流的bug" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/wArj2V7HWkflLIY.png" alt="Chrome Timeline瀑布流的bug" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*Chrome Timeline瀑布图无法识别记录*</em></p>
 
 <blockquote>
@@ -328,18 +328,18 @@ Author: Ray-Eldath
 
 <p>值得注意的是，尽管Chrome自带的<code class="highlighter-rouge">Performance</code>的瀑布流图表已经十分详尽，但是因为记录的内容太多，导致记录本身耗时（虽然可以关闭一些无关的记录选项，比如不关注执行栈时可以<code class="highlighter-rouge">disable JavaScript sample</code>），且加载性能数据也非常耗时。实际上做游戏Profile时我们关心的其实只是很小的一部分，比如每个模块的耗时分布，每个协议的耗时，所以一般情况下还是需要自己做一些额外的工作，比如数据的筛选与可视化报告。</p>
 
-<p><img src="/assets/img/2020-06-01/json数据.png" alt="Chrome 性能数据记录的格式" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/HXgmRFOuMapZx8k.png" alt="Chrome 性能数据记录的格式" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*Chrome 性能数据记录的格式*</em></p>
 
 <p>在JavaScript中使用<code class="highlighter-rouge">performance</code>或<code class="highlighter-rouge">console</code>进行标记，并通过<code class="highlighter-rouge">DevTool</code> - <code class="highlighter-rouge">Performance</code> - <code class="highlighter-rouge">Record</code> 产生性能数据后，通过观察输出的JSON数据格式，我们可以找到标记的一些数据特征，通过脚本筛选出来进行计算处理，输出成每个事件的耗时记录。再通过<code class="highlighter-rouge">ECharts</code>工具绘制成图表，根据不同的需要输出不同的可视化报告。形成自动化流程后，每个开发阶段都能对游戏的性能有一个合理的把控了。</p>
 
-<p><img src="/assets/img/2020-06-01/json数据处理与报告.png" alt="数据处理与可视化工具" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/9hiqEZuVAPmSzos.png" alt="数据处理与可视化工具" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*数据处理与可视化工具脚本*</em></p>
 
-<p><img src="/assets/img/2020-06-01/每帧耗时分布.png" alt="每帧Update耗时分析报告" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/eiIhs5Mj2F8GaHN.png" alt="每帧Update耗时分析报告" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*每帧Update耗时分析报告*</em></p>
 
-<p><img src="/assets/img/2020-06-01/协议耗时.png" alt="协议耗时报告" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/F1wLXkmVpvgWtbi.png" alt="协议耗时报告" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*协议耗时报告*</em></p>
 
 <h3 id="ui打开速度的运行时监测">UI打开速度的运行时监测</h3>
@@ -369,7 +369,7 @@ Author: Ray-Eldath
   <li>如果是具体逻辑执行阶段的明显耗时则根据具体代码来进行优化，比如对逻辑重的部分进行摊帧执行。</li>
 </ul>
 
-<p><img src="/assets/img/2020-06-01/UI打开速度监测.png" alt="UI打开速度监测" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/TSzNnGfj3v6mRlK.png" alt="UI打开速度监测" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*UI打开速度监测和收集的部分代码*</em></p>
 
 <h3 id="静态资源标准检查工具的实现">静态资源标准检查工具的实现</h3>
@@ -386,12 +386,12 @@ Author: Ray-Eldath
 
 <p>因此我写了一些简单的python脚本，用来扫描游戏内的UI配置、图集以及实际资源规格，来判断是否制作出了超规格的UI面板。项目组根据这些报告，自行定夺是否优化。而优化完成后，再次执行工具，扫描对比后便能看到问题是否依然存在。</p>
 
-<p><img src="/assets/img/2020-06-01/UI报告.png" alt="UI报告" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/Cgb93RGTNsrAHtB.png" alt="UI报告" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*UI静态检测报告*</em></p>
 
 <p>同理也需要对特效、模型等进行扫描。其实没有任何技术难度可言，只是通过这样的简易自动化工具，便能快速发现一些问题，而不需要等待问题暴露时再去通过排查来定位。</p>
 
-<p><img src="/assets/img/2020-06-01/特效报告.png" alt="特效报告" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/3NofbjPiZzR1aOI.png" alt="特效报告" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*特效静态检测报告*</em></p>
 
 <h3 id="内存规模分析与内存泄漏排查">内存规模分析与内存泄漏排查</h3>
@@ -467,7 +467,7 @@ Author: Ray-Eldath
 <span class="k">this</span><span class="p">.</span><span class="nx">Hook</span><span class="p">(</span><span class="nx">laya</span><span class="p">.</span><span class="nx">display</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="dl">"</span><span class="s2">destroy</span><span class="dl">"</span><span class="p">,</span> <span class="nx">DestroyFunc</span><span class="p">);</span>
 </code></pre></div></div>
 
-<p><img src="/assets/img/2020-06-01/对像统计.png" alt="引擎对象统计" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/ftY1ZvwISCc3ye2.png" alt="引擎对象统计" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*引擎对象统计*</em></p>
 
 <p>我们通过反复打开关闭某一功能或进出某场景，再对比统计数量就能看到一些组件的泄漏。这是统计监测引擎对象数量变化的组件，同样我们需要实时能够看到一些贴图资源是否真的从<code class="highlighter-rouge">Laya.Loader.loadedMap</code>中移除并真正的释放内存。如果是通过控制台<code class="highlighter-rouge">console.log(Laya.Loader.loadedMap)</code>观察也可以，但是太过麻烦，并且有时候加载的资源数量达到几百上千条，则会卡控制台。为了解决这个问题，我们拓展了<code class="highlighter-rouge">Laya</code>的<code class="highlighter-rouge">DebugPanel</code>进行展示，并且通过资源路径来区分不同的资源种类，并提供一些预估值来计算其占用的内存大小。</p>
@@ -476,7 +476,7 @@ Author: Ray-Eldath
   <p><code class="highlighter-rouge">Laya</code>引擎本身在<code class="highlighter-rouge">laya.debugtool.js</code>中写了一些用于debug和profile的功能组件，但是不知道为什么官网并没有给出使用说明，可能废弃了大部分功能，只保留了一个<code class="highlighter-rouge">DebugPanel</code>。并且还对DebugPanel的一些代码进行了base64加密，给最初拓展该组件带来了一定的麻烦。</p>
 </blockquote>
 
-<p><img src="/assets/img/2020-06-01/DebugPanel拓展.png" alt="DebugPanel拓展" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/WKXc9ABCgbu3nkh.png" alt="DebugPanel拓展" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*DebugPanel拓展*</em></p>
 
 <p><code class="highlighter-rouge">H2</code>项目中我使用这两个工具在最后性能收尾阶段跑完了游戏内所有40个功能以及20个副本，发现了数十个泄漏以及代码上的问题并修复。从这个结果上看，引擎层面的工具对游戏的稳定性而言是十分重要的。</p>
@@ -485,7 +485,7 @@ Author: Ray-Eldath
 
 <p>以上是游戏引擎层面的工具，在设备/系统方面我们也需要一些工具来确定内存的整体规模和判断是否有内存泄漏的问题。比如在iOS设备上使用<code class="highlighter-rouge">Xcode</code>调试查看应用使用的内存，CPU，网络，甚至耗电情况和原因，当然<code class="highlighter-rouge">Android Studio</code>也基本有同样的功能。这些IDE除了提供查看实时的内存规模变化的功能外，还提供了一些专门检测<code class="highlighter-rouge">Leaks</code>即内存泄漏的功能。</p>
 
-<p><img src="/assets/img/2020-06-01/使用AS或Xcode查看真实的内存.png" alt="使用AS查看应用使用的内存" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/lE3WPieXY2dSAgm.png" alt="使用AS查看应用使用的内存" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*使用Android Studio查看应用使用的内存*</em></p>
 
 <blockquote>
@@ -494,7 +494,7 @@ Author: Ray-Eldath
 
 <p>因为项目是多平台发行的，除了传统的iOS/Android设备环境外，还有Chrome以及小游戏环境，同样需要对应的Profile工具来查看内存情况。微信小游戏环境下可以使用安卓设备，运行时打开Profile模式，便可以在右上角看到内存信息，机制与安卓同理。Chrome则可以通过<code class="highlighter-rouge">Shift + Del</code>打开浏览器的任务管理器，查看页面内存使用情况。如果觉得表格数字不够直观，你也可以使用 <em>GraphProcess</em> 这款Chrome插件来查看内存变化情况。</p>
 
-<p><img src="/assets/img/2020-06-01/GraphProcess查看Chrome内存波动.png" alt="使用GraphProcess查看Chrome内存波动" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/XxIz7SNTJkH3FYp.png" alt="使用GraphProcess查看Chrome内存波动" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*使用GraphProcess查看Chrome内存波动*</em></p>
 
 <h4 id="2内存规模">2.内存规模</h4>
@@ -531,7 +531,7 @@ Author: Ray-Eldath
 
 <p>值得一提的是排查主流程某个性能问题的经历。表现是游戏内主流程跑到某个阶段，必现的加载缓慢，游戏卡顿的问题。我首先确定了使用的资源已经经过压缩，然后通过在引擎层对加载各阶段的耗时统计，以及近N次加载耗时的平均发现了卡顿时的异样表现，最终定位到了原因是在Loader队列中等待的时间过长。</p>
 
-<p><img src="/assets/img/2020-06-01/微信小游戏加载缓慢问题定位.png" alt="资源加载各阶段的耗时统计" data-action="zoom" style="max-width: 85%;" />
+<p><img src="https://i.loli.net/2021/04/01/jqswg41XK582zid.png" alt="资源加载各阶段的耗时统计" data-action="zoom" style="max-width: 85%;" />
 <em>*资源加载各阶段的耗时统计与问题定位*</em></p>
 
 <p>通过打印等待队列长度及其内容时发现，卡顿时等待队列最长去到26个待加载资源。而这是因为打开了某个制作未被优化而依赖了十余个icon的UI，或者游戏内主流程在某个阶段进行频繁的场景切换，而大量场景地块、怪物、NPC乃至角色的部分动画都因为Cache策略的调整而未被缓存到内存中，需要重新下载，导致待加载队列过长，从而导致大幅度的下载延时。这一点在其他端没有测出来，但是在小游戏环境下表现颇为明显。</p>
@@ -587,7 +587,7 @@ Author: Ray-Eldath
 
 <p>如同市面上的CPU更新时都会和上一代进行算力对比一样，在我们对游戏进行性能优化的过程中，也一定要对前后的具体性能表现进行性能量化，差异对比。否则做了任何一个改动都只能从主观上去臆测，无法知道优化的有效性，也无法直观查看优化的结果。没有量化数据指导的优化工作以及迭代更新不但结果抽象，而且往往会陷入没有目标，没有反馈，优化效率低下，徒劳，甚至负优化的情形中去。</p>
 
-<p><img src="/assets/img/2020-06-01/V8优化的量化指标对比.png" alt="如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/Zc6SU59mPyqYJXN.png" alt="如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*如JavaScript V8引擎每次有新的技术迭代都会展示优化的结果*</em></p>
 
 <p>性能优化离不开量化，而量化则离不开好的工具和模块设计。不过测量性能指标的工具有好有坏，最理想的往往是在设计功能模块时，就已经思考了如何量化这个模块的性能指标，并且随着模块的实现，相应的量化工具也写出来了。比如设计一个协议的收发模块，就要考虑如何方便量化协议的耗时。协议基类可以将收发协议拆分成若干个独立步骤，比如组装，发送，解析，执行，这样在后期量化性能指标的时候，便能非常方便的打点统计，数据清晰，哪里不符合标准也一目了然。在H2项目后期我排查场景、特效模块引起的内存泄漏时，颇有这种遗憾。当业务功能已经铺开或实现完全时，再重新设计模块和规则要求大家一起使用或遵守是不现实的。量化的工具不应该是单独于项目之外的东西，而是随着功能实现同时设计产出的东西。</p>
@@ -619,7 +619,7 @@ Author: Ray-Eldath
 
 <p>在H2项目中，随着项目推进总共进行了2次相对集中的性能优化工作。从公司的视角而言，因为我们没有足够的人力持续性的监视着性能数据或者投入到性能优化的工作上去，所以每次只能集中一段时间投入2-3个人对项目的性能表现进行把控和优化。这非常可以理解，哪怕数百人的项目组也经常存在人力紧张的情况。但是问题是这些优化的时间节点往往是性能肉眼可见地出问题了（失控），项目要内测了，项目要上线了这些因素影响的。如果项目本身相对简单，或者初期就有了一定的开发规范，也没有大量的需求改动，那么游戏性能也不会有什么大问题。但是当项目复杂度提升到一定水平时，这样的工作安排往往捉襟见肘。而这就是自动化监测工具需要完成的工作：先于“人眼”报告出游戏的性能问题。</p>
 
-<p><img src="/assets/img/2020-06-01/自动化监测.png" alt="自动化监测" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/jc6BCh4RziQGAHX.png" alt="自动化监测" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*市面上对产品进行性能、质量、兼容性测试的商业化测试软件PerfDog*</em></p>
 
 <p>理想的情况下，从项目一开始便应该投入人力开发一些自动化工具监测性能表现。有别于市面上对完整游戏产品进行质量测试的商业测试软件如<code class="highlighter-rouge">PerfDog</code> <code class="highlighter-rouge">UPR</code> <code class="highlighter-rouge">Airtest</code>等等，这些工具理应随着功能模块的开发或规则的制定一起实现，关注一些具有项目个性化关键的性能指标，独立或嵌入模块之内。一般分以下两种形式：</p>
@@ -645,7 +645,7 @@ Author: Ray-Eldath
   <li>选择合适的图表形式绘制可视化报告</li>
 </ul>
 
-<p><img src="/assets/img/2020-06-01/echarts示例.png" alt="echarts示例" data-action="zoom" style="max-width: 85%;" /><br />
+<p><img src="https://i.loli.net/2021/04/01/kBJWrbOQzGsftq8.png" alt="echarts示例" data-action="zoom" style="max-width: 85%;" /><br />
 <em>*基于JavaScript的开源可视化图表库ECharts示例*</em></p>
 
 <blockquote>
@@ -747,6 +747,18 @@ Author: Ray-Eldath
       
     </section>
     <section class="post-footer-item read-next">
+      
+      <div class="read-next-item">
+        <a href="/2020/07/04/Intro-To-Modern-CG.html" class="read-next-link"></a>
+        <section>
+          <span>GAMES101毕业 - 现代计算机图形学入门</span>
+          <p>现代计算机图形学入门 - 2020春季 - 闫令琪UCSB课程主页课程论坛课程地址实验/作业环境虚拟机下搭建环境#...</p>
+        </section>
+        
+        <div class="filter"></div>
+        <img src="https://i.loli.net/2021/03/31/7EYRMm4yJ2o3jsh.png" alt="">
+        
+     </div>
       
 
       
