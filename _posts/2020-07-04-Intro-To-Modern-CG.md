@@ -68,10 +68,10 @@ sudo apt-get install libeigen3-dev
 
 三维环境下的任意一个旋转都可以拆解成绕三个轴的简单旋转组合。以下公式为绕过原点旋转轴$n$旋转$\alpha$角度，具体的推导可以[参考](https://blog.csdn.net/Master_Ding/article/details/82459342){:target="_blank"}:
 
-$$ R(n, \alpha) = cos(\alpha)I + (1 - cos(\alpha))nn^T + sin(\alpha)\begin{pmatrix}0 & -n_z & n_y\\\\n_z & 0 &-n_x\\\\-n_y & n_x & 0\end{pmatrix}$$
+$$ R(n, \alpha) = cos(\alpha)I + (1 - cos(\alpha))nn^T + sin(\alpha)\begin{pmatrix}0 & -n_z & n_y\\\\n_z & 0 &-n_x\\\\-n_y & n_x & 0\end{pmatrix} $$
 
 绕不经过原点的轴旋转类似二维可以拆解为：
-平移使轴经过原点计算平移矩阵$T$，计算旋转矩阵$R$，平移回原来的位置$T^-$:
+平移使轴经过原点计算平移矩阵$$T$$，计算旋转矩阵$$R$$，平移回原来的位置$$T^-$$:
 
 $$ M_{T^-}M_RM_T $$
 

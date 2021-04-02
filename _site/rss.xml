@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 01 Apr 2021 23:40:31 +0800</pubDate>
-    <lastBuildDate>Thu, 01 Apr 2021 23:40:31 +0800</lastBuildDate>
+    <pubDate>Sat, 03 Apr 2021 00:51:05 +0800</pubDate>
+    <lastBuildDate>Sat, 03 Apr 2021 00:51:05 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -83,7 +83,7 @@
 R(n, \alpha) = cos(\alpha)I + (1 - cos(\alpha))nn^T + sin(\alpha)\begin{pmatrix}0 &amp; -n_z &amp; n_y\\\\n_z &amp; 0 &amp;-n_x\\\\-n_y &amp; n_x &amp; 0\end{pmatrix} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;绕不经过原点的轴旋转类似二维可以拆解为：
-平移使轴经过原点计算平移矩阵$T$，计算旋转矩阵$R$，平移回原来的位置$T^-$:&lt;/p&gt;
+平移使轴经过原点计算平移矩阵&lt;script type=&quot;math/tex&quot;&gt;T&lt;/script&gt;，计算旋转矩阵&lt;script type=&quot;math/tex&quot;&gt;R&lt;/script&gt;，平移回原来的位置&lt;script type=&quot;math/tex&quot;&gt;T^-&lt;/script&gt;:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;M_{T^-}M_RM_T&lt;/script&gt;
 
