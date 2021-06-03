@@ -5,8 +5,8 @@
     <description>What is the purpose of LIFE</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 03 Apr 2021 00:51:05 +0800</pubDate>
-    <lastBuildDate>Sat, 03 Apr 2021 00:51:05 +0800</lastBuildDate>
+    <pubDate>Thu, 03 Jun 2021 18:29:33 +0800</pubDate>
+    <lastBuildDate>Thu, 03 Jun 2021 18:29:33 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -61,7 +61,7 @@
 &lt;p&gt;&lt;img src=&quot;https://i.loli.net/2020/03/08/IkF6VmRQc9b3raK.png&quot; alt=&quot;HomogenousCoordinates.png&quot; data-action=&quot;zoom&quot; style=&quot;max-width: 85%;&quot; /&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;为了解决上面平移不属于线性变换，无法用矩阵左乘来表示的问题，所以引入了齐次坐标。自此，所有的线性变换均可以用一个矩阵左乘来表示。注意矢量平移前后仍为同一矢量，且为了保证齐次坐标下运算的一致性（两个点相减等于一个新的矢量），所以二维向量的齐次坐标第三位是0。&lt;/p&gt;
+  &lt;p&gt;为了解决上面平移不属于线性变换，无法用矩阵左乘来表示的问题，所以引入了齐次坐标。自此，所有渲染过程用到的变换操作都可以用一个矩阵左乘来表示了。注意矢量平移前后仍为同一矢量，且为了保证齐次坐标下运算的一致性（两个点相减等于一个新的矢量），所以二维向量的齐次坐标第三位是0。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;齐次坐标统一后的线性变换表示：&lt;/p&gt;
@@ -791,7 +791,7 @@ R(n, \alpha) = cos(\alpha)I + (1 - cos(\alpha))nn^T + sin(\alpha)\begin{pmatrix}
 &lt;em&gt;*使用Android Studio查看应用使用的内存*&lt;/em&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;和引擎层面排查泄漏同理，通过观察反复进出同一场景/打开同一功能引起的内存规模的波动是否正常，一般就能判断游戏内是否存在内存泄漏问题。&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目也因此解决了若干个因为错误使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎的动态合批功能而引起的内存暴涨导致的&lt;code class=&quot;highlighter-rouge&quot;&gt;OOM&lt;/code&gt;问题，将项目内存规模稳定到了Android设备测试环境下400-600MB区间。&lt;/p&gt;
+  &lt;p&gt;和引擎层面排查泄漏同理，通过观察反复进出同一场景/打开同一功能引起的内存规模的波动是否正常，一般就能判断游戏内是否存在内存泄漏问题。&lt;code class=&quot;highlighter-rouge&quot;&gt;H2&lt;/code&gt;项目也因此解决了若干个因为错误使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;Laya&lt;/code&gt;引擎的动态合批功能而引起的内存暴涨导致的&lt;code class=&quot;highlighter-rouge&quot;&gt;OOM&lt;/code&gt;问题，修复后将项目内存规模稳定到了Android设备测试环境下400-600MB区间。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;因为项目是多平台发行的，除了传统的iOS/Android设备环境外，还有Chrome以及小游戏环境，同样需要对应的Profile工具来查看内存情况。微信小游戏环境下可以使用安卓设备，运行时打开Profile模式，便可以在右上角看到内存信息，机制与安卓同理。Chrome则可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;Shift + Del&lt;/code&gt;打开浏览器的任务管理器，查看页面内存使用情况。如果觉得表格数字不够直观，你也可以使用 &lt;em&gt;GraphProcess&lt;/em&gt; 这款Chrome插件来查看内存变化情况。&lt;/p&gt;
@@ -961,7 +961,7 @@ R(n, \alpha) = cos(\alpha)I + (1 - cos(\alpha))nn^T + sin(\alpha)\begin{pmatrix}
 &lt;p&gt;优秀的性能表现离不开优秀的设计和封装。一个模块最核心的部分封装好了，开发人员只需要往模块内部填充业务，哪怕代码水平参差不齐，写的再天马行空，项目也大概率不会出现严重的性能问题。举个例子，一个面板加载的资源和对象组件是否存在泄漏，这个就需要在设计UI模块之时加以考虑。例如我们可以在面板初始化时统一使用某个接口注册加载其依赖的资源和组件，面板销毁时同样由统一接口管理对应资源的清理。这样能有效避免组件或资源泄漏问题，并且即使出现个别代码加载未注册的资源时，也能及时发现并解决。&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;每个公司都有自己的代码标准或者开发规约，但是开发者执行的好与坏就是体现代码水平的差异了。但是，好的设计与封装就如同硬性的规定，极大的提高了代码水平的下限。&lt;/p&gt;
+  &lt;p&gt;每个公司都有自己的代码标准或者开发规约，但是开发者执行的好与坏就是体现代码水平的差异了。好的设计与封装就如同硬性的规定，极大的提高了代码水平的下限。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h4 id=&quot;重构&quot;&gt;重构&lt;/h4&gt;
