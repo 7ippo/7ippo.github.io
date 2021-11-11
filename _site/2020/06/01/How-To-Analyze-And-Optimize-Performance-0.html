@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Begin Jekyll SEO tag v2.6.1 -->
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
 <title>基于第一个完整项目经验的性能分析与优化讨论(一) | Tingsven’s blog</title>
-<meta name="generator" content="Jekyll v3.8.6" />
+<meta name="generator" content="Jekyll v3.8.5" />
 <meta property="og:title" content="基于第一个完整项目经验的性能分析与优化讨论(一)" />
 <meta name="author" content="周子博" />
 <meta property="og:locale" content="en_US" />
@@ -16,8 +16,10 @@
 <meta property="og:site_name" content="Tingsven’s blog" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-06-01T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="基于第一个完整项目经验的性能分析与优化讨论(一)" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"基于第一个完整项目经验的性能分析与优化讨论(一)","dateModified":"2020-06-01T00:00:00+08:00","datePublished":"2020-06-01T00:00:00+08:00","url":"http://localhost:4000/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html"},"author":{"@type":"Person","name":"周子博"},"description":"项目经历","@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"周子博"},"@type":"BlogPosting","headline":"基于第一个完整项目经验的性能分析与优化讨论(一)","dateModified":"2020-06-01T00:00:00+08:00","url":"http://localhost:4000/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html","description":"项目经历","datePublished":"2020-06-01T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <meta name="keywords"  content="H5, Laya, 性能优化">
@@ -250,43 +252,43 @@ Author: Ray-Eldath
 
 <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 可供参考的对象池类结构</span>
 <span class="k">export</span> <span class="kd">class</span> <span class="nx">ObjectPool</span><span class="p">{</span>
-    <span class="kr">protected</span> <span class="nx">pool_type</span><span class="p">:</span> <span class="nx">PoolType</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>           <span class="c1">// 池类型</span>
-    <span class="kr">protected</span> <span class="nx">obj_class</span><span class="p">:</span> <span class="nx">any</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>                <span class="c1">// 对象类型</span>
-    <span class="kr">protected</span> <span class="nx">constructor_args</span><span class="p">:</span> <span class="nx">any</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>         <span class="c1">// 传入构造器的参数</span>
-    <span class="kr">protected</span> <span class="nx">max_obj_id</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>               <span class="c1">// 最大对象id，从1开始</span>
-    <span class="kr">protected</span> <span class="nx">obj_map</span><span class="p">:</span> <span class="nx">any</span> <span class="o">=</span> <span class="p">{};</span>                    <span class="c1">// 对象池: {pool_obj_id, object}</span>
-    <span class="kr">protected</span> <span class="nx">obj_cur_count</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>            <span class="c1">// 对象池当前数量</span>
-    <span class="kr">protected</span> <span class="nx">idle_key_map</span><span class="p">:</span> <span class="nx">any</span> <span class="o">=</span> <span class="p">{};</span>               <span class="c1">// 记录对象信息空闲池: {pool_obj_id, boolean}</span>
-    <span class="kr">protected</span> <span class="nx">idle_key_cur_count</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>       <span class="c1">// 空闲池当前数量</span>
-    <span class="kr">protected</span> <span class="nx">retain_threshold</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>         <span class="c1">// 池清理的下阈值: 池中对象数量&lt;=此值, 则停止清理</span>
-    <span class="kr">protected</span> <span class="nx">shrink_threshold</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>         <span class="c1">// 池清理的上阈值: 池中对象数量&gt;=此值, 则可以清理</span>
-    <span class="kr">protected</span> <span class="nx">shrink_check_time</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>        <span class="c1">// 池清理的间隔时间</span>
-    <span class="kr">protected</span> <span class="nx">delay_create_flag</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>   <span class="c1">// 是否摊帧创建</span>
+    <span class="k">protected</span> <span class="nx">pool_type</span><span class="p">:</span> <span class="nx">PoolType</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>           <span class="c1">// 池类型</span>
+    <span class="k">protected</span> <span class="nx">obj_class</span><span class="p">:</span> <span class="kr">any</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>                <span class="c1">// 对象类型</span>
+    <span class="k">protected</span> <span class="nx">constructor_args</span><span class="p">:</span> <span class="kr">any</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>         <span class="c1">// 传入构造器的参数</span>
+    <span class="k">protected</span> <span class="nx">max_obj_id</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>               <span class="c1">// 最大对象id，从1开始</span>
+    <span class="k">protected</span> <span class="nx">obj_map</span><span class="p">:</span> <span class="kr">any</span> <span class="o">=</span> <span class="p">{};</span>                    <span class="c1">// 对象池: {pool_obj_id, object}</span>
+    <span class="k">protected</span> <span class="nx">obj_cur_count</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>            <span class="c1">// 对象池当前数量</span>
+    <span class="k">protected</span> <span class="nx">idle_key_map</span><span class="p">:</span> <span class="kr">any</span> <span class="o">=</span> <span class="p">{};</span>               <span class="c1">// 记录对象信息空闲池: {pool_obj_id, boolean}</span>
+    <span class="k">protected</span> <span class="nx">idle_key_cur_count</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>       <span class="c1">// 空闲池当前数量</span>
+    <span class="k">protected</span> <span class="nx">retain_threshold</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>         <span class="c1">// 池清理的下阈值: 池中对象数量&lt;=此值, 则停止清理</span>
+    <span class="k">protected</span> <span class="nx">shrink_threshold</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>         <span class="c1">// 池清理的上阈值: 池中对象数量&gt;=此值, 则可以清理</span>
+    <span class="k">protected</span> <span class="nx">shrink_check_time</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>        <span class="c1">// 池清理的间隔时间</span>
+    <span class="k">protected</span> <span class="nx">delay_create_flag</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>   <span class="c1">// 是否摊帧创建</span>
 
-    <span class="kr">protected</span> <span class="nx">inited</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="kr">protected</span> <span class="nx">pool_id</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>               <span class="c1">// 池ID</span>
-    <span class="kr">protected</span> <span class="nx">next_shrink_interval</span><span class="p">:</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>     <span class="c1">// 下次池清理的剩余时间</span>
+    <span class="k">protected</span> <span class="nx">inited</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">protected</span> <span class="nx">pool_id</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>               <span class="c1">// 池ID</span>
+    <span class="k">protected</span> <span class="nx">next_shrink_interval</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>     <span class="c1">// 下次池清理的剩余时间</span>
 
     <span class="c1">// 构造对象池，传入对象类型，对象构造时的参数，池规模大小等信息</span>
     <span class="kd">constructor</span><span class="p">()</span> <span class="p">{...}</span>
 
     <span class="c1">// 自动管理与摊帧创建</span>
-    <span class="kr">public</span> <span class="nx">Update</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
+    <span class="k">public</span> <span class="nx">Update</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
 
     <span class="c1">// 借出对象，同时具备拓展池规模的功能</span>
-    <span class="kr">public</span> <span class="nx">RentObject</span><span class="p">():</span> <span class="nx">any</span> <span class="p">{...}</span>
+    <span class="k">public</span> <span class="nx">RentObject</span><span class="p">():</span> <span class="kr">any</span> <span class="p">{...}</span>
 
     <span class="c1">// 归还对象，同时检查是否需要缩小池规模</span>
-    <span class="kr">public</span> <span class="nx">GiveBackObject</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
+    <span class="k">public</span> <span class="nx">GiveBackObject</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
 
     <span class="c1">// 真正创建一个对象</span>
-    <span class="kr">protected</span> <span class="nx">CreateOneObject</span><span class="p">():</span> <span class="nx">any</span> <span class="p">{...}</span>
+    <span class="k">protected</span> <span class="nx">CreateOneObject</span><span class="p">():</span> <span class="kr">any</span> <span class="p">{...}</span>
 
     <span class="c1">// 真正销毁一个对象</span>
-    <span class="kr">protected</span> <span class="nx">DestroyObject</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
+    <span class="k">protected</span> <span class="nx">DestroyObject</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
 
     <span class="c1">// 缩小池规模</span>
-    <span class="kr">protected</span> <span class="nx">Shrink</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
+    <span class="k">protected</span> <span class="nx">Shrink</span><span class="p">():</span> <span class="k">void</span> <span class="p">{...}</span>
 
     <span class="c1">// 一些统计、profile接口</span>
     <span class="p">...</span>
@@ -442,7 +444,7 @@ Author: Ray-Eldath
 <p>首先是借助引擎内部的一些debug工具或profile工具来检查无用资源或引擎对象的清理是否正常。如果自己封装了一个管理类，则还要测试管理类的加载和清理策略是否正确，清理策略是否合理。比如<code class="highlighter-rouge">H2</code>项目中，我写了一个实时展示<code class="highlighter-rouge">Laya</code>引擎可视对象的数量的统计组件，用来检查游戏内各个功能或场景是否存在引擎对象泄漏的问题。因为项目中的所有可视对象都继承于<code class="highlighter-rouge">Laya</code>的<code class="highlighter-rouge">Node</code>类，所以可以拿到子类的name，再通过hook其构造和销毁函数统计子对象的数量变化。</p>
 
 <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 引擎自定义对像统计CustomStat.ts</span>
-<span class="kr">public</span> <span class="kd">static</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">tar</span><span class="p">)</span>
+<span class="k">public</span> <span class="k">static</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">tar</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="k">if</span> <span class="p">((</span><span class="k">typeof</span> <span class="nx">tar</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">))</span> <span class="k">return</span> <span class="nx">tar</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
     <span class="k">return</span> <span class="nx">tar</span><span class="p">[</span><span class="dl">"</span><span class="s2">constructor</span><span class="dl">"</span><span class="p">].</span><span class="nx">name</span><span class="p">;</span>
