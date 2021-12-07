@@ -1,6 +1,18 @@
 [
   
     {
+      "title"    : "CUDA入门：CUDA C++ Programming Guide",
+      "tags"     : "GPU编程",
+      "url"      : "/2021/09/05/Cuda-Cpp-Programming-Guide.html"
+    } ,
+  
+    {
+      "title"    : "Numpy快速入门",
+      "tags"     : "Python",
+      "url"      : "/2021/08/10/Numpy-Quick-Start.html"
+    } ,
+  
+    {
       "title"    : "GAMES101毕业 - 现代计算机图形学入门",
       "tags"     : "图形学 实时渲染",
       "url"      : "/2020/07/04/Intro-To-Modern-CG.html"
@@ -8,13 +20,13 @@
   
     {
       "title"    : "基于第一个完整项目经验的性能分析与优化讨论(一)",
-      "tags"     : "H5 Laya 性能优化",
+      "tags"     : "H5 Laya",
       "url"      : "/2020/06/01/How-To-Analyze-And-Optimize-Performance-0.html"
     } ,
   
     {
       "title"    : "Laya项目轻松上线微信小游戏",
-      "tags"     : "H5 Laya 小游戏",
+      "tags"     : "H5 Laya",
       "url"      : "/2020/01/18/Laya-Wechat-MiniGame.html"
     } ,
   
@@ -26,19 +38,19 @@
   
     {
       "title"    : "JavaScript混淆堆栈本地解析映射工具",
-      "tags"     : "H5 npm 工具",
+      "tags"     : "H5",
       "url"      : "/2019/09/11/JavaScript-Source-Mapping.html"
     } ,
   
     {
       "title"    : "Chrome调试关联本地sourcemap文件",
-      "tags"     : "H5 Chrome",
+      "tags"     : "H5",
       "url"      : "/2019/09/11/Chrome-Devtool-Mapping-Sourcemap.html"
     } ,
   
     {
       "title"    : "H5游戏缓存策略的讨论",
-      "tags"     : "H5 HTTP 缓存",
+      "tags"     : "H5",
       "url"      : "/2019/08/02/Discuss-H5-Game-Cache-Strategy.html"
     } ,
   
@@ -50,7 +62,7 @@
   
     {
       "title"    : "浅谈浏览器缓存机制与H5游戏缓存策略",
-      "tags"     : "H5 HTTP 缓存",
+      "tags"     : "H5",
       "url"      : "/2019/06/21/Small-Talk-About-Browser-Cache.html"
     } ,
   
@@ -62,13 +74,13 @@
   
     {
       "title"    : "Apk Permissions Check",
-      "tags"     : "Android Python 工具",
+      "tags"     : "Android Python",
       "url"      : "/2018/11/06/Apk-Permissions-Check.html"
     } ,
   
     {
       "title"    : "Log for Shell",
-      "tags"     : "Shell 工具",
+      "tags"     : "Shell",
       "url"      : "/2018/09/28/Log-for-Shell.html"
     } 
   

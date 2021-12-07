@@ -6,7 +6,7 @@ cover: 'https://i.loli.net/2019/09/11/DwE4xOzsCRGyt9H.jpg'
 date: 2019-09-11
 author: zpo
 categories: H5
-tags: H5 npm 工具
+tags: H5
 ---
 
 ## 为什么要写这个工具

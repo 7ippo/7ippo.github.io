@@ -6,7 +6,7 @@ date: 2019-08-02
 author: 周子博
 categories: H5
 cover: 'https://i.loli.net/2019/08/06/WegjI3rcV9qt4wd.jpg'
-tags: H5 HTTP 缓存
+tags: H5
 ---
 
 <h2>缓存策略的几个思考点</h2>

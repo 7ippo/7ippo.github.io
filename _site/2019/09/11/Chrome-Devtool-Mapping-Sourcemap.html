@@ -22,7 +22,7 @@
 {"author":{"@type":"Person","name":"zpo"},"@type":"BlogPosting","headline":"Chrome调试关联本地sourcemap文件","dateModified":"2019-09-11T00:00:00+08:00","url":"http://localhost:4000/2019/09/11/Chrome-Devtool-Mapping-Sourcemap.html","description":"Why 外网发布环境都是被混淆的JavaScript代码，因为发布环境下不会保存或关联sourcemap(否则混淆没有任何意义了)，所以日志与报错的堆栈都指向混淆后的代码。开发人员持有sourcemap文件，除了有本地解析映射的需求外，有时也存在直接调试外网混淆代码的需求，这时候就可以关联上本地的sourcemap文件，对线上的混淆代码进行映射和解析，直观反映成源码，可以通过Chrome自带功能解决该需求。 准备 本地有对应线上混淆JavaScript文件的sourcemap文件 方法 F12打开Chrome - dev-tool - Sources 选中被混淆的代码，或者通过控制台的链接打开被混淆的代码 右键 - Add source map 通过file协议选择本地的map文件,先在浏览器地址栏中输入确保可以访问到。 e.g. file:///D:/H5Research/CatchJSError/logline.min.js.map 添加后Sources左侧栏出现源码 回到控制台发现已经映射到源码了","datePublished":"2019-09-11T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/09/11/Chrome-Devtool-Mapping-Sourcemap.html"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <meta name="keywords"  content="H5, Chrome">
+    <meta name="keywords"  content="H5">
     <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
     <link rel="stylesheet" href="/assets/css/github-markdown.css">
@@ -139,8 +139,6 @@ Author: Ray-Eldath
         
           
             <a href="http://localhost:4000/tags#H5" class="post-tag">H5</a>
-          
-            <a href="http://localhost:4000/tags#Chrome" class="post-tag">Chrome</a>
           
         
       </div>

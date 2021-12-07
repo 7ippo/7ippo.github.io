@@ -7,7 +7,7 @@ date: 2018-11-06
 author: 周子博
 categories: 技术
 cover: 'https://i.loli.net/2019/02/12/5c626fbda2e1c.jpg'
-tags: Android Python 工具
+tags: Android Python
 ---
 
 <h2>目的</h2>

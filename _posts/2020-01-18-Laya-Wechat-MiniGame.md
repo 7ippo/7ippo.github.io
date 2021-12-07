@@ -6,7 +6,7 @@ date: 2020-01-18
 author: 周子博
 categories: H5
 cover: 'https://i.loli.net/2020/03/30/2xlYnmaEKhpw37i.jpg'
-tags: H5 Laya 小游戏
+tags: H5 Laya
 ---
 
 Laya引擎为了H5游戏上线微信等小游戏平台的无缝对接做了许多工作，但是项目上线微信小游戏还是遇到了不少的问题。不过都已经一一解决，现在把收获的经验和解决问题的方法和同学们分享一下。以下我就按照从Laya发布小游戏开始，问题可能出现的顺序简单讨论一下。

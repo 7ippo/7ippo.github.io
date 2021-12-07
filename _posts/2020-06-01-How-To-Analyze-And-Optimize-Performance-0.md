@@ -6,7 +6,7 @@ date: 2020-06-01
 author: 周子博
 categories: H5
 cover: 'https://i.loli.net/2021/03/15/K3I8HyLlhGsfNFp.jpg'
-tags: H5 Laya 性能优化
+tags: H5 Laya
 ---
 
 ## 项目经历

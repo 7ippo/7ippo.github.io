@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>CUDA入门：CUDA C++ Programming Guide | Tingsven’s blog</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="CUDA入门：CUDA C++ Programming Guide" />
+<meta name="author" content="周子博" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Why CUDA" />
+<meta property="og:description" content="Why CUDA" />
+<link rel="canonical" href="http://localhost:4000/2021/09/05/Cuda-Cpp-Programming-Guide.html" />
+<meta property="og:url" content="http://localhost:4000/2021/09/05/Cuda-Cpp-Programming-Guide.html" />
+<meta property="og:site_name" content="Tingsven’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-05T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CUDA入门：CUDA C++ Programming Guide" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"周子博"},"@type":"BlogPosting","headline":"CUDA入门：CUDA C++ Programming Guide","dateModified":"2021-09-05T00:00:00+08:00","url":"http://localhost:4000/2021/09/05/Cuda-Cpp-Programming-Guide.html","description":"Why CUDA","datePublished":"2021-09-05T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2021/09/05/Cuda-Cpp-Programming-Guide.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="keywords"  content="GPU编程">
+    <link rel="stylesheet" href="//cdn.staticfile.org/normalize/6.0.0/normalize.min.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_roc50gemkxpw4s4i.css">
+    <link rel="stylesheet" href="/assets/css/github-markdown.css">
+    <link rel="stylesheet" href="/assets/css/prism.css">
+    <link rel="stylesheet" href="/assets/css/share.min.css">
+    <link rel="stylesheet" href="/assets/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/zoom.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/assets/js/transition.js"></script>
+    <script src="/assets/js/zoom.js"></script>
+	
+	<!--
+Author: Ray-Eldath
+refer to:
+ - http://docs.mathjax.org/en/latest/options/index.html
+-->
+
+	<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+		jax: ["input/TeX", "output/HTML-CSS"],
+		tex2jax: {
+			inlineMath: [ ["$", "$"] ],
+			displayMath: [ ["$$", "$$"] ],
+			skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+		},
+		"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+      });
+    </script>
+
+	
+    <!--
+Author: Ray-Eldath
+-->
+<style>
+    .markdown-body .anchor{
+        float: left;
+        margin-top: -8px;
+        margin-left: -20px;
+        padding-right: 4px;
+        line-height: 1;
+        opacity: 0;
+    }
+    
+    .markdown-body .anchor .anchor-icon{
+        font-size: 15px
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        let nodes = document.querySelector(".markdown-body").querySelectorAll("h1,h2,h3")
+        for(let node of nodes) {
+            var anchor = document.createElement("a")
+            var anchorIcon = document.createElement("i")
+            anchorIcon.setAttribute("class", "fa fa-anchor fa-lg anchor-icon")
+            anchorIcon.setAttribute("aria-hidden", true)
+            anchor.setAttribute("class", "anchor")
+            anchor.setAttribute("href", "#" + node.getAttribute("id"))
+            
+            anchor.onmouseover = function() {
+                this.style.opacity = "0.4"
+            }
+            
+            anchor.onmouseout = function() {
+                this.style.opacity = "0"
+            }
+            
+            anchor.appendChild(anchorIcon)
+            node.appendChild(anchor)
+        }
+    })
+</script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-146060169-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-146060169-1');
+</script>
+</head>
+
+
+<body>
+  <!--[if lt IE 10]>
+<div class="alert-danger" role="alert">你的浏览器实在太太太旧了，放学别走，升级完浏览器再说！<a target="_blank" class="alert-link" href="http://browsehappy.com">立即升级</a></div>
+<![endif]-->
+  <input id="nm-switch" type="hidden" value="false"> <header class="g-header">
+    <div class="g-logo">
+      <a href="/"></a>
+    </div>
+    <i id="menu-toggle" class="iconfont icon-menu"></i>
+    <nav class="g-nav">
+        <ul>
+            
+            <li><a href="/">home</a></li>
+            
+            <li><a href="/tags.html">tags</a></li>
+            
+        </ul>
+    </nav>
+</header>
+
+
+  <header
+    class="g-banner post-header post-pattern-glamorous bgcolor-default "
+    data-theme="default"
+  >
+    <div class="post-wrapper">
+      <div class="post-tags">
+        
+          
+            <a href="http://localhost:4000/tags#GPU%E7%BC%96%E7%A8%8B" class="post-tag">GPU编程</a>
+          
+        
+      </div>
+      <h1>CUDA入门：CUDA C++ Programming Guide</h1>
+      <div class="post-meta">
+        <span class="post-meta-item"><i class="iconfont icon-author"></i>周子博</span>
+        <time class="post-meta-item" datetime="21-09-05"><i class="iconfont icon-date"></i>05 Sep 2021</time>
+        <i class="iconfont icon-search"></i> <span id="/2021/09/05/Cuda-Cpp-Programming-Guide.html" class="post-meta-item leancloud_visitors" data-flag-title="CUDA入门：CUDA C++ Programming Guide">-</span> 次阅读
+      </div>
+    </div>
+    
+    <div class="filter"></div>
+      <div class="post-cover" style="background: url('https://s2.loli.net/2021/12/07/RbH5cQsjJVY6MdC.jpg') center no-repeat; background-size: cover;"></div>
+    
+  </header>
+
+  <div class="post-content visible">
+    
+    <h2 class="post-subtitle">阅读NVIDIA CUDA Programming Guide一些笔记</h2>
+    
+
+    <article class="markdown-body">
+      <h2 id="why-cuda">Why CUDA</h2>
+
+<p>一句话官方定义CUDA：</p>
+
+<pre><code class="language-quote">CUDA是一种利用NVIDIA GPUs中的并行计算引擎来高效解决复杂计算问题的通用高并行计算平台和编程模型
+</code></pre>
+
+<p>理解<code class="highlighter-rouge">Why CUDA</code>就是理解<code class="highlighter-rouge">Why GPU</code>。GPU与CPU的设计决定了其使命，GPU中大量的晶体管用于数据处理比如浮点数计算。在同样面对读写内存的延迟问题时，GPU通过高度并行计算来弥补这种不足，而CPU则依赖多级缓存和复杂的流控制来解决，后者从晶体管的角度看具有非常昂贵的开销。这就导致了在进行并行计算时GPU具有天然、显著的优势。因为CUDA目的是作为一个通用的并行计算平台和编程模型，所以其将执行并行计算的设备抽象为<code class="highlighter-rouge">device</code>，而将准备数据，调用并行计算设备的设备抽象为<code class="highlighter-rouge">host</code>，以下我就分别以GPU和CPU指代了。</p>
+
+<hr />
+
+<h2 id="编程模型">编程模型</h2>
+
+<h3 id="线程层级">线程层级</h3>
+
+<p>理解CUDA，只需要理解这几个概念。<code class="highlighter-rouge">Kernel</code>，<code class="highlighter-rouge">Thread</code>，<code class="highlighter-rouge">Block</code>，<code class="highlighter-rouge">Grid</code>。</p>
+
+<ul>
+  <li><code class="highlighter-rouge">Kernel</code>：CUDA C++允许我们定义的函数方法，使用<code class="highlighter-rouge">__global__</code>声明，调用时使用<code class="highlighter-rouge">&lt;&lt;&lt;...&gt;&gt;&gt;</code>语法定义执行使用的<code class="highlighter-rouge">Thread</code>、<code class="highlighter-rouge">Block</code>配置。一旦调用，会由GPU中声明的N个线程并行执行。</li>
+  <li><code class="highlighter-rouge">Thread</code>：执行<code class="highlighter-rouge">Kernel</code>方法的单位。</li>
+  <li><code class="highlighter-rouge">Block</code>：组织<code class="highlighter-rouge">Thread</code>的结构。</li>
+  <li><code class="highlighter-rouge">Grid</code>：组织<code class="highlighter-rouge">Block</code>的结构。</li>
+</ul>
+
+<p><img src="/assets/img/2021-09-05/block_thread.png" alt="block_thread" /><br />
+<em>图1：线程、线程块、线程格的结构</em></p>
+
+<p>在调用CUDA <code class="highlighter-rouge">Kernel</code>时，我们可以指定用多少个<code class="highlighter-rouge">Block</code>，即<code class="highlighter-rouge">blocksPerGrid</code>，亦即<code class="highlighter-rouge">gridDim</code>，再指定一个<code class="highlighter-rouge">Block</code>中有多少个<code class="highlighter-rouge">Thread</code>，即<code class="highlighter-rouge">threadsPerBlock</code>，亦即<code class="highlighter-rouge">blockDim</code>。比如对一个N * N矩阵的加法，可以如下调用<code class="highlighter-rouge">Kernel</code>。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Kernel definition</span>
+<span class="n">__global__</span> <span class="kt">void</span> <span class="nf">MatAdd</span><span class="p">(</span><span class="kt">float</span> <span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">],</span> <span class="kt">float</span> <span class="n">B</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">],</span>
+    <span class="kt">float</span> <span class="n">C</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">])</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="c1">// Kernel invocation with one block of N * N * 1 threads</span>
+    <span class="kt">int</span> <span class="n">numBlocks</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">dim3</span> <span class="n">threadsPerBlock</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">);</span>
+    <span class="n">MatAdd</span> <span class="o">&lt;&lt;&lt;</span> <span class="n">numBlocks</span><span class="p">,</span> <span class="n">threadsPerBlock</span> <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">);</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在该例中，我们指定一个<code class="highlighter-rouge">Grid</code>只有1个<code class="highlighter-rouge">Block</code>，一个<code class="highlighter-rouge">Block</code>中有<code class="highlighter-rouge">N * N</code>个<code class="highlighter-rouge">Thread</code>。对于<code class="highlighter-rouge">blocksPerGrid</code>与<code class="highlighter-rouge">threadsPerBlock</code>，我们可以给一维，二维甚至三维的维度(<code class="highlighter-rouge">int</code>或者<code class="highlighter-rouge">dim3</code>)，来适应向量，矩阵与图像，甚至体素的并行计算问题。只是当我们给的维度不足时，剩余的维度默认为1而已。</p>
+
+<blockquote>
+  <p><code class="highlighter-rouge">threadsPerBlock</code>有上限，首先其总数有上限1024，与硬件有关，且其维度也有不同的限制，比如第三维度最高只能到64。你可以给(1024,1,1)或者(1,1,64)。</p>
+</blockquote>
+
+<p>在<code class="highlighter-rouge">Kernel</code>方法中，我们可以通过其索引<code class="highlighter-rouge">index</code>来对不同线程进行区分，用于进行不同的计算任务。这需要用到内建(built-in)的变量:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">blockIdx</code>：线程块的索引，是一个三维<code class="highlighter-rouge">unsigned int</code>型变量</li>
+  <li><code class="highlighter-rouge">threadIdx</code>：线程的索引，是一个三维<code class="highlighter-rouge">unsigned int</code>型变量</li>
+  <li><code class="highlighter-rouge">gridDim</code>：即<code class="highlighter-rouge">blocksPerGrid</code>，调用<code class="highlighter-rouge">Kernel</code>时传入的第一个<code class="highlighter-rouge">dim3</code></li>
+  <li><code class="highlighter-rouge">blockDim</code>：即<code class="highlighter-rouge">threadsPerBlock</code>，调用<code class="highlighter-rouge">Kernel</code>时传入的第二个<code class="highlighter-rouge">dim3</code></li>
+</ul>
+
+<p>这里要注意，索引只是相对位置，或者说块/格子内位置，要计算一个线程的绝对位置（往往我们需要的是线程的绝对位置，来读写取对应的显存地址），则需要结合<code class="highlighter-rouge">gridDim</code>与<code class="highlighter-rouge">blockDim</code>来计算。这里引用一下Guide中的原文做补充说明。</p>
+
+<blockquote>
+  <p>The index of a thread and its thread ID relate to each other in a straightforward way: For a
+one-dimensional block, they are the same; for a two-dimensional block of size (Dx, Dy),the
+thread ID of a thread of index (x, y) is (x + y Dx); for a three-dimensional block of size (Dx, Dy, Dz),
+the thread ID of a thread of index (x, y, z) is (x + y Dx + z Dx Dy).</p>
+</blockquote>
+
+<p>再通过一个矩阵相加的示例来说明：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Kernel definition</span>
+<span class="n">__global__</span> <span class="kt">void</span> <span class="nf">MatAdd</span><span class="p">(</span><span class="kt">float</span> <span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">],</span> <span class="kt">float</span> <span class="n">B</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">],</span>
+<span class="kt">float</span> <span class="n">C</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">N</span><span class="p">])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">blockDim</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">blockIdx</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">blockDim</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span> <span class="o">&amp;&amp;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+    <span class="c1">// Kernel invocation</span>
+    <span class="n">dim3</span> <span class="n">threadsPerBlock</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+    <span class="n">dim3</span> <span class="n">numBlocks</span><span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="n">threadsPerBlock</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">N</span> <span class="o">/</span> <span class="n">threadsPerBlock</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="n">MatAdd</span><span class="o">&lt;&lt;&lt;</span><span class="n">numBlocks</span><span class="p">,</span> <span class="n">threadsPerBlock</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">);</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>上述示例将线程的二维相对索引<code class="highlighter-rouge">threadIdx</code>结合线程块的索引<code class="highlighter-rouge">blockIdx</code>与线程块的结构<code class="highlighter-rouge">blockDim</code>展开成了绝对的二维索引<code class="highlighter-rouge">i,j</code>，对应最终矩阵中的行列坐标。你可以对照图1理解，若干个线程块二维排列起来，那么当前线程的横坐标等于块内相对横坐标（即<code class="highlighter-rouge">threadIdx.x</code>）加上之前线程块累积的横坐标(即<code class="highlighter-rouge">blockIdx.x * blockDim.x</code>)，纵坐标也同理。</p>
+
+<p>值得注意的是，该例子中为了方便假定<code class="highlighter-rouge">N / threadsPerBlock.x</code>可以整除，其实这种假定往往不成立。现实中往往要通过<code class="highlighter-rouge">divideAndRoundUp</code>来向上取整，也就是说较问题规模而言会至多分配一个线程块，所以需要在每个线程中做有效性判断<code class="highlighter-rouge">if (i &lt; N &amp;&amp; j &lt; N)</code>。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// divideAndRoundUp，N为问题规模，即最终需要的线程数</span>
+<span class="kt">int</span> <span class="n">threadsPerBlock</span> <span class="o">=</span> <span class="mi">256</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">blocksPerGrid</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="n">threadsPerBlock</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">threadsPerBlock</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>综合而言，使用CUDA编程时，我们需要将问题划分为若干个相同的子问题求解，按照某种形状组织起子问题，然后在GPU中由线程去执行每一个子问题，并行计算得到结果。每一个线程所执行的方法是一样的，唯一的区别是其<code class="highlighter-rouge">index</code>索引不同，根据其不同的位置索引，去访问不同的显存数据作为输入，再输出结果到对应的显存地址中去。</p>
+
+<h3 id="显存层级">显存层级</h3>
+
+<p>在执行Kernel期间，每个CUDA线程可以从多个存储空间访问数据。</p>
+
+<p><img src="/assets/img/2021-09-05/memory_model.png" alt="memory_model" /><br />
+<em>图2：内存模型</em></p>
+
+<ul>
+  <li>local memory: 线程私有空间</li>
+  <li>shared memory in block: 线程块块内共享空间</li>
+  <li>global memory: 所有线程共享空间</li>
+  <li>constant memory: 所有线程共享的<em>只读</em>空间</li>
+  <li>texture memory: 所有线程共享的<em>只读</em>空间</li>
+</ul>
+
+<p>global、constant、texture三种显存空间是所有线程均可访问的，不同在于其针对不同的使用方式和数据做了针对性优化，如一级缓存，空间访问局部性原理等。</p>
+
+<h3 id="混合编程">混合编程</h3>
+
+<p>并非所有的代码都需要并行计算，也并非整个程序都执行在GPU上，一个使用CUDA编写的程序往往是这样执行的：</p>
+
+<p><img src="/assets/img/2021-09-05/heterogeneous_programming.png" alt="heterogeneous_programming" /><br />
+<em>图3：CPU/GPU混合编程的执行顺序</em></p>
+
+<p><code class="highlighter-rouge">Kernels</code>,即并行计算执行在GPU上，剩下的顺序执行部分执行在CPU上。并且CUDA编程模型还会假设二者拥有自己独立的内存空间。所以我们编写的程序需要通过CUDA runtime提供的接口去管理以上所提到的所有内存，包括GPU内存的分配和释放，以及GPU和CPU之间内存的数据传输。</p>
+
+<blockquote>
+  <p>虽然目前看大部分计算机都是CPU和GPU内存相互独立，但是从未来角度看，统一内存（如苹果M1）统一了CPU GPU的内存地址空间，减少了二者之间的数据拷贝、传输、存储的开销，应该逐渐会成为主流。</p>
+</blockquote>
+
+<h3 id="异步单指令多线程编程模型-asynchronous-simt">异步单指令多线程编程模型 Asynchronous SIMT</h3>
+
+<p>从安培架构的NVIDIA GPU开始，CUDA就通过异步编程模型加速了CUDA线程对内存的操作。该编程模型通过异步屏障<code class="highlighter-rouge">Asynchronous Barrier</code>这类同步对象来实现CUDA线程之间的同步，也解释了为什么我们可以通过<code class="highlighter-rouge">cuda::memcpy_async</code>接口在GPU仍在计算的过程中从<code class="highlighter-rouge">global memory</code>中异步操作数据。</p>
+
+<p>同步对象除了<code class="highlighter-rouge">cuda::barrier</code>外，还有<code class="highlighter-rouge">cuda::pipeline</code>，异步的操作可以通过这些同步对象来同步块内线程，或者是块之间线程的完成的状态(synchronize the completion of the operation)。我们可以显式管理这些同步对象，或者通过库调用进行隐式管理。</p>
+
+<blockquote>
+  <p>关于同步屏障barrier，可以参考这篇<a href="http://dengzuoheng.github.io/cpp-concurency-pattern-2-barrier">文章</a>了解一下并发模型。其目的是为了在并发的线程之间实现同步的操作。</p>
+</blockquote>
+
+<hr />
+
+<h2 id="编程接口">编程接口</h2>
+
+<h3 id="cuda的编译工作流">CUDA的编译工作流</h3>
+
+<p>GPU执行的<code class="highlighter-rouge">Kernel</code>方法我们可以用C++来写，也可以用PTX来写。PTX是CUDA指令集架构，相比C++是low-level的编程语言，有一点像汇编。不管用哪种方式编写<code class="highlighter-rouge">Kernel</code>，最终都需要通过<code class="highlighter-rouge">nvcc</code>来编译成二进制代码，才能执行才GPU上，这一点你在工程属性配置中也能看到。<code class="highlighter-rouge">nvcc</code>，即<code class="highlighter-rouge">NVIDIA Compiler Collection</code>，也是一套编译工具集。对一个CUDA Program来说，具体的编译工作流是这样的：</p>
+
+<h4 id="1-offline-compilation离线编译">1. Offline Compilation离线编译</h4>
+
+<ol>
+  <li>因为一个源文件一般是包括了CPU与GPU端代码的混合，所以nvcc会在这一阶段先将<code class="highlighter-rouge">device code</code>与<code class="highlighter-rouge">host code</code>分开。</li>
+  <li>然后先编译<code class="highlighter-rouge">device code</code>，生成一个汇编形式的文件<code class="highlighter-rouge">assembly form</code>，即<code class="highlighter-rouge">PTX code</code>，这一步类似于<code class="highlighter-rouge">gcc -s</code>。你也可以控制直接生成二进制形式的对象文件，在CUDA中被叫做<code class="highlighter-rouge">cubin object</code>。</li>
+  <li><code class="highlighter-rouge">device code</code>编译好后，所有的定义的<code class="highlighter-rouge">Kernel</code>方法都被编译成了<code class="highlighter-rouge">PTX code</code>或者<code class="highlighter-rouge">cubin object</code>，然后nvcc会将<code class="highlighter-rouge">&lt;&lt;&lt;...&gt;&gt;&gt;</code>这样的语法直接替换为<code class="highlighter-rouge">CUDA Runtime</code>的一些函数调用，来装载和启动我们已经编译好的<code class="highlighter-rouge">Kernel</code>。</li>
+  <li>最后nvcc会调用<code class="highlighter-rouge">host compiler</code>来编译剩余的<code class="highlighter-rouge">host code</code>。你也可以控制直接输出还是C++代码的<code class="highlighter-rouge">host code</code>，再使用别的编译工具来编译。</li>
+</ol>
+
+<h4 id="2-just-in-time-compilation即时编译">2. Just-in-Time Compilation即时编译</h4>
+
+<ol>
+  <li>即时编译发生在程序运行时，基于离线编译的结果，GPU驱动程序会将程序所装载的<code class="highlighter-rouge">PTX code</code>进一步编译成二进制代码。虽然这会增加程序加载的耗时，但是其相应的给应用程序带来了最新GPU驱动所提供的任何编译上的改进。这也是当下编译的应用程序能够在未来诞生的GPU设备上继续跑下去的唯一方法。英伟达使用这种设计来做CUDA程序的向上兼容。</li>
+  <li>因为每次调用<code class="highlighter-rouge">Kernel</code>都是调用<code class="highlighter-rouge">CUDA Runtime</code>的一些方法来装载和启动这些<code class="highlighter-rouge">PTX code</code>，为了避免频繁的即时编译，GPU驱动层也会对这些编译结果进行缓存。当你的GPU驱动升级后，这些缓存也会全部失效，需要使用新的驱动重新编译。</li>
+</ol>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+  <li><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html">CUDA C++ Programming Guide - NVIDIA</a></li>
+</ol>
+
+    </article>
+
+    
+    <div class="social-share-wrapper">
+      <div class="social-share"></div>
+    </div>
+    
+  </div>
+
+  <section class="author-detail">
+    <section class="post-footer-item author-card">
+      <div class="avatar">
+        <img src="https://i.loli.net/2020/03/30/rT8oDqO7iU5J6yu.jpg" alt="">
+      </div>
+      <div class="author-name" rel="author">周子博</div>
+      <div class="bio">
+        <p>爱Vera，爱生活，爱游戏</p>
+      </div>
+      
+      <ul class="sns-links">
+        
+        <li>
+          <a href="/contact.html" target="_blank">
+                    <i class="iconfont icon-email"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//weibo.com/swazz" target="_blank">
+                    <i class="iconfont icon-weibo"></i>
+                </a>
+        </li>
+        
+        <li>
+          <a href="//github.com/7ippo" target="_blank">
+                    <i class="iconfont icon-github"></i>
+                </a>
+        </li>
+        
+      </ul>
+      
+    </section>
+    <section class="post-footer-item read-next">
+      
+
+      
+      <div class="read-next-item">
+        <a href="/2021/08/10/Numpy-Quick-Start.html" class="read-next-link"></a>
+          <section>
+            <span>Numpy快速入门</span>
+            <p>What &amp; Why</p>
+          </section>
+          
+          <div class="filter"></div>
+          <img src="/assets/img/2021-08-10/numpylogo.svg" alt="">
+          
+      </div>
+      
+    </section>
+    
+    <section class="post-footer-item comment">
+        <div id="disqus_thread"></div>
+    </section>
+    
+  </section>
+
+  <footer class="g-footer">
+  <section>Tingsven's blog ©
+  
+  
+    2017
+    -
+  
+  2021
+  </section>
+  <section>Powered by <a href="//jekyllrb.com">Jekyll</a> | <a href="https://github.com/kaeyleo/jekyll-theme-H2O">Theme H2O</a></section>
+</footer>
+
+<!-- 同时兼容http与https -->
+<script src="//cdn1.lncld.net/static/js/2.5.0/av-min.js"></script>
+<script>
+    AV.initialize("EYgyitdcYOMWLdS6JfHNHD43-gzGzoHsz", "3hmJaI6a8V7rhyspVOMsr2oR");
+    // 自己创建的Class的名字
+    var name='Counter';
+    function createRecord(Counter){
+      // 设置 ACL
+      var acl = new AV.ACL();
+      acl.setPublicReadAccess(true);
+      acl.setPublicWriteAccess(true);
+      // 获得span的所有元素
+      var elements=document.getElementsByClassName('leancloud_visitors');
+      // 一次创建多条记录
+      var allcounter=[];
+      for (var i = 0; i < elements.length ; i++) {
+        // 若某span的内容不包括 '-' ，则不必创建记录
+        if(elements[i].textContent.indexOf('-') == -1){
+          continue;
+        }
+        var title = elements[i].getAttribute('data-flag-title');
+        var url = elements[i].id;
+        var newcounter = new Counter();
+        newcounter.setACL(acl);
+        newcounter.set("title", title);
+        newcounter.set("url", url);
+        newcounter.set("time", 1);
+        allcounter.push(newcounter);
+        // 顺便更新显示span为默认值1
+        elements[i].textContent=1;
+      }
+      AV.Object.saveAll(allcounter).then(function (todo) {
+        // 成功保存记录之后
+        console.log('New Visit Record Success');
+      }, function (error) {
+        // 异常错误 
+        console.error('New Visit Record Fail: ' + error.message);
+      });
+    }
+    function showCount(Counter){
+      var $visitors = $(".leancloud_visitors");
+      if($visitors.length == 0) return;
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+      query.equalTo('url', url);
+      query.find().then(function (results) {
+        // 当获取到的记录为0时置默认值
+        if(results.length==0){
+          createRecord(Counter);
+          return;
+        }
+        // 将获取到的数据设置为text
+        var item = results[0];
+        var url = item.get('url');
+        var time = item.get('time');
+        var element = document.getElementById(url);
+        element.textContent = time + 1;
+        // 访问量+1
+        item.increment('time');
+        item.save().then(function (testObject) {
+        });
+      }, function (error) {
+        console.log('save error:'+error.message);
+      });
+    }
+    $(function() {
+      var Counter = AV.Object.extend(name);
+      showCount(Counter);
+    });
+</script>
+
+
+  <script src="/assets/js/social-share.min.js"></script>
+  <script>
+    socialShare('.social-share', {
+      sites: [
+        
+          'wechat'
+          ,
+          
+        
+          'weibo'
+          ,
+          
+        
+          'douban'
+          ,
+          
+        
+          'twitter'
+          
+        
+      ],
+      wechatQrcodeTitle: "分享到微信朋友圈",
+      wechatQrcodeHelper: '<p>扫码后点击右上角</p><p>将本文分享至朋友圈</p>'
+    });
+  </script>
+
+  
+  <script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://tingsven.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  
+
+  <script src="/assets/js/prism.js"></script>
+  <script src="/assets/js/index.min.js"></script>
+</body>
+
+</html>
